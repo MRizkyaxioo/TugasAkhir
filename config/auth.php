@@ -44,6 +44,11 @@ return [
         'provider' => 'admin',
         ],
 
+        'pembimbing' => [
+        'driver' => 'session',
+        'provider' => 'pembimbing',
+        ],
+
         'web' => [
             'driver' => 'session',
             'provider' => 'users',
@@ -72,6 +77,11 @@ return [
         'admin' => [
             'driver' => 'eloquent',
             'model' => App\Models\Administrasi::class,
+        ],
+
+        'pembimbing' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\Pembimbing::class,
         ],
 
         'users' => [

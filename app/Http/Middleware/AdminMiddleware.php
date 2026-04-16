@@ -15,10 +15,22 @@ class AdminMiddleware
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
-    {
-        if (!Auth::guard('admin')->check()) {
-            return redirect()->route('admin.login')->with('error', 'Anda harus login terlebih dahulu');
-        }
-        return $next($request);
+{
+    if (!Auth::guard('admin')->check() && !Auth::guard('pembimbing')->check()) {
+        return redirect()->route('admin.login')
+            ->with('error', 'Anda harus login terlebih dahulu');
     }
+
+    // 🔒 proteksi admin
+    if ($request->is('dashboard-admin') && !Auth::guard('admin')->check()) {
+        abort(403, 'Akses ditolak');
+    }
+
+    // 🔒 proteksi pembimbing
+    if ($request->is('dashboard-pembimbing') && !Auth::guard('pembimbing')->check()) {
+        abort(403, 'Akses ditolak');
+    }
+
+    return $next($request);
+}
 }

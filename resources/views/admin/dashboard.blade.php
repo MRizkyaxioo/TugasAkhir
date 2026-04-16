@@ -16,5 +16,12 @@
                         <button type="submit">🚪 Logout</button>
                     </form>
 
+                    <form action="{{ route('admin.update.kuota') }}" method="POST">
+    @csrf
+    @method('PUT')
+
+    <input type="number" name="kuota" required>
+    <button type="submit">Update</button>
+</form>
 </body>
 </html>

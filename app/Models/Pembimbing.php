@@ -3,8 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Pembimbing extends Model
+class Pembimbing extends Authenticatable
 {
     protected $table = 'pembimbing_lapangan';
     protected $primaryKey = 'id_pembimbing';
