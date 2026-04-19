@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('nama', 60);
             $table->string('sekolah', 50);
             $table->string('bidang_jurusan', 15);
-            $table->smallInteger('nisn');
+            $table->string('nisn', 20);
             $table->smallInteger('semester');
             $table->date('awal_magang');
             $table->date('akhir_magang');

@@ -23,5 +23,15 @@
     <input type="number" name="kuota" required>
     <button type="submit">Update</button>
 </form>
+
+<h2>📊 Statistik Peserta Magang</h2>
+
+<ul>
+    <li>👥 Total Peserta Aktif: <b>{{ $total }}</b></li>
+    <li>👦 Siswa (Laki-laki): <b>{{ $siswa }}</b></li>
+    <li>👧 Siswi (Perempuan): <b>{{ $siswi }}</b></li>
+</ul>
+
+<hr>
 </body>
 </html>

@@ -3,8 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Peserta extends Model
+class Peserta extends Authenticatable
 {
     protected $table = 'peserta';
     protected $primaryKey = 'id_peserta';
@@ -16,6 +17,8 @@ class Peserta extends Model
         'bidang_jurusan',
         'nisn',
         'semester',
+        'awal_magang',
+        'akhir_magang',
         'no_telp',
         'alamat',
         'kelas',

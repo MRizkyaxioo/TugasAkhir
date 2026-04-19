@@ -23,7 +23,7 @@ return new class extends Migration
                 ->cascadeOnDelete();
 
             $table->enum('status', ['pending', 'diterima', 'ditolak', 'selesai']);
-            $table->string('file_berkas_balasan', 255);
+            $table->string('file_berkas_balasan', 255)->nullable();
             $table->timestamps();
         });
     }

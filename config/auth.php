@@ -49,6 +49,11 @@ return [
         'provider' => 'pembimbing',
         ],
 
+        'peserta' => [
+        'driver' => 'session',
+        'provider' => 'peserta',
+        ],
+
         'web' => [
             'driver' => 'session',
             'provider' => 'users',
@@ -82,6 +87,11 @@ return [
         'pembimbing' => [
         'driver' => 'eloquent',
         'model' => App\Models\Pembimbing::class,
+        ],
+
+        'peserta' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\Peserta::class,
         ],
 
         'users' => [

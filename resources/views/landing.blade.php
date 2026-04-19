@@ -26,13 +26,15 @@
     <br>
 
     @if($kuota > 0)
-        <a href="/daftar">
-            <button>Daftar Magang</button>
-        </a>
+        <a href="{{ route('peserta.register') }}">
+    <button>Register</button>
+</a>
     @else
         <button disabled>Pendaftaran Ditutup</button>
         <p style="color:red;">Pendaftaran ditutup</p>
     @endif
-
+<a href="{{ route('peserta.login') }}">
+    <button>Login</button>
+</a>
 </body>
 </html>
