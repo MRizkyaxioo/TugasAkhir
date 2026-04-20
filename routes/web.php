@@ -37,6 +37,23 @@ Route::middleware(AdminMiddleware::class)->group(function () {
     Route::get('/dashboard-pembimbing', [DashboardPembimbingController::class, 'index'])->name('pembimbing.dashboard');
 
     Route::put('/admin/update-kuota', [DashboardAdminController::class, 'updateKuota'])->name('admin.update.kuota');
+
+    // calon peserta
+    Route::get('/admin/calon', [DashboardAdminController::class, 'calonPeserta'])->name('admin.calon');
+
+    // detail
+    Route::get('/admin/detail/{id}', [DashboardAdminController::class, 'detailPeserta'])->name('admin.detail');
+
+    // aksi
+    Route::post('/admin/terima/{id}', [DashboardAdminController::class, 'terima'])->name('admin.terima');
+    Route::post('/admin/tolak/{id}', [DashboardAdminController::class, 'tolak'])->name('admin.tolak');
+
+    // peserta aktif
+    Route::get('/admin/peserta', [DashboardAdminController::class, 'pesertaMagang'])->name('admin.peserta');
+
+    // riwayat
+    Route::get('/admin/riwayat', [DashboardAdminController::class, 'riwayat'])->name('admin.riwayat');
+
 });
 
 // ✅ dashboard PESERTA (diterima)

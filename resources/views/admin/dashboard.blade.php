@@ -33,5 +33,9 @@
 </ul>
 
 <hr>
+
+<a href="{{ route('admin.calon') }}">Daftar Calon Peserta</a><br>
+<a href="{{ route('admin.peserta') }}">Peserta Magang</a><br>
+<a href="{{ route('admin.riwayat') }}">Riwayat Peserta</a><br>
 </body>
 </html>
