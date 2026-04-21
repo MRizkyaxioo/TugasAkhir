@@ -43,6 +43,8 @@ Route::middleware(AdminMiddleware::class)->group(function () {
 
     // detail
     Route::get('/admin/detail/{id}', [DashboardAdminController::class, 'detailPeserta'])->name('admin.detail');
+    Route::get('/admin/detail-peserta/{id}', [DashboardAdminController::class, 'detailPesertaAktif'])->name('admin.detail.peserta');
+    Route::get('/admin/detail-riwayat/{id}', [DashboardAdminController::class, 'detailPesertaSelesai'])->name('admin.detail.riwayat');
 
     // aksi
     Route::post('/admin/terima/{id}', [DashboardAdminController::class, 'terima'])->name('admin.terima');

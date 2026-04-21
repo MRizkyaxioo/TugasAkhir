@@ -25,3 +25,7 @@
 </tr>
 @endforeach
 </table>
+
+<td>
+        <a href="{{ route('admin.dashboard') }}">Kembali</a>
+    </td>

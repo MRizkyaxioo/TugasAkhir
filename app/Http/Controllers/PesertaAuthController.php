@@ -45,9 +45,14 @@ class PesertaAuthController extends Controller
             'nama' => 'required',
             'nisn' => 'required|unique:peserta,nisn',
             'password' => 'required',
-            'file_berkas' => 'required|file',
+            'file_berkas' => 'required|file|mimes:pdf|max:5120',
             'awal_magang' => 'required|date',
             'akhir_magang' => 'required|date|after_or_equal:awal_magang',
+        ], [
+            // CUSTOM MESSAGE
+            'file_berkas.required' => 'File wajib diupload',
+            'file_berkas.mimes' => 'File harus berupa PDF',
+            'file_berkas.max' => 'Ukuran maksimal 5MB',
         ]);
 
         DB::beginTransaction();

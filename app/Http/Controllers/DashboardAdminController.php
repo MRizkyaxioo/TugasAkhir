@@ -55,6 +55,26 @@ class DashboardAdminController extends Controller
         return view('admin.calon', compact('data'));
     }
 
+    // 🔹 Peserta magang (diterima)
+    public function pesertaMagang()
+    {
+        $data = Peserta::whereHas('hasilPendaftaran', function ($q) {
+            $q->where('status', 'diterima');
+        })->with('hasilPendaftaran')->get();
+
+        return view('admin.peserta', compact('data'));
+    }
+
+    // 🔹 Riwayat (selesai)
+    public function riwayat()
+    {
+        $data = Peserta::whereHas('hasilPendaftaran', function ($q) {
+            $q->where('status', 'selesai');
+        })->with('hasilPendaftaran')->get();
+
+        return view('admin.riwayat', compact('data'));
+    }
+
     // 🔹 Detail peserta
     public function detailPeserta($id)
     {
@@ -62,6 +82,23 @@ class DashboardAdminController extends Controller
             ->findOrFail($id);
 
         return view('admin.detail', compact('peserta'));
+    }
+
+    public function detailPesertaAktif($id)
+{
+    $peserta = Peserta::with('hasilPendaftaran.berkas')
+        ->findOrFail($id);
+
+    return view('admin.detailpeserta', compact('peserta'));
+}
+
+// 🔹 Detail peserta
+    public function detailPesertaSelesai($id)
+    {
+        $peserta = Peserta::with('hasilPendaftaran.berkas')
+            ->findOrFail($id);
+
+        return view('admin.detailriwayat', compact('peserta'));
     }
 
     // 🔹 Terima peserta
@@ -82,23 +119,4 @@ class DashboardAdminController extends Controller
         return redirect()->route('admin.calon')->with('success', 'Peserta ditolak');
     }
 
-    // 🔹 Peserta magang (diterima)
-    public function pesertaMagang()
-    {
-        $data = Peserta::whereHas('hasilPendaftaran', function ($q) {
-            $q->where('status', 'diterima');
-        })->get();
-
-        return view('admin.peserta', compact('data'));
-    }
-
-    // 🔹 Riwayat (selesai)
-    public function riwayat()
-    {
-        $data = Peserta::whereHas('hasilPendaftaran', function ($q) {
-            $q->where('status', 'selesai');
-        })->get();
-
-        return view('admin.riwayat', compact('data'));
-    }
 }

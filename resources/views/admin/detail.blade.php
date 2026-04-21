@@ -5,6 +5,8 @@
 <p>Sekolah: {{ $peserta->sekolah }}</p>
 <p>Jurusan: {{ $peserta->bidang_jurusan }}</p>
 <p>Status: {{ $peserta->hasilPendaftaran->status }}</p>
+<p>Awal Magang: {{ $peserta->awal_magang }}</p>
+<p>Akhir Magang: {{ $peserta->akhir_magang }}</p>
 
 <h3>Berkas:</h3>
 <a href="{{ asset('storage/'.$peserta->hasilPendaftaran->berkas->file_berkas) }}" target="_blank">
@@ -22,3 +24,7 @@
     @csrf
     <button type="submit">❌ Tolak</button>
 </form>
+
+<td>
+        <a href="{{ route('admin.calon') }}">Kembali</a>
+    </td>
