@@ -49,6 +49,8 @@ Route::middleware(AdminMiddleware::class)->group(function () {
     // aksi
     Route::post('/admin/terima/{id}', [DashboardAdminController::class, 'terima'])->name('admin.terima');
     Route::post('/admin/tolak/{id}', [DashboardAdminController::class, 'tolak'])->name('admin.tolak');
+    Route::post('/admin/selesai/{id}', [DashboardAdminController::class, 'selesai'])->name('admin.selesai');
+    Route::post('/admin/assign-pembimbing/{id}', [DashboardAdminController::class, 'assignPembimbing'])->name('admin.assign.pembimbing');
 
     // peserta aktif
     Route::get('/admin/peserta', [DashboardAdminController::class, 'pesertaMagang'])->name('admin.peserta');

@@ -1,37 +1,52 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Detail Peserta</title>
-</head>
-<body>
-
 <h2>Detail Peserta Magang</h2>
 
 <p><b>Nama:</b> {{ $peserta->nama }}</p>
 <p><b>NISN:</b> {{ $peserta->nisn }}</p>
 <p><b>Sekolah:</b> {{ $peserta->sekolah }}</p>
 <p><b>Jurusan:</b> {{ $peserta->bidang_jurusan }}</p>
-<p><b>Semester:</b> {{ $peserta->semester }}</p>
-<p><b>Periode:</b> {{ $peserta->awal_magang }} s/d {{ $peserta->akhir_magang }}</p>
 <p><b>Status:</b> {{ $peserta->hasilPendaftaran->status }}</p>
+
+<hr>
+
+<h3>Berkas</h3>
+@if($peserta->hasilPendaftaran->berkas)
+    <a href="{{ asset('storage/'.$peserta->hasilPendaftaran->berkas->file_berkas) }}" target="_blank">
+        Lihat PDF
+    </a>
+@endif
+
+<hr>
+
+<h3>Assign Pembimbing</h3>
+
+<form method="POST" action="{{ route('admin.assign.pembimbing', $peserta->id_peserta) }}">
+    @csrf
+
+    <select name="id_pembimbing">
+        <option value="">-- Pilih Pembimbing --</option>
+        @foreach($pembimbing as $p)
+            <option value="{{ $p->id_pembimbing }}">
+                {{ $p->nama }}
+            </option>
+        @endforeach
+    </select>
+
+    <button type="submit">Simpan</button>
+</form>
+
+@if($peserta->pembimbing->count())
+    <p><b>Pembimbing Saat Ini:</b> {{ $peserta->pembimbing->first()->nama }}</p>
+@endif
+
+<hr>
+
+<h3>Aksi</h3>
+
+<form action="{{ route('admin.selesai', $peserta->id_peserta) }}" method="POST">
+    @csrf
+    <button type="submit">✔ Tandai Selesai</button>
+</form>
 
 <br>
 
-<h3>Berkas Magang</h3>
-
-@if($peserta->hasilPendaftaran->berkas)
-    <a href="{{ asset('storage/'.$peserta->hasilPendaftaran->berkas->file_berkas) }}" target="_blank">
-        Lihat Berkas
-    </a>
-@else
-    <p>Tidak ada berkas</p>
-@endif
-
-<br><br>
-
-<td>
-        <a href="{{ route('admin.peserta') }}">Kembali</a>
-    </td>
-
-</body>
-</html>
+<a href="{{ route('admin.peserta') }}">Kembali</a>

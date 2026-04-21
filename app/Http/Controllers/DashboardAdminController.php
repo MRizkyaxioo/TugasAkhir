@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\KuotaMagang;
 use App\Models\Peserta;
 use App\Models\HasilPendaftaran;
+use App\Models\Pembimbing;
+use App\Models\PembimbingPeserta;
 use Illuminate\Http\Request;
 
 class DashboardAdminController extends Controller
@@ -46,34 +48,80 @@ class DashboardAdminController extends Controller
     }
 
     // 🔹 List calon peserta (pending)
-    public function calonPeserta()
-    {
-        $data = Peserta::whereHas('hasilPendaftaran', function ($q) {
-            $q->where('status', 'pending');
-        })->with('hasilPendaftaran')->get();
+    public function calonPeserta(Request $request)
+{
+    $query = Peserta::whereHas('hasilPendaftaran', function ($q) {
+        $q->where('status', 'pending');
+    });
 
-        return view('admin.calon', compact('data'));
+    // 🔍 Filter nama
+    if ($request->nama) {
+        $query->where('nama', 'like', '%' . $request->nama . '%');
     }
 
-    // 🔹 Peserta magang (diterima)
-    public function pesertaMagang()
-    {
-        $data = Peserta::whereHas('hasilPendaftaran', function ($q) {
-            $q->where('status', 'diterima');
-        })->with('hasilPendaftaran')->get();
-
-        return view('admin.peserta', compact('data'));
+    // 🔍 Filter jurusan
+    if ($request->jurusan) {
+        $query->where('bidang_jurusan', 'like', '%' . $request->jurusan . '%');
     }
 
-    // 🔹 Riwayat (selesai)
-    public function riwayat()
-    {
-        $data = Peserta::whereHas('hasilPendaftaran', function ($q) {
-            $q->where('status', 'selesai');
-        })->with('hasilPendaftaran')->get();
-
-        return view('admin.riwayat', compact('data'));
+    // 🔍 Filter sekolah
+    if ($request->sekolah) {
+        $query->where('sekolah', 'like', '%' . $request->sekolah . '%');
     }
+
+    $data = $query->with('hasilPendaftaran')->get();
+
+    return view('admin.calon', compact('data'));
+}
+
+public function pesertaMagang(Request $request)
+{
+    $query = Peserta::whereHas('hasilPendaftaran', function ($q) {
+        $q->where('status', 'diterima');
+    });
+
+    if ($request->nama) {
+        $query->where('nama', 'like', '%' . $request->nama . '%');
+    }
+
+    if ($request->jurusan) {
+        $query->where('bidang_jurusan', 'like', '%' . $request->jurusan . '%');
+    }
+
+    if ($request->sekolah) {
+        $query->where('sekolah', 'like', '%' . $request->sekolah . '%');
+    }
+
+    $data = $query->with('hasilPendaftaran')->get();
+
+    return view('admin.peserta', compact('data'));
+}
+
+    public function riwayat(Request $request)
+{
+    $query = Peserta::whereHas('hasilPendaftaran', function ($q) {
+        $q->where('status', 'selesai');
+    });
+
+    // 🔍 Filter nama
+    if ($request->nama) {
+        $query->where('nama', 'like', '%' . $request->nama . '%');
+    }
+
+    // 🔍 Filter jurusan
+    if ($request->jurusan) {
+        $query->where('bidang_jurusan', 'like', '%' . $request->jurusan . '%');
+    }
+
+    // 🔍 Filter sekolah
+    if ($request->sekolah) {
+        $query->where('sekolah', 'like', '%' . $request->sekolah . '%');
+    }
+
+    $data = $query->with(['hasilPendaftaran', 'pembimbing'])->get();
+
+    return view('admin.riwayat', compact('data'));
+}
 
     // 🔹 Detail peserta
     public function detailPeserta($id)
@@ -86,13 +134,15 @@ class DashboardAdminController extends Controller
 
     public function detailPesertaAktif($id)
 {
-    $peserta = Peserta::with('hasilPendaftaran.berkas')
+    $peserta = Peserta::with(['hasilPendaftaran.berkas', 'pembimbing'])
         ->findOrFail($id);
 
-    return view('admin.detailpeserta', compact('peserta'));
+    $pembimbing = Pembimbing::all();
+
+    return view('admin.detailpeserta', compact('peserta', 'pembimbing'));
 }
 
-// 🔹 Detail peserta
+// 🔹 Detail riwayat
     public function detailPesertaSelesai($id)
     {
         $peserta = Peserta::with('hasilPendaftaran.berkas')
@@ -118,5 +168,28 @@ class DashboardAdminController extends Controller
 
         return redirect()->route('admin.calon')->with('success', 'Peserta ditolak');
     }
+
+    public function selesai($id)
+{
+    HasilPendaftaran::where('id_peserta', $id)
+        ->update(['status' => 'selesai']);
+
+    return redirect()->route('admin.peserta')
+        ->with('success', 'Peserta selesai magang');
+}
+
+public function assignPembimbing(Request $request, $id)
+{
+    $request->validate([
+        'id_pembimbing' => 'required|exists:pembimbing_lapangan,id_pembimbing'
+    ]);
+
+    PembimbingPeserta::updateOrCreate(
+        ['id_peserta' => $id],
+        ['id_pembimbing' => $request->id_pembimbing]
+    );
+
+    return back()->with('success', 'Pembimbing berhasil ditentukan');
+}
 
 }
