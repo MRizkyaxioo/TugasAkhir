@@ -16,7 +16,6 @@
     <th>NISN</th>
     <th>Sekolah</th>
     <th>Jurusan</th>
-    <th>Pembimbing</th>
     <th>Status</th>
     <th>Aksi</th>
 </tr>
@@ -28,10 +27,6 @@
     <td>{{ $d->nisn }}</td>
     <td>{{ $d->sekolah }}</td>
     <td>{{ $d->bidang_jurusan }}</td>
-
-    <td>
-        {{ $d->pembimbing->first()->nama ?? 'Belum ada' }}
-    </td>
 
     <td>{{ $d->hasilPendaftaran->status }}</td>
 

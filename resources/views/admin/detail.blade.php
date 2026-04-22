@@ -4,6 +4,8 @@
 <p>NISN: {{ $peserta->nisn }}</p>
 <p>Sekolah: {{ $peserta->sekolah }}</p>
 <p>Jurusan: {{ $peserta->bidang_jurusan }}</p>
+<p>Kelas: {{ $peserta->kelas }}</p>
+<p>Semester: {{ $peserta->semester }}</p>
 <p>Status: {{ $peserta->hasilPendaftaran->status }}</p>
 <p>Awal Magang: {{ $peserta->awal_magang }}</p>
 <p>Akhir Magang: {{ $peserta->akhir_magang }}</p>

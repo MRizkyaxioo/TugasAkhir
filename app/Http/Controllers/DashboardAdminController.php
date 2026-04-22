@@ -192,4 +192,24 @@ public function assignPembimbing(Request $request, $id)
     return back()->with('success', 'Pembimbing berhasil ditentukan');
 }
 
+public function uploadBalasan(Request $request, $id)
+{
+    $request->validate([
+        'file_balasan' => 'required|mimes:pdf|max:5120'
+    ]);
+
+    $file = $request->file('file_balasan');
+
+    // rename biar gak tabrakan
+    $filename = time().'_'.$file->getClientOriginalName();
+    $path = $file->storeAs('balasan', $filename, 'public');
+
+    HasilPendaftaran::where('id_peserta', $id)
+        ->update([
+            'file_berkas_balasan' => $path
+        ]);
+
+    return back()->with('success', 'Surat balasan berhasil diupload');
+}
+
 }
