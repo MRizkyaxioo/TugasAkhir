@@ -24,6 +24,6 @@ class PresensiPeserta extends Model
 
     public function presensi()
     {
-        return $this->belongsTo(PresensiPeserta::class, 'id_presensi');
+        return $this->belongsTo(Presensi::class, 'id_presensi');
     }
 }

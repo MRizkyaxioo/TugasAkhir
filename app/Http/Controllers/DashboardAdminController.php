@@ -7,6 +7,7 @@ use App\Models\Peserta;
 use App\Models\HasilPendaftaran;
 use App\Models\Pembimbing;
 use App\Models\PembimbingPeserta;
+use App\Models\PresensiPeserta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -188,8 +189,11 @@ public function pesertaMagang(Request $request)
     HasilPendaftaran::where('id_peserta', $id)
         ->update(['status' => 'selesai']);
 
+    // 🔥 hapus presensi & surat izin
+    PresensiPeserta::where('id_peserta', $id)->delete();
+
     return redirect()->route('admin.peserta')
-        ->with('success', 'Peserta selesai magang');
+        ->with('success', 'Peserta selesai & data presensi dibersihkan');
 }
 
 public function assignPembimbing(Request $request, $id)

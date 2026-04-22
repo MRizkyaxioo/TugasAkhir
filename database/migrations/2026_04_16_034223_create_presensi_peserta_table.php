@@ -23,7 +23,7 @@ return new class extends Migration
                 ->cascadeOnDelete();
 
             $table->string('surat_pendukung_izin', 255)->nullable();
-            $table->dateTime('tanggal_presensi');
+            $table->dateTime('tanggal_presensi')->nullable();
             $table->enum('status_kehadiran', ['hadir', 'izin', 'sakit', 'alpha']);
             $table->timestamps();
         });

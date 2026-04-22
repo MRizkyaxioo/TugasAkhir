@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('presensi', function (Blueprint $table) {
             $table->id('id_presensi');
             $table->boolean('is_open');
-            $table->dateTime('opened_at');
-            $table->dateTime('closed_at');
+            $table->dateTime('opened_at')->nullable();
+            $table->dateTime('closed_at')->nullable();
             $table->timestamps();
         });
     }

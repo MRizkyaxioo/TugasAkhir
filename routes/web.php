@@ -7,6 +7,7 @@ use App\Http\Controllers\PesertaDashboardController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DashboardPembimbingController;
 use App\Http\Controllers\DashboardPesertaController;
+use App\Http\Controllers\PresensiController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\PesertaMiddleware;
 use App\Http\Middleware\CalonPesertaMiddleware;
@@ -54,11 +55,17 @@ Route::middleware(AdminMiddleware::class)->group(function () {
     Route::post('/admin/upload-balasan/{id}',[DashboardAdminController::class, 'uploadBalasan'])->name('admin.upload.balasan');
     Route::get('/admin/pembimbing',[DashboardAdminController::class, 'pembimbing'])->name('admin.pembimbing');
     Route::post('/admin/pembimbing/store',[DashboardAdminController::class, 'storePembimbing'])->name('admin.pembimbing.store');
+    Route::post('/admin/presensi/buka', [PresensiController::class, 'bukaPresensi']);
+    Route::post('/admin/simpan-presensi', [PresensiController::class, 'simpanPresensi'])->name('admin.simpan.presensi');
+
+    Route::get('/admin/presensi', [PresensiController::class, 'halamanPresensi'])->name('admin.presensi');
+    Route::get('/admin/rekap-presensi', [PresensiController::class, 'rekapPresensi'])->name('admin.rekap.presensi');
+    Route::get('/admin/rekap-surat', [PresensiController::class, 'rekapSurat'])->name('admin.rekap.surat');
 
     // peserta aktif
     Route::get('/admin/peserta', [DashboardAdminController::class, 'pesertaMagang'])->name('admin.peserta');
 
-    // riwayat
+    // riwayat peserta
     Route::get('/admin/riwayat', [DashboardAdminController::class, 'riwayat'])->name('admin.riwayat');
 
 });
@@ -66,6 +73,7 @@ Route::middleware(AdminMiddleware::class)->group(function () {
 // ✅ dashboard PESERTA (diterima)
 Route::middleware(PesertaMiddleware::class)->group(function () {
     Route::get('/dashboard-peserta', [DashboardPesertaController::class, 'peserta']);
+    Route::post('/peserta/presensi', [DashboardPesertaController::class, 'kirimPresensi'])->name('peserta.presensi');
 });
 
 // ✅ dashboard CALON

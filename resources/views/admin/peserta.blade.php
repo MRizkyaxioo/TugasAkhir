@@ -53,7 +53,7 @@
           enctype="multipart/form-data">
         @csrf
         <input type="file" name="file_balasan" accept="application/pdf" required>
-        <button type="submit">Upload</button>
+        <button type="submit">Upload Surat Balasan</button>
     </form>
 
     @if($d->hasilPendaftaran->file_berkas_balasan)

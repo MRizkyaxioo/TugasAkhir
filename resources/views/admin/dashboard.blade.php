@@ -38,5 +38,6 @@
 <a href="{{ route('admin.peserta') }}">Peserta Magang</a><br>
 <a href="{{ route('admin.riwayat') }}">Riwayat Peserta</a><br>
 <a href="{{ route('admin.pembimbing') }}">Data Pembimbing</a><br>
+<a href="{{ route('admin.presensi') }}">Presensi</a><br>
 </body>
 </html>
