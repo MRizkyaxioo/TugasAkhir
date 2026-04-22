@@ -1,4 +1,4 @@
-<h2>Detail Peserta</h2>
+<h2>Detail Calon Peserta</h2>
 
 <p>Nama: {{ $peserta->nama }}</p>
 <p>NISN: {{ $peserta->nisn }}</p>
@@ -6,6 +6,7 @@
 <p>Jurusan: {{ $peserta->bidang_jurusan }}</p>
 <p>Kelas: {{ $peserta->kelas }}</p>
 <p>Semester: {{ $peserta->semester }}</p>
+<p>Email: {{ $peserta->email }}</p>
 <p>Status: {{ $peserta->hasilPendaftaran->status }}</p>
 <p>Awal Magang: {{ $peserta->awal_magang }}</p>
 <p>Akhir Magang: {{ $peserta->akhir_magang }}</p>

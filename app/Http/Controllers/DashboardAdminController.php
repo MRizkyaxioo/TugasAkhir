@@ -8,6 +8,7 @@ use App\Models\HasilPendaftaran;
 use App\Models\Pembimbing;
 use App\Models\PembimbingPeserta;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class DashboardAdminController extends Controller
 {
@@ -69,6 +70,10 @@ class DashboardAdminController extends Controller
         $query->where('sekolah', 'like', '%' . $request->sekolah . '%');
     }
 
+    if ($request->nisn) {
+        $query->where('nisn', 'like', '%' . $request->nisn . '%');
+    }
+
     $data = $query->with('hasilPendaftaran')->get();
 
     return view('admin.calon', compact('data'));
@@ -90,6 +95,10 @@ public function pesertaMagang(Request $request)
 
     if ($request->sekolah) {
         $query->where('sekolah', 'like', '%' . $request->sekolah . '%');
+    }
+
+    if ($request->nisn) {
+        $query->where('nisn', 'like', '%' . $request->nisn . '%');
     }
 
     $data = $query->with('hasilPendaftaran')->get();
@@ -116,6 +125,11 @@ public function pesertaMagang(Request $request)
     // 🔍 Filter sekolah
     if ($request->sekolah) {
         $query->where('sekolah', 'like', '%' . $request->sekolah . '%');
+    }
+
+    // 🔍 Filter nisn
+    if ($request->nisn) {
+        $query->where('nisn', 'like', '%' . $request->nisn . '%');
     }
 
     $data = $query->with(['hasilPendaftaran', 'pembimbing'])->get();
@@ -210,6 +224,32 @@ public function uploadBalasan(Request $request, $id)
         ]);
 
     return back()->with('success', 'Surat balasan berhasil diupload');
+}
+
+public function pembimbing()
+{
+    $data = Pembimbing::all();
+    return view('admin.pembimbing', compact('data'));
+}
+
+public function storePembimbing(Request $request)
+{
+    $request->validate([
+        'nama' => 'required',
+        'nip_nidn' => 'required',
+        'username' => 'required|unique:pembimbing_lapangan,username',
+        'password' => 'required|min:5'
+    ]);
+
+    Pembimbing::create([
+        'id_role' => 2, // default role pembimbing
+        'nama' => $request->nama,
+        'nip_nidn' => $request->nip_nidn,
+        'username' => $request->username,
+        'password' => Hash::make($request->password)
+    ]);
+
+    return back()->with('success', 'Pembimbing berhasil ditambahkan');
 }
 
 }

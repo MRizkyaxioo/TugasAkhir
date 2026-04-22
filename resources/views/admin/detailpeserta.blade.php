@@ -6,6 +6,7 @@
 <p><b>Kelas:</b> {{ $peserta->kelas }}</p>
 <p><b>Semester:</b> {{ $peserta->semester }}</p>
 <p><b>Jurusan:</b> {{ $peserta->bidang_jurusan }}</p>
+<p>Email: {{ $peserta->email }}</p>
 <p><b>No. Telepon:</b> {{ $peserta->no_telp }}</p>
 <p><b>Alamat:</b> {{ $peserta->alamat }}</p>
 <p><b>Awal Magang:</b> {{ $peserta->awal_magang }}</p>

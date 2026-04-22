@@ -9,6 +9,7 @@
 <p><b>Jurusan:</b> {{ $peserta->bidang_jurusan }}</p>
 <p><b>No. Telepon:</b> {{ $peserta->no_telp }}</p>
 <p><b>Alamat:</b> {{ $peserta->alamat }}</p>
+<p>Email: {{ $peserta->email }}</p>
 
 <p><b>Periode:</b> {{ $peserta->awal_magang }} s/d {{ $peserta->akhir_magang }}</p>
 

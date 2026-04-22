@@ -16,6 +16,7 @@
     <input type="text" name="nama" placeholder="Nama Peserta">
     <input type="text" name="jurusan" placeholder="Jurusan">
     <input type="text" name="sekolah" placeholder="Sekolah">
+    <input type="text" name="nisn" placeholder="NISN">
     <button type="submit">Cari</button>
 </form>
 

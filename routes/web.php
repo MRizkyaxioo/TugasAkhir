@@ -51,8 +51,9 @@ Route::middleware(AdminMiddleware::class)->group(function () {
     Route::post('/admin/tolak/{id}', [DashboardAdminController::class, 'tolak'])->name('admin.tolak');
     Route::post('/admin/selesai/{id}', [DashboardAdminController::class, 'selesai'])->name('admin.selesai');
     Route::post('/admin/assign-pembimbing/{id}', [DashboardAdminController::class, 'assignPembimbing'])->name('admin.assign.pembimbing');
-    Route::post('/admin/upload-balasan/{id}',
-    [DashboardAdminController::class, 'uploadBalasan'])->name('admin.upload.balasan');
+    Route::post('/admin/upload-balasan/{id}',[DashboardAdminController::class, 'uploadBalasan'])->name('admin.upload.balasan');
+    Route::get('/admin/pembimbing',[DashboardAdminController::class, 'pembimbing'])->name('admin.pembimbing');
+    Route::post('/admin/pembimbing/store',[DashboardAdminController::class, 'storePembimbing'])->name('admin.pembimbing.store');
 
     // peserta aktif
     Route::get('/admin/peserta', [DashboardAdminController::class, 'pesertaMagang'])->name('admin.peserta');
