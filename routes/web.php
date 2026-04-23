@@ -7,6 +7,7 @@ use App\Http\Controllers\PesertaDashboardController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DashboardPembimbingController;
 use App\Http\Controllers\DashboardPesertaController;
+use App\Http\Controllers\LogbookController;
 use App\Http\Controllers\PresensiController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\PesertaMiddleware;
@@ -74,6 +75,9 @@ Route::middleware(AdminMiddleware::class)->group(function () {
 Route::middleware(PesertaMiddleware::class)->group(function () {
     Route::get('/dashboard-peserta', [DashboardPesertaController::class, 'peserta']);
     Route::post('/peserta/presensi', [DashboardPesertaController::class, 'kirimPresensi'])->name('peserta.presensi');
+    Route::get('/logbook', [LogbookController::class, 'index'])->name('peserta.logbook');
+    Route::post('/logbook/store', [LogbookController::class, 'store'])->name('peserta.logbook.store');
+    Route::get('/logbook/export-pdf', [LogbookController::class, 'exportPdf'])->name('peserta.logbook.export.pdf');
 });
 
 // ✅ dashboard CALON

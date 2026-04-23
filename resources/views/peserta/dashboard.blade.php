@@ -25,7 +25,7 @@
 
 <hr>
 
-<a href="/logbook">Isi Logbook</a><br>
+<a href="{{ route('peserta.logbook') }}">Logbook</a><br>
 
 <form action="{{ route('peserta.logout') }}" method="POST">
     @csrf
