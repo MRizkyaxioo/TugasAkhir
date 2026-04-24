@@ -23,6 +23,6 @@ class HasilPendaftaran extends Model
 
     public function berkas()
     {
-        return $this->belongsTo(BerkasMagang::class, 'id_berkas');
+        return $this->hasMany(BerkasMagang::class, 'id_peserta', 'id_peserta');
     }
 }

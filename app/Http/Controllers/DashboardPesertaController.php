@@ -21,6 +21,19 @@ public function peserta()
 {
     $peserta = Auth::guard('peserta')->user();
 
+    $status = $peserta->hasilPendaftaran->status;
+
+    // ❌ BLOCK STATUS SELESAI
+    if ($status == 'selesai') {
+        return redirect()->route('peserta.selesai');
+    }
+
+    // ❌ BLOCK PENDING
+    if ($status == 'pending') {
+        return redirect()->route('dashboard-calon');
+    }
+
+    // ✅ HANYA DITERIMA
     $presensi = Presensi::where('is_open', 1)->latest()->first();
 
     $sudahPresensi = false;
@@ -76,5 +89,12 @@ public function kirimPresensi(Request $request)
     ]);
 
     return back()->with('success', 'Presensi berhasil dikirim');
+}
+
+public function selesai()
+{
+    $peserta = Auth::guard('peserta')->user();
+
+    return view('peserta.selesai', compact('peserta'));
 }
 }

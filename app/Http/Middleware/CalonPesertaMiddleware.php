@@ -15,20 +15,25 @@ class CalonPesertaMiddleware
      * @param  Closure(Request): (Response)  $next
      */
     public function handle(Request $request, Closure $next)
-    {
-        if (!Auth::guard('peserta')->check()) {
-            return redirect('/login-peserta')
-                ->with('error', 'Silakan login terlebih dahulu');
-        }
-
-        $peserta = Auth::guard('peserta')->user();
-        $status = $peserta->hasilPendaftaran->status ?? 'pending';
-
-        // kalau sudah diterima, jangan ke dashboard calon
-        if ($status === 'diterima') {
-            return redirect('/dashboard-peserta');
-        }
-
-        return $next($request);
+{
+    if (!Auth::guard('peserta')->check()) {
+        return redirect('/login-peserta')
+            ->with('error', 'Silakan login terlebih dahulu');
     }
+
+    $peserta = Auth::guard('peserta')->user();
+    $status = $peserta->hasilPendaftaran->status ?? 'pending';
+
+    // ❌ kalau diterima → dashboard peserta
+    if ($status === 'diterima') {
+        return redirect('/dashboard-peserta');
+    }
+
+    // ❌ kalau selesai → dashboard selesai
+    if ($status === 'selesai') {
+        return redirect('/dashboard-selesai');
+    }
+
+    return $next($request);
+}
 }

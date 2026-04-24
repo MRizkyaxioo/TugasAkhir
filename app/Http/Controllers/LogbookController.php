@@ -54,6 +54,10 @@ class LogbookController extends Controller
 {
     $peserta = Auth::guard('peserta')->user();
 
+    if (!$peserta) {
+        abort(403);
+    }
+
     $data = Logbook::where('id_peserta', $peserta->id_peserta)
         ->orderBy('tanggal', 'asc')
         ->get();

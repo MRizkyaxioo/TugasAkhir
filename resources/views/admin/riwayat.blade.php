@@ -31,10 +31,16 @@
     <td>{{ $d->hasilPendaftaran->status }}</td>
 
     <td>
-        <a href="{{ route('admin.detail.riwayat', $d->id_peserta) }}">
-            <button>Detail</button>
-        </a>
-    </td>
+    <a href="{{ route('admin.detail.riwayat', $d->id_peserta) }}">
+        <button>Detail</button>
+    </a>
+
+    <br><br>
+
+    <a href="{{ route('peserta.nilai.pdf', $d->id_peserta) }}" target="_blank">
+        <button>📄 Cetak Nilai</button>
+    </a>
+</td>
 </tr>
 @endforeach
 </table>

@@ -8,11 +8,14 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DashboardPembimbingController;
 use App\Http\Controllers\DashboardPesertaController;
 use App\Http\Controllers\LogbookController;
+use App\Http\Controllers\PenilaianController;
 use App\Http\Controllers\PresensiController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\PesertaMiddleware;
 use App\Http\Middleware\CalonPesertaMiddleware;
+use App\Http\Middleware\PesertaSelesaiMiddleware;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 
 Route::get('/', [DashboardController::class, 'index']);
@@ -37,6 +40,7 @@ Route::middleware(AdminMiddleware::class)->group(function () {
     Route::get('/dashboard-admin', [DashboardAdminController::class, 'index'])->name('admin.dashboard');
 
     Route::get('/dashboard-pembimbing', [DashboardPembimbingController::class, 'index'])->name('pembimbing.dashboard');
+    Route::get('/pembimbing/detail/{id}', [DashboardPembimbingController::class, 'detail'])->name('pembimbing.detail');
 
     Route::put('/admin/update-kuota', [DashboardAdminController::class, 'updateKuota'])->name('admin.update.kuota');
 
@@ -63,6 +67,23 @@ Route::middleware(AdminMiddleware::class)->group(function () {
     Route::get('/admin/rekap-presensi', [PresensiController::class, 'rekapPresensi'])->name('admin.rekap.presensi');
     Route::get('/admin/rekap-surat', [PresensiController::class, 'rekapSurat'])->name('admin.rekap.surat');
 
+    // 🔥 PENILAIAN PEMBIMBING
+Route::get('/pembimbing/penilaian/{id}', [PenilaianController::class, 'form'])
+    ->name('pembimbing.penilaian');
+
+Route::post('/pembimbing/penilaian/{id}', [PenilaianController::class, 'simpan'])
+    ->name('pembimbing.penilaian.simpan');
+
+// 🔥 KRITERIA NILAI
+Route::post('/pembimbing/kriteria', [PenilaianController::class, 'storeKriteria'])
+    ->name('pembimbing.kriteria.store');
+
+Route::delete('/pembimbing/kriteria/{id}', [PenilaianController::class, 'deleteKriteria'])
+    ->name('pembimbing.kriteria.delete');
+
+    Route::post('/pembimbing/penilaian/assign/{id}', [PenilaianController::class, 'assignKriteria'])
+    ->name('pembimbing.penilaian.assign');
+
     // peserta aktif
     Route::get('/admin/peserta', [DashboardAdminController::class, 'pesertaMagang'])->name('admin.peserta');
 
@@ -77,7 +98,6 @@ Route::middleware(PesertaMiddleware::class)->group(function () {
     Route::post('/peserta/presensi', [DashboardPesertaController::class, 'kirimPresensi'])->name('peserta.presensi');
     Route::get('/logbook', [LogbookController::class, 'index'])->name('peserta.logbook');
     Route::post('/logbook/store', [LogbookController::class, 'store'])->name('peserta.logbook.store');
-    Route::get('/logbook/export-pdf', [LogbookController::class, 'exportPdf'])->name('peserta.logbook.export.pdf');
 });
 
 // ✅ dashboard CALON
@@ -85,3 +105,15 @@ Route::middleware(CalonPesertaMiddleware::class)->group(function () {
     Route::get('/dashboard-calon', [DashboardPesertaController::class, 'calon']);
 });
 
+Route::middleware(PesertaSelesaiMiddleware::class)->group(function () {
+    Route::get('/dashboard-selesai', function () {
+        $peserta = auth()->guard('peserta')->user();
+        return view('peserta.selesai', compact('peserta'));
+    });
+});
+
+Route::get('/peserta/nilai/pdf/{id}', [PenilaianController::class, 'exportNilai'])->name('peserta.nilai.pdf');
+Route::middleware(['web'])->group(function () {
+    Route::get('/logbook/export-pdf', [LogbookController::class, 'exportPdf'])
+        ->name('peserta.logbook.export.pdf');
+});

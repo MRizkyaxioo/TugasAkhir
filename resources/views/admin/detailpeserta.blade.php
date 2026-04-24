@@ -16,11 +16,11 @@
 <hr>
 
 <h3>Berkas</h3>
-@if($peserta->hasilPendaftaran->berkas)
-    <a href="{{ asset('storage/'.$peserta->hasilPendaftaran->berkas->file_berkas) }}" target="_blank">
-        Lihat PDF
-    </a>
-@endif
+@foreach($peserta->hasilPendaftaran->berkas as $b)
+    <a href="{{ asset('storage/'.$b->file_berkas) }}" target="_blank">
+        Lihat Berkas
+    </a><br>
+@endforeach
 
 <hr>
 

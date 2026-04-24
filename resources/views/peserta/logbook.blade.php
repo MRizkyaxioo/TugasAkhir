@@ -44,7 +44,11 @@
 <br>
 
 <a href="{{ route('peserta.logbook.export.pdf') }}">
-    📄 Export PDF
+    📄 Cetak Logbook
+</a>
+
+<a href="{{ route('peserta.nilai.pdf', auth()->guard('peserta')->user()->id_peserta) }}" target="_blank">
+    📄 Cetak Nilai
 </a>
 
 <a href="/dashboard-peserta">Kembali</a><br>

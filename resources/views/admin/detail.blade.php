@@ -12,9 +12,12 @@
 <p>Akhir Magang: {{ $peserta->akhir_magang }}</p>
 
 <h3>Berkas:</h3>
-<a href="{{ asset('storage/'.$peserta->hasilPendaftaran->berkas->file_berkas) }}" target="_blank">
-    Lihat Berkas
-</a>
+
+@foreach($peserta->hasilPendaftaran->berkas as $b)
+    <a href="{{ asset('storage/'.$b->file_berkas) }}" target="_blank">
+        Lihat Berkas
+    </a><br>
+@endforeach
 
 <br><br>
 

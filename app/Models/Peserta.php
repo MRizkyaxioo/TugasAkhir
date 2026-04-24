@@ -71,4 +71,14 @@ class Peserta extends Authenticatable
             'id_pembimbing'
         );
     }
+
+    public function kriteriaDipakai()
+{
+    return $this->belongsToMany(
+        KriteriaNilai::class,
+        'penilaian_peserta',
+        'id_peserta',
+        'id_kriteria_nilai'
+    )->withPivot('nilai');
+}
 }
