@@ -7,9 +7,11 @@ use App\Http\Controllers\PesertaDashboardController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DashboardPembimbingController;
 use App\Http\Controllers\DashboardPesertaController;
+use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\LogbookController;
 use App\Http\Controllers\PenilaianController;
 use App\Http\Controllers\PresensiController;
+use App\Http\Controllers\ResetPasswordController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\PesertaMiddleware;
 use App\Http\Middleware\CalonPesertaMiddleware;
@@ -35,6 +37,18 @@ Route::post('/logout-peserta', [PesertaAuthController::class, 'logout'])->name('
 // register
 Route::get('/register-peserta', [PesertaAuthController::class, 'showRegister'])->name('peserta.register');
 Route::post('/register-peserta', [PesertaAuthController::class, 'register'])->name('peserta.register');
+
+// form input email
+Route::get('/lupa-password', [ForgotPasswordController::class, 'showForm'])->name('password.request');
+
+// kirim email
+Route::post('/lupa-password', [ForgotPasswordController::class, 'sendResetLink'])->name('password.email');
+
+// form reset password
+Route::get('/reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+
+// simpan password baru
+Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
 
 Route::middleware(AdminMiddleware::class)->group(function () {
     Route::get('/dashboard-admin', [DashboardAdminController::class, 'index'])->name('admin.dashboard');
@@ -117,3 +131,4 @@ Route::middleware(['web'])->group(function () {
     Route::get('/logbook/export-pdf', [LogbookController::class, 'exportPdf'])
         ->name('peserta.logbook.export.pdf');
 });
+

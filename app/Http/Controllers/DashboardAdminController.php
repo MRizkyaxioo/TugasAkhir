@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\PesertaDiterimaMail;
 use App\Models\KuotaMagang;
 use App\Models\Peserta;
 use App\Models\HasilPendaftaran;
@@ -9,6 +10,7 @@ use App\Models\Pembimbing;
 use App\Models\PembimbingPeserta;
 use App\Models\PresensiPeserta;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
 
 class DashboardAdminController extends Controller
@@ -171,6 +173,13 @@ public function pesertaMagang(Request $request)
     {
         HasilPendaftaran::where('id_peserta', $id)
             ->update(['status' => 'diterima']);
+
+        $peserta = Peserta::findOrFail($id);
+
+        //kirim email
+        if ($peserta->email) {
+            Mail::to($peserta->email)->send(new PesertaDiterimaMail($peserta));
+        }
 
         return redirect()->route('admin.calon')->with('success', 'Peserta diterima');
     }

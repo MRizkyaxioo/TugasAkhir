@@ -328,6 +328,13 @@
             <circle cx="12" cy="12" r="3"/>
         </svg>
     </div>
+    <div style="text-align:right; margin-top:4px;">
+        <a href="{{ route('password.request') }}"
+           style="font-size:0.75rem; color:#C8873A; text-decoration:none;">
+           Lupa password?
+        </a>
+    </div>
+</div>
 </div>
 
                     <div class="btn-group">
