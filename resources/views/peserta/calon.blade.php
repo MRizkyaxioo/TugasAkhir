@@ -38,6 +38,7 @@
             align-items: center;
             justify-content: space-between;
             box-shadow: 0 2px 12px rgba(26,18,8,0.05);
+            position: relative;
         }
 
         .header-left {
@@ -55,10 +56,10 @@
 
         .brand-text h1 {
             font-family: 'Playfair Display', serif;
-            font-size: 1rem; font-weight: 700;
+            font-size: 1.5rem; font-weight: 700;
             color: var(--dark); line-height: 1.2;
         }
-        .brand-text p { font-size: 0.72rem; color: var(--muted); font-weight: 300; }
+        .brand-text p { font-size: 1rem; color: var(--muted); font-weight: 300; }
 
         /* HEADER TITLE CENTER */
         .header-title {
@@ -137,13 +138,13 @@
 
         .avatar-info h3 {
             font-family: 'Playfair Display', serif;
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: 700;
             color: var(--dark);
         }
 
         .avatar-info p {
-            font-size: 0.78rem;
+            font-size: 0,78rem;
             color: var(--muted);
             margin-top: 2px;
         }
@@ -243,7 +244,8 @@
             <div class="logo-wrap">
                 <img src="{{ asset('images/logo-poliban.jpg') }}" alt="Logo Poliban">
             </div>
-            <div class="brand-text">
+
+            <div class="brand-text" style="position:absolute; left:50%; transform:translateX(-50%); text-align:center;">
                 <h1>Selamat Datang Calon Peserta</h1>
                 <p>Perpustakaan Politeknik Negeri Banjarmasin</p>
             </div>

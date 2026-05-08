@@ -39,6 +39,7 @@
             align-items: center;
             gap: 16px;
             box-shadow: 0 2px 12px rgba(26,18,8,0.05);
+            position: relative;
         }
 
         .logo-wrap {
@@ -54,14 +55,14 @@
 
         .brand-text h1 {
             font-family: 'Playfair Display', serif;
-            font-size: 1rem;
+            font-size: 1.3rem;
             font-weight: 700;
             color: var(--dark);
             line-height: 1.2;
         }
 
         .brand-text p {
-            font-size: 0.72rem;
+            font-size: 1rem;
             color: var(--muted);
             font-weight: 300;
         }
@@ -272,15 +273,16 @@
 </script>
 <body>
 
-    <header>
-        <div class="logo-wrap">
-            <img src="{{ asset('images/logo-poliban.jpg') }}" alt="Logo Poliban">
-        </div>
-        <div class="brand-text">
-            <h1>Perpustakaan Politeknik Negeri Banjarmasin</h1>
-            <p>Penerimaan dan Pengelolaan Peserta Magang</p>
-        </div>
-    </header>
+   <header>
+    <div class="logo-wrap">
+        <img src="{{ asset('images/logo-poliban.jpg') }}" alt="Logo Poliban">
+    </div>
+
+    <div class="brand-text" style="position:absolute; left:50%; transform:translateX(-50%); text-align:center;">
+        <h1>Perpustakaan Politeknik Negeri Banjarmasin</h1>
+        <p>Penerimaan dan Pengelolaan Peserta Magang</p>
+    </div>
+</header>
 
     <main>
         <div class="login-card">
@@ -294,66 +296,61 @@
             </div>
 
             {{-- FORM KANAN --}}
-            <div class="card-form">
-                <h2>Login</h2>
+           <div class="card-form">
+    <h2>Login</h2>
 
-                @if(session('error'))
-                    <div class="alert-error">{{ session('error') }}</div>
-                @endif
+    @if(session('error'))
+        <div class="alert-error">{{ session('error') }}</div>
+    @endif
 
-                <form action="{{ route('peserta.login') }}" method="POST" style="display:flex;flex-direction:column;gap:16px;">
-                    @csrf
+    <form action="{{ route('peserta.login') }}" method="POST" style="display:flex;flex-direction:column;gap:16px;">
+        @csrf
 
-                    <div class="field">
-                        <label>Nisn</label>
-                        <div class="input-wrap">
-                            <input type="text" name="nisn" value="{{ old('nisn') }}" autocomplete="off">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                                <circle cx="12" cy="7" r="4"/>
-                            </svg>
-                        </div>
-                    </div>
-
-                    <div class="field">
-    <label>Password</label>
-    <div class="input-wrap">
-        <input type="password" name="password" id="passwordLogin">
-        <svg id="eyeLogin" onclick="togglePassword('passwordLogin', 'eyeLogin')"
-             width="16" height="16" viewBox="0 0 24 24" fill="none"
-             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-             style="cursor:pointer; pointer-events:all;">
-            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-            <circle cx="12" cy="12" r="3"/>
-        </svg>
-    </div>
-    <div style="text-align:right; margin-top:4px;">
-        <a href="{{ route('password.request') }}"
-           style="font-size:0.75rem; color:#C8873A; text-decoration:none;">
-           Lupa password?
-        </a>
-    </div>
-</div>
-</div>
-
-                    <div class="btn-group">
-                        {{-- Tombol Register hanya muncul jika kuota > 0 --}}
-                        @php $kuota = \App\Models\KuotaMagang::find(1); @endphp
-                        @if($kuota && $kuota->kuota_peserta > 0)
-                            <a href="{{ route('peserta.register') }}" class="btn-register">Register</a>
-                        @else
-                            {{-- Jika kuota 0, tombol login melebar penuh --}}
-                        @endif
-
-                        <button type="submit"
-                            class="btn-login {{ (!$kuota || $kuota->kuota_peserta <= 0) ? 'btn-login-full' : '' }}">
-                            Login
-                        </button>
-                    </div>
-
-                </form>
+        <div class="field">
+            <label>Nisn</label>
+            <div class="input-wrap">
+                <input type="text" name="nisn" value="{{ old('nisn') }}" autocomplete="off">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
             </div>
+        </div>
+
+        <div class="field">
+            <label>Password</label>
+            <div class="input-wrap">
+                <input type="password" name="password" id="passwordLogin">
+                <svg id="eyeLogin" onclick="togglePassword('passwordLogin', 'eyeLogin')"
+                     width="16" height="16" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                     style="cursor:pointer; pointer-events:all;">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                </svg>
+            </div>
+            <div style="text-align:right; margin-top:4px;">
+                <a href="{{ route('password.request') }}"
+                   style="font-size:0.75rem; color:#C8873A; text-decoration:none;">
+                   Lupa password?
+                </a>
+            </div>
+        </div>
+
+        <div class="btn-group">
+            @php $kuota = \App\Models\KuotaMagang::find(1); @endphp
+            @if($kuota && $kuota->kuota_peserta > 0)
+                <a href="{{ route('peserta.register') }}" class="btn-register">Register</a>
+            @endif
+            <button type="submit"
+                class="btn-login {{ (!$kuota || $kuota->kuota_peserta <= 0) ? 'btn-login-full' : '' }}">
+                Login
+            </button>
+        </div>
+
+    </form>
+</div>
 
         </div>
     </main>

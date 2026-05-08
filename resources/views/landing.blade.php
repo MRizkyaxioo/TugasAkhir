@@ -45,6 +45,7 @@
             top: 0;
             z-index: 100;
             box-shadow: 0 2px 12px rgba(26,18,8,0.05);
+            position: relative;
         }
 
         .header-brand {
@@ -76,14 +77,14 @@
 
         .brand-text h1 {
             font-family: 'Playfair Display', serif;
-            font-size: 1.1rem;
+            font-size: 1.5rem;
             font-weight: 700;
             color: var(--dark);
             line-height: 1.2;
         }
 
         .brand-text p {
-            font-size: 0.75rem;
+            font-size: 1rem;
             color: var(--muted);
             font-weight: 300;
             margin-top: 2px;
@@ -227,36 +228,28 @@
 <body>
 
     <!-- HEADER -->
-    <header>
-        <div class="header-brand">
-            <div class="logo-wrap">
-                {{-- Ganti src dengan path logo Poliban yang sebenarnya --}}
-                <img src="{{ asset('images/logo-poliban.jpg') }}"
-                     alt="Logo Poliban"
-                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
-                <svg class="logo-placeholder" style="display:none; align-items:center; justify-content:center;"
-                     viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="20" cy="20" r="18" stroke="#C8873A" stroke-width="1.5"/>
-                    <text x="50%" y="55%" text-anchor="middle" fill="#C8873A"
-                          font-size="10" font-family="serif">PNB</text>
-                </svg>
-            </div>
-            <div class="brand-text">
-                <h1>Perpustakaan Politeknik Negeri Banjarmasin</h1>
-                <p>Penerimaan dan Pengelolaan Peserta Magang</p>
-            </div>
-        </div>
+  <header>
+    <div class="logo-wrap">
+        <img src="{{ asset('images/logo-poliban.jpg') }}"
+             alt="Logo Poliban"
+             onerror="this.style.display='none'">
+    </div>
 
-        <a href="{{ route('peserta.login') }}" class="btn-login">
-            Login
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"/>
-                <polyline points="12 8 16 12 12 16"/>
-                <line x1="8" y1="12" x2="16" y2="12"/>
-            </svg>
-        </a>
-    </header>
+    <div class="brand-text" style="position:absolute; left:50%; transform:translateX(-50%); text-align:center;">
+        <h1>Perpustakaan Politeknik Negeri Banjarmasin</h1>
+        <p>Penerimaan dan Pengelolaan Peserta Magang</p>
+    </div>
+
+    <a href="{{ route('peserta.login') }}" class="btn-login">
+        Login
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 8 16 12 12 16"/>
+            <line x1="8" y1="12" x2="16" y2="12"/>
+        </svg>
+    </a>
+</header>
 
     <!-- MAIN -->
     <main>

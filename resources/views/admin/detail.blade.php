@@ -8,7 +8,7 @@
     <style>
         :root {
             --cream: #F5E6D0;
-            --warm-white: #FDF4E7;
+            --warm-white: #FFFDF9;
             --gold: #C8873A;
             --gold-light: #E8A85A;
             --dark: #1A1208;
@@ -243,7 +243,7 @@
         .btn-outline:hover { background: var(--gold); color: #fff; }
 
         .btn-back {
-            background: var(--cream);
+            background: #f9f4ed;
             border: 1.5px solid #E8D5B5;
             color: var(--muted);
         }

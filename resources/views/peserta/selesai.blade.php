@@ -41,6 +41,7 @@
             position: sticky;
             top: 0;
             z-index: 100;
+            position: relative;
         }
 
         .header-left {
@@ -99,11 +100,11 @@
 
         .content-grid {
             display: grid;
-            grid-template-columns: 1.2fr 1fr;
+            grid-template-columns: 2fr 2fr;
             gap: 20px;
             max-width: 760px;
             width: 100%;
-            align-items: start;
+            align-items: stretch;
         }
 
         /* CARD */
@@ -202,12 +203,13 @@
 
     <!-- HEADER -->
     <header>
-        <div class="header-left">
-            <div class="logo-wrap">
-                <img src="{{ asset('images/logo-poliban.jpg') }}" alt="Logo Poliban">
-            </div>
-            <div class="header-title">Peserta Selesai Magang</div>
-        </div>
+        <div class="logo-wrap">
+        <img src="{{ asset('images/logo-poliban.jpg') }}" alt="Logo Poliban">
+    </div>
+
+    <div class="header-title" style="position:absolute; left:50%; transform:translateX(-50%);">
+        Peserta Selesai Magang
+    </div>
 
         <form action="{{ route('peserta.logout') }}" method="POST">
             @csrf
@@ -251,7 +253,7 @@
             </div>
 
             <!-- KANAN: MENU -->
-            <div class="card">
+            <div class="card" style="height:100%;">
                 <div class="card-label">Menu</div>
                 <div class="menu-card">
                     <a href="{{ route('peserta.logbook.export.pdf') }}"

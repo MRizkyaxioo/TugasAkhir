@@ -8,7 +8,7 @@
     <style>
         :root {
             --cream: #F5E6D0;
-            --warm-white: #FDF4E7;
+            --warm-white: #FFFDF9;
             --gold: #C8873A;
             --gold-light: #E8A85A;
             --dark: #1A1208;
@@ -363,7 +363,7 @@
 
                     <div class="action-group">
                         <span class="action-label">Rekap Presensi</span>
-                        <a href="{{ route('admin.rekap.presensi') }}" class="btn btn-primary btn-sm">Rekap Presensi</a>
+                        <a href="{{ route('admin.rekap.presensi') }}" class="btn btn-outline btn-sm">Rekap Presensi</a>
                     </div>
 
                     <div class="action-group">

@@ -8,7 +8,7 @@
     <style>
         :root {
             --cream: #F5E6D0;
-            --warm-white: #FDF4E7;
+            --warm-white: #FFFDF9;
             --gold: #C8873A;
             --gold-light: #E8A85A;
             --dark: #1A1208;

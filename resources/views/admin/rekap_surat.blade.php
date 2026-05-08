@@ -8,7 +8,7 @@
     <style>
         :root {
             --cream: #F5E6D0;
-            --warm-white: #FDF4E7;
+            --warm-white: #FFFDF9;
             --gold: #C8873A;
             --gold-light: #E8A85A;
             --dark: #1A1208;
@@ -148,7 +148,7 @@
 
         table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
 
-        thead tr { background: var(--cream); }
+        thead tr { background: #f9f4ed; }
         thead th {
             padding: 11px 14px;
             text-align: left;
@@ -189,7 +189,7 @@
             align-items: center;
             gap: 6px;
             padding: 9px 22px;
-            background: var(--cream);
+            background: #f9f4ed;
             border: 1.5px solid #E8D5B5;
             border-radius: 50px;
             color: var(--muted);

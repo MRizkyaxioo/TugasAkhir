@@ -38,6 +38,7 @@
             align-items: center;
             justify-content: space-between;
             box-shadow: 0 2px 12px rgba(26,18,8,0.05);
+            position: relative;
         }
 
         .header-left {
@@ -288,25 +289,26 @@
 
     <!-- HEADER -->
     <header>
-        <div class="header-left">
-            <div class="logo-wrap">
-                <img src="{{ asset('images/logo-poliban.jpg') }}" alt="Logo Poliban">
-            </div>
-            <div class="header-title">Penilaian Peserta</div>
-        </div>
+    <div class="logo-wrap">
+        <img src="{{ asset('images/logo-poliban.jpg') }}" alt="Logo Poliban">
+    </div>
 
-        <form action="{{ route('admin.logout') }}" method="POST">
-            @csrf
-            <button type="submit" class="btn-logout">
-                Logout
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                    <polyline points="16 17 21 12 16 7"/>
-                    <line x1="21" y1="12" x2="9" y2="12"/>
-                </svg>
-            </button>
-        </form>
-    </header>
+    <div class="header-title" style="position:absolute; left:50%; transform:translateX(-50%);">
+        Penilaian Peserta
+    </div>
+
+    <form action="{{ route('admin.logout') }}" method="POST">
+        @csrf
+        <button type="submit" class="btn-logout">
+            Logout
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                <polyline points="16 17 21 12 16 7"/>
+                <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+        </button>
+    </form>
+</header>
 
     <!-- MAIN -->
     <main>

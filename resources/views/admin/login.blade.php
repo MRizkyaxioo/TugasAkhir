@@ -38,6 +38,7 @@
             align-items: center;
             gap: 16px;
             box-shadow: 0 2px 12px rgba(26,18,8,0.05);
+            position: relative;
         }
 
         .logo-wrap {
@@ -49,10 +50,10 @@
 
         .brand-text h1 {
             font-family: 'Playfair Display', serif;
-            font-size: 1rem; font-weight: 700;
+            font-size: 1.5rem; font-weight: 700;
             color: var(--dark); line-height: 1.2;
         }
-        .brand-text p { font-size: 0.72rem; color: var(--muted); font-weight: 300; }
+        .brand-text p { font-size: 1rem; color: var(--muted); font-weight: 300; }
 
         main {
             flex: 1;
@@ -177,7 +178,8 @@
         <div class="logo-wrap">
             <img src="{{ asset('images/logo-poliban.jpg') }}" alt="Logo Poliban">
         </div>
-        <div class="brand-text">
+
+        <div class="brand-text" style="position:absolute; left:50%; transform:translateX(-50%); text-align:center;">
             <h1>Perpustakaan Politeknik Negeri Banjarmasin</h1>
             <p>Penerimaan dan Pengelolaan Peserta Magang</p>
         </div>

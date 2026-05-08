@@ -144,7 +144,7 @@
             padding: 18px 36px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
             box-shadow: 0 2px 8px rgba(26,18,8,0.04);
         }
 
@@ -387,11 +387,11 @@
 
         <!-- TOP BAR -->
         <div class="topbar">
-            <div>
-                <div class="topbar-title">Selamat Datang Admin</div>
-                <div class="topbar-sub">
-                    Login sebagai : {{ auth()->guard('admin')->user()->username ?? auth()->guard('pembimbing')->user()->username ?? '-' }}
-                </div>
+                <div style="text-align: center;">
+            <div div class="topbar-title">Selamat Datang Admin</div>
+            <div class="topbar-sub">
+            Login sebagai : {{ auth()->guard('admin')->user()->username ?? auth()->guard('pembimbing')->user()->username ?? '-' }}
+                 </div>
             </div>
         </div>
 

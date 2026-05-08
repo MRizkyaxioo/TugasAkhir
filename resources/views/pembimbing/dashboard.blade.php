@@ -41,6 +41,7 @@
             position: sticky;
             top: 0;
             z-index: 100;
+            position: relative;
         }
 
         .header-left {
@@ -111,6 +112,8 @@
             box-shadow: var(--shadow);
             border: 1px solid rgba(200,135,58,0.08);
             padding: 24px 28px;
+            max-width: 800px;
+            margin: 0 auto; 
         }
 
         /* FILTER */
@@ -215,29 +218,28 @@
 
     <!-- HEADER -->
     <header>
-        <div class="header-left">
-            <div class="logo-wrap">
-                <img src="{{ asset('images/logo-poliban.jpg') }}" alt="Logo Poliban">
-            </div>
-            <div>
-                <div class="header-title">Dashboard Pembimbing</div>
-                <div class="header-sub">
-                    Login sebagai : {{ auth()->guard('pembimbing')->user()->nama }}
-                </div>
-            </div>
-        </div>
+    <div class="logo-wrap">
+        <img src="{{ asset('images/logo-poliban.jpg') }}" alt="Logo Poliban">
+    </div>
 
-        <form action="{{ route('admin.logout') }}" method="POST">
-            @csrf
-            <button type="submit" class="btn-logout">
-                Logout
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                    <polyline points="16 17 21 12 16 7"/>
-                    <line x1="21" y1="12" x2="9" y2="12"/>
-                </svg>
-            </button>
-        </form>
+    <div style="position:absolute; left:50%; transform:translateX(-50%); text-align:center;">
+        <div class="header-title">Dashboard Pembimbing</div>
+        <div class="header-sub">
+            Login sebagai : {{ auth()->guard('pembimbing')->user()->nama }}
+        </div>
+    </div>
+
+    <form action="{{ route('admin.logout') }}" method="POST">
+        @csrf
+        <button type="submit" class="btn-logout">
+            Logout
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                <polyline points="16 17 21 12 16 7"/>
+                <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+        </button>
+    </form>
     </header>
 
     <!-- MAIN -->
