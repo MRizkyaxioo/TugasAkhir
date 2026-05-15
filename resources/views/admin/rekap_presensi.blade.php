@@ -187,6 +187,7 @@
             transition: background 0.2s;
         }
 
+
         .btn-back:hover { background: #E8D5B5; color: var(--dark); }
 
         @media (max-width: 768px) {
@@ -272,13 +273,30 @@
             <div class="page-header-title">Rekap Presensi</div>
         </div>
 
+        <form method="GET" class="filter">
+
+        <select name="bulan">
+            <option value="">Keseluruhan</option>
+
+            @for($i=1; $i<=12; $i++)
+                <option value="{{ $i }}"
+                    {{ $bulan == $i ? 'selected' : '' }}>
+                    {{ date('F', mktime(0,0,0,$i,1)) }}
+                </option>
+            @endfor
+        </select>
+
+        <button type="submit">Terapkan</button>
+
+    </form>
+
         <div class="page-body">
             <div class="card">
                 <div class="table-wrap">
                     <table>
                         <thead>
                             <tr>
-                                <th>No</th>
+                                <th>NISN</th>
                                 <th>Nama</th>
                                 <th style="text-align:center;">Hadir</th>
                                 <th style="text-align:center;">Izin</th>
@@ -289,7 +307,7 @@
                         <tbody>
                             @forelse($data as $i => $d)
                             <tr>
-                                <td>{{ $i + 1 }}</td>
+                                <td>{{ $d->peserta->nisn }}</td>
                                 <td>{{ $d->peserta->nama }}</td>
                                 <td class="count-cell count-hadir">{{ $d->hadir }}</td>
                                 <td class="count-cell count-izin">{{ $d->izin }}</td>

@@ -14,7 +14,8 @@ class PresensiPeserta extends Model
         'id_presensi',
         'surat_pendukung_izin',
         'tanggal_presensi',
-        'status_kehadiran'
+        'status_kehadiran',
+        'is_final'
     ];
 
     public function peserta()

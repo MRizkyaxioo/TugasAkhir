@@ -85,7 +85,8 @@ public function kirimPresensi(Request $request)
         'id_presensi' => $request->id_presensi,
         'status_kehadiran' => $request->status,
         'surat_pendukung_izin' => $path,
-        'tanggal_presensi' => now()
+        'tanggal_presensi' => now(),
+        'is_final' => 0
     ]);
 
     return back()->with('success', 'Presensi berhasil dikirim');

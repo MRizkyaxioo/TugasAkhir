@@ -350,15 +350,24 @@
                 <div class="action-bar">
                     <div class="action-group">
                         <span class="action-label">Buka Presensi</span>
-                        <form method="POST" action="/admin/presensi/buka">
-                            @csrf
-                            <button type="submit" class="btn btn-primary btn-sm">Buka Presensi</button>
-                        </form>
+                        <form method="POST"
+      action="/admin/presensi/buka"
+      id="form-buka-presensi">
+    @csrf
+
+    <button type="submit" class="btn btn-primary btn-sm">
+        Buka Presensi
+    </button>
+</form>
                     </div>
 
                     <div class="action-group">
                         <span class="action-label">Simpan Presensi</span>
-                        <button type="submit" form="form-presensi" class="btn btn-primary btn-sm">Simpan Presensi</button>
+                        <button type="button"
+        id="btn-simpan-presensi"
+        class="btn btn-primary btn-sm">
+    Simpan Presensi
+</button>
                     </div>
 
                     <div class="action-group">
@@ -379,8 +388,9 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>No</th>
+                                    <th>NISN</th>
                                     <th>Nama</th>
+                                    <th>Tanggal Presensi</th>
                                     <th>Status</th>
                                     <th>Surat</th>
                                 </tr>
@@ -388,8 +398,9 @@
                             <tbody>
                                 @forelse($data as $i => $d)
                                 <tr>
-                                    <td>{{ $i + 1 }}</td>
+                                    <td>{{ $d->peserta->nisn }}</td>
                                     <td>{{ $d->peserta->nama }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($d->tanggal_presensi)->timezone('Asia/Makassar')->format('d-m-Y H:i') }} WITA</td>
                                     <td>
                                         <select name="status[{{ $d->id_presensi_peserta }}]"
                                                 class="status-select">
@@ -423,6 +434,62 @@
             </div>
         </div>
     </div>
+<script>
 
+    // SWEETALERT BUKA PRESENSI
+    document.getElementById('form-buka-presensi')
+    .addEventListener('submit', function(e){
+
+        e.preventDefault();
+
+        Swal.fire({
+            title: 'Buka Presensi?',
+            text: 'Presensi hari ini akan dibuka.',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#C8873A',
+            cancelButtonColor: '#7A6E62',
+            confirmButtonText: 'Ya, Buka',
+            cancelButtonText: 'Batal',
+            background: '#FFFDF9',
+            color: '#1A1208'
+        }).then((result) => {
+
+            if(result.isConfirmed){
+                this.submit();
+            }
+
+        });
+
+    });
+
+
+    // SWEETALERT SIMPAN PRESENSI
+    document.getElementById('btn-simpan-presensi')
+    .addEventListener('click', function(){
+
+        Swal.fire({
+            title: 'Simpan Presensi?',
+            text: 'Presensi akan disimpan dan ditutup.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#C8873A',
+            cancelButtonColor: '#7A6E62',
+            confirmButtonText: 'Ya, Simpan',
+            cancelButtonText: 'Batal',
+            background: '#FFFDF9',
+            color: '#1A1208'
+        }).then((result) => {
+
+            if(result.isConfirmed){
+                document.getElementById('form-presensi').submit();
+            }
+
+        });
+
+    });
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>

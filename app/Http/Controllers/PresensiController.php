@@ -35,9 +35,11 @@ public function halamanPresensi()
     return back()->with('success', 'Presensi dibuka');
 }
 
-public function rekapPresensi()
+public function rekapPresensi(Request $request)
 {
-    $data = PresensiPeserta::select(
+    $bulan = $request->bulan;
+
+    $query = PresensiPeserta::select(
         'id_peserta',
         DB::raw("SUM(status_kehadiran='hadir') as hadir"),
         DB::raw("SUM(status_kehadiran='izin') as izin"),
@@ -45,23 +47,28 @@ public function rekapPresensi()
         DB::raw("SUM(status_kehadiran='alpha') as alpha")
     )
     ->with('peserta')
+    ->where('is_final', 1)
 
     ->whereHas('peserta.hasilPendaftaran', function ($q) {
         $q->where('status', 'diterima');
-    })
+    });
 
-    ->groupBy('id_peserta')
-    ->get();
+    if ($bulan) {
+        $query->whereMonth('tanggal_presensi', $bulan);
+    }
 
-    return view('admin.rekap_presensi', compact('data'));
+    $data = $query->groupBy('id_peserta')->get();
+
+    return view('admin.rekap_presensi', compact('data', 'bulan'));
 }
 
 public function rekapSurat()
 {
     $data = PresensiPeserta::with('peserta')
-         ->whereHas('peserta.hasilPendaftaran', function ($q) {
-                $q->where('status', 'diterima');
-            })
+        ->where('is_final', 1)
+        ->whereHas('peserta.hasilPendaftaran', function ($q) {
+            $q->where('status', 'diterima');
+        })
         ->whereNotNull('surat_pendukung_izin')
         ->latest()
         ->get();
@@ -76,12 +83,13 @@ public function simpanPresensi(Request $request)
         foreach ($request->status as $id => $status) {
             PresensiPeserta::where('id_presensi_peserta', $id)
                 ->update([
-                    'status_kehadiran' => $status
+                    'status_kehadiran' => $status,
+                    'is_final' => 1
                 ]);
         }
     }
 
-    // 🔥 AUTO TUTUP PRESENSI TERAKHIR
+    // AUTO TUTUP PRESENSI TERAKHIR
     $presensi = Presensi::latest()->first();
 
     if ($presensi) {
