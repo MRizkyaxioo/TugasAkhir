@@ -283,6 +283,17 @@
         @media (max-width: 600px) {
             header, main, footer { padding-left: 20px; padding-right: 20px; }
         }
+
+        .btn-hapus {
+    background: none;
+    border: none;
+    color: #C0392B;
+    cursor: pointer;
+    font-size: 0.8rem;
+    margin-left: 10px;
+    text-decoration: underline;
+}
+.btn-hapus:hover { color: #E74C3C; }
     </style>
 </head>
 <body>
@@ -336,40 +347,49 @@
                         <span class="info-value">{{ $peserta->nama }}</span>
                     </div>
                     <div class="info-row">
-                        <span class="info-label">Sekolah</span>
-                        <span class="info-value">{{ $peserta->sekolah }}</span>
+                        <span class="info-label">Sekolah/Kampus</span>
+                        <span class="info-value">{{ $peserta->sekolahKampus->nama_sekolah_kampus ?? '-' }}</span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">Jurusan</span>
-                        <span class="info-value">{{ $peserta->bidang_jurusan }}</span>
+                        <span class="info-value">{{ $peserta->jurusan->jurusan ?? '-' }}</span>
                     </div>
                 </div>
 
                 <!-- Daftar Kriteria -->
                 <div class="card">
-                    <div class="card-label">Daftar Kriteria</div>
-                    @forelse($kriteria as $k)
-                        <div class="kriteria-item">
-                            <span>{{ $k->kriteria_nilai }}</span>
-                        </div>
-                    @empty
-                        <p class="empty-text">Belum ada kriteria</p>
-                    @endforelse
-                </div>
+    <div class="card-label">Daftar Kriteria Penilaian</div>
+    @forelse($kriteria as $k)
+        <div class="kriteria-item">
+            <span>{{ $k->kriteria_nilai }}</span>
+            <form action="{{ route('pembimbing.kriteria.delete', $k->id_kriteria_nilai) }}" method="POST" class="form-hapus-kriteria" style="display:inline;">
+    @csrf
+    @method('DELETE')
+    <button type="button" class="btn-hapus btn-hapus-kriteria">Hapus</button>
+</form>
+        </div>
+    @empty
+        <p class="empty-text">Belum ada kriteria</p>
+    @endforelse
+</div>
 
                 <!-- Nilai yang sudah diberikan -->
                 <div class="card">
-                    <div class="card-label">Daftar Kriteria</div>
-                    @php $nilaiLama = $peserta->penilaian->keyBy('id_kriteria_nilai'); @endphp
-                    @forelse($peserta->penilaian as $n)
-                        <div class="nilai-item">
-                            <span>{{ $n->kriteria->kriteria_nilai }}</span>
-                            <span class="nilai-score">: {{ $n->nilai }}</span>
-                        </div>
-                    @empty
-                        <p class="empty-text">Belum ada nilai</p>
-                    @endforelse
-                </div>
+    <div class="card-label">Nilai Peserta Magang</div>
+    @forelse($peserta->penilaian as $n)
+        <div class="nilai-item">
+            <span>{{ $n->kriteria->kriteria_nilai }}</span>
+            <span class="nilai-score">: {{ $n->nilai }}</span>
+            <form action="{{ route('pembimbing.penilaian.delete', ['peserta' => $peserta->id_peserta, 'kriteria' => $n->id_kriteria_nilai]) }}" method="POST" class="form-hapus-nilai" style="display:inline;">
+    @csrf
+    @method('DELETE')
+    <button type="button" class="btn-hapus btn-hapus-nilai">Hapus</button>
+</form>
+        </div>
+    @empty
+        <p class="empty-text">Belum ada nilai</p>
+    @endforelse
+</div>
 
             </div>
 
@@ -437,6 +457,57 @@
             Kembali
         </a>
     </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Hapus kriteria
+    document.querySelectorAll('.btn-hapus-kriteria').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const form = this.closest('form');
+            Swal.fire({
+                title: 'Hapus Kriteria?',
+                text: 'Semua nilai yang menggunakan kriteria ini juga akan terhapus.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#C0392B',
+                cancelButtonColor: '#7A6E62',
+                confirmButtonText: 'Ya, hapus',
+                cancelButtonText: 'Batal',
+                background: '#FFFDF9',
+                color: '#1A1208'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+    });
+
+    // Hapus nilai
+    document.querySelectorAll('.btn-hapus-nilai').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const form = this.closest('form');
+            Swal.fire({
+                title: 'Hapus Nilai?',
+                text: 'Nilai ini akan dihapus dari peserta.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#C0392B',
+                cancelButtonColor: '#7A6E62',
+                confirmButtonText: 'Ya, hapus',
+                cancelButtonText: 'Batal',
+                background: '#FFFDF9',
+                color: '#1A1208'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+    });
+});
+</script>
 
 </body>
 </html>

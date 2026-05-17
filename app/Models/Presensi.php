@@ -10,6 +10,9 @@ class Presensi extends Model
     protected $primaryKey = 'id_presensi';
 
     protected $fillable = [
+        'tanggal',
+        'jam_buka',
+        'jam_tutup',
         'is_open',
         'opened_at',
         'closed_at'

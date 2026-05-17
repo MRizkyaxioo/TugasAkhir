@@ -292,7 +292,7 @@
                     <table>
                         <thead>
                             <tr>
-                                <th>NISN</th>
+                                <th>NISN/NIM</th>
                                 <th>Nama</th>
                                 <th>Status</th>
                                 <th>Tanggal</th>
@@ -302,7 +302,7 @@
                         <tbody>
                             @forelse($data as $i => $d)
                             <tr>
-                                <td>{{ $d->peserta->nisn }}</td>
+                                <td>{{ $d->peserta->nisn_nim }}</td>
                                 <td>{{ $d->peserta->nama }}</td>
                                 <td>
                                     <span class="badge badge-{{ $d->status_kehadiran }}">

@@ -24,7 +24,7 @@ return new class extends Migration
 
             $table->string('surat_pendukung_izin', 255)->nullable();
             $table->dateTime('tanggal_presensi')->nullable();
-            $table->enum('status_kehadiran', ['hadir', 'izin', 'sakit', 'alpha']);
+            $table->enum('status_kehadiran', ['hadir', 'izin', 'sakit', 'alpa']);
             $table->boolean('is_final')->default(0);
             $table->timestamps();
         });

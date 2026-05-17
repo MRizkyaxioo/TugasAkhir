@@ -51,10 +51,24 @@ class PenilaianController extends Controller
     }
 
     public function deleteKriteria($id)
-    {
-        KriteriaNilai::findOrFail($id)->delete();
-        return back();
-    }
+{
+    $kriteria = KriteriaNilai::findOrFail($id);
+    // Hapus semua nilai yang menggunakan kriteria ini
+    PenilaianPeserta::where('id_kriteria_nilai', $id)->delete();
+    $kriteria->delete();
+
+    return back()->with('success', 'Kriteria dan semua nilai terkait berhasil dihapus.');
+}
+
+public function hapusNilai($id_peserta, $id_kriteria)
+{
+    // Pastikan peserta dan kriteria valid
+    PenilaianPeserta::where('id_peserta', $id_peserta)
+        ->where('id_kriteria_nilai', $id_kriteria)
+        ->delete();
+
+    return back()->with('success', 'Nilai berhasil dihapus.');
+}
 
     public function exportNilai($id)
 {

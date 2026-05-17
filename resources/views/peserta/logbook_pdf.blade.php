@@ -48,7 +48,7 @@
 
 <div class="info">
     <p><strong>Nama:</strong> {{ $peserta->nama }}</p>
-    <p><strong>Sekolah:</strong> {{ $peserta->sekolah }}</p>
+    <p><strong>Sekolah:</strong> {{ $peserta->sekolahKampus->nama_sekolah_kampus ?? '-' }}</p>
     <p><strong>Periode:</strong> {{ $peserta->awal_magang }} s/d {{ $peserta->akhir_magang }}</p>
 </div>
 
@@ -77,11 +77,6 @@
 </table>
 
 <br><br>
-
-<p style="text-align:right;">
-    Banjarmasin, {{ date('d-m-Y') }}<br><br><br>
-    _______________________
-</p>
 
 </body>
 </html>

@@ -252,15 +252,6 @@
         tbody tr:hover { background: #FFFDF9; }
         tbody td { padding: 10px 14px; color: var(--dark); vertical-align: middle; }
 
-        .bukti-link {
-            color: var(--gold);
-            text-decoration: none;
-            font-size: 0.82rem;
-            font-weight: 500;
-        }
-
-        .bukti-link:hover { text-decoration: underline; }
-
         .empty-row td {
             text-align: center;
             color: var(--muted);
@@ -273,6 +264,43 @@
             .page-body { padding: 16px; }
             .form-row { grid-template-columns: 1fr; }
         }
+
+        .bukti-img {
+            max-width: 80px;
+            max-height: 80px;
+            border-radius: 6px;
+            object-fit: cover;
+        }
+        .btn-edit {
+            background: #C8873A;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 4px 12px;
+            font-size: 0.78rem;
+            cursor: pointer;
+            margin-left: 8px;
+        }
+        .btn-edit:hover { background: #E8A85A; }
+        .alert-error {
+            background: #FEF2F2; border: 1px solid #FECACA; color: #C0392B;
+            font-size: 0.85rem; padding: 12px 16px; border-radius: 10px; margin-bottom: 16px;
+        }
+        .btn-cetak {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 18px;
+            border-radius: 50px;
+            background: var(--gold);
+            color: #fff;
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-weight: 500;
+            box-shadow: 0 3px 10px rgba(200,135,58,0.3);
+            margin-bottom: 16px;
+        }
+        .btn-cetak:hover { background: var(--gold-light); }
     </style>
 </head>
 <body>
@@ -326,39 +354,72 @@
             @if(session('success'))
                 <div class="alert-success">{{ session('success') }}</div>
             @endif
+            @if(session('error'))
+                <div class="alert-error">{{ session('error') }}</div>
+            @endif
 
             <div class="card">
 
-                <!-- FORM -->
-                <form action="{{ route('peserta.logbook.store') }}" method="POST"
-                      enctype="multipart/form-data" id="form-logbook">
-                    @csrf
-                    <div class="form-row">
+                {{-- Tombol Cetak PDF --}}
+                <a href="{{ route('peserta.logbook.export.pdf') }}" class="btn-cetak" target="_blank">
+                    Cetak PDF
+                </a>
 
-                        <div class="field">
-                            <label>Tanggal</label>
-                            <input type="date" name="tanggal" required>
-                        </div>
-
-                        <div class="field">
-                            <label>Kegiatan</label>
-                            <textarea name="kegiatan" rows="2" required></textarea>
-                        </div>
-
-                        <div class="file-field">
-                            <label>Bukti Kegiatan</label>
-                            <div class="file-btn-wrap">
-                                <label for="bukti-input" class="file-pick-btn" id="file-label">Pilih File</label>
-                                <input type="file" id="bukti-input" name="bukti_foto"
-                                       accept="image/*,application/pdf"
-                                       onchange="document.getElementById('file-label').textContent = this.files[0]?.name || 'Pilih File'">
-                            </div>
-                        </div>
-
-                        <button type="submit" class="btn-kirim">Kirim</button>
-
+                {{-- FORM CREATE (jika belum ada logbook hari ini, dan presensi sudah dilakukan) --}}
+                @if(!$presensiHariIni)
+                    <div style="text-align:center; padding: 20px; color: var(--muted); font-size:0.9rem;">
+                        ⚠️ Anda belum melakukan presensi hari ini. Silakan presensi terlebih dahulu.
                     </div>
-                </form>
+                @elseif(!$logbookHariIni)
+                    {{-- Form input baru --}}
+                    <form action="{{ route('peserta.logbook.store') }}" method="POST"
+                          enctype="multipart/form-data" id="form-logbook">
+                        @csrf
+                        <div class="form-row">
+                            <div class="field">
+                                <label>Tanggal</label>
+                                <input type="date" name="tanggal" value="{{ date('Y-m-d') }}" readonly required>
+                            </div>
+                            <div class="field">
+                                <label>Kegiatan</label>
+                                <textarea name="kegiatan" rows="2" required></textarea>
+                            </div>
+                            <div class="file-field">
+                                <label>Bukti Kegiatan</label>
+                                <div class="file-btn-wrap">
+                                    <label for="bukti-input" class="file-pick-btn" id="file-label">Pilih File</label>
+                                    <input type="file" id="bukti-input" name="bukti_foto"
+                                           accept="image/*"
+                                           onchange="document.getElementById('file-label').textContent = this.files[0]?.name || 'Pilih File'">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn-kirim">Kirim</button>
+                        </div>
+                    </form>
+                @else
+                    {{-- Sudah ada logbook hari ini --}}
+                    <div style="margin-bottom:20px; padding:12px; background:#FFFDF9; border:1px solid #E8D5B5; border-radius:8px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <strong>Logbook Hari Ini ({{ \Carbon\Carbon::parse($logbookHariIni->tanggal)->format('d-m-Y') }})</strong>
+                            @if($bisaEdit)
+                                <button class="btn-edit" onclick="editLogbook({{ $logbookHariIni->id_logbook }})">Edit</button>
+                            @else
+                                <span style="font-size:0.8rem; color:var(--muted);">Terkunci (Presensi sudah ditutup)</span>
+                            @endif
+                        </div>
+                        <p style="margin-top:8px;">{{ $logbookHariIni->kegiatan }}</p>
+                        @if($logbookHariIni->bukti_foto)
+                            <div style="margin-top:8px;">
+                                @php $ext = pathinfo($logbookHariIni->bukti_foto, PATHINFO_EXTENSION); @endphp
+                                @if(in_array(strtolower($ext), ['jpg','jpeg','png','gif']))
+                                    <img src="{{ asset('storage/'.$logbookHariIni->bukti_foto) }}" class="bukti-img" alt="Bukti">
+                                @else
+                                    <a href="{{ asset('storage/'.$logbookHariIni->bukti_foto) }}" target="_blank" class="bukti-link">Lihat Bukti (PDF)</a>
+                                @endif
+                            </div>
+                        @endif
+                    </div>
+                @endif
 
                 <!-- TABLE -->
                 <div class="table-wrap">
@@ -379,8 +440,12 @@
                                 <td>{{ $d->kegiatan }}</td>
                                 <td>
                                     @if($d->bukti_foto)
-                                        <a href="{{ asset('storage/'.$d->bukti_foto) }}"
-                                           target="_blank" class="bukti-link">Lihat Bukti</a>
+                                        @php $ext = pathinfo($d->bukti_foto, PATHINFO_EXTENSION); @endphp
+                                        @if(in_array(strtolower($ext), ['jpg','jpeg','png','gif']))
+                                            <img src="{{ asset('storage/'.$d->bukti_foto) }}" class="bukti-img" alt="Bukti">
+                                        @else
+                                            <a href="{{ asset('storage/'.$d->bukti_foto) }}" target="_blank" class="bukti-link">Lihat Bukti (PDF)</a>
+                                        @endif
                                     @else
                                         <span style="color:var(--muted); font-size:0.8rem;">-</span>
                                     @endif
@@ -398,6 +463,77 @@
             </div>
         </div>
     </div>
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    const updateUrlBase = "{{ route('peserta.logbook.update', ['id' => '__ID__']) }}";
+
+    function editLogbook(id) {
+        Swal.fire({
+            title: 'Edit Logbook',
+            html: `
+                <textarea id="swal-kegiatan" class="swal2-textarea" placeholder="Kegiatan" style="height:100px; width:100%;">${ "{{ $logbookHariIni ? addslashes($logbookHariIni->kegiatan) : '' }}" }</textarea>
+                <div style="margin-top:12px; text-align:left;">
+                    <label for="swal-bukti" style="display:inline-block; background:#C8873A; color:#fff; padding:8px 16px; border-radius:6px; cursor:pointer; font-size:0.85rem;">
+                        Ubah Gambar
+                    </label>
+                    <input type="file" id="swal-bukti" accept="image/*" style="display:none;">
+                    <span id="swal-file-name" style="margin-left:10px; font-size:0.8rem; color:var(--muted);"></span>
+                </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Simpan',
+            didOpen: () => {
+                document.getElementById('swal-bukti').addEventListener('change', function() {
+                    const fileName = this.files[0]?.name || '';
+                    document.getElementById('swal-file-name').textContent = fileName;
+                });
+            },
+            preConfirm: () => {
+                const kegiatan = document.getElementById('swal-kegiatan').value;
+                if (!kegiatan) {
+                    Swal.showValidationMessage('Kegiatan wajib diisi');
+                    return false;
+                }
+                const fileInput = document.getElementById('swal-bukti');
+                const file = fileInput.files[0] || null;
+                return { kegiatan, file };
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const formData = new FormData();
+                formData.append('_token', '{{ csrf_token() }}');
+                formData.append('_method', 'PUT');
+                formData.append('kegiatan', result.value.kegiatan);
+                if (result.value.file) {
+                    formData.append('bukti_foto', result.value.file);
+                }
+
+                fetch(updateUrlBase.replace('__ID__', id), {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => response.json().then(data => ({ ok: response.ok, data })))
+                .then(({ ok, data }) => {
+                    if (ok) {
+                        Swal.fire('Berhasil', data.message || 'Logbook berhasil diperbarui', 'success')
+                            .then(() => location.reload());
+                    } else {
+                        Swal.fire('Gagal', data.message || 'Terjadi kesalahan', 'error');
+                    }
+                })
+                .catch(error => {
+                    Swal.fire('Gagal', 'Terjadi kesalahan jaringan', 'error');
+                });
+            }
+        });
+    }
+</script>
 
 </body>
 </html>

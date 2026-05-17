@@ -55,6 +55,8 @@ Route::middleware(AdminMiddleware::class)->group(function () {
 
     Route::get('/dashboard-pembimbing', [DashboardPembimbingController::class, 'index'])->name('pembimbing.dashboard');
     Route::get('/pembimbing/detail/{id}', [DashboardPembimbingController::class, 'detail'])->name('pembimbing.detail');
+    Route::get('/pembimbing/logbook/{id}', [DashboardPembimbingController::class, 'logbook'])
+    ->name('pembimbing.logbook');
 
     Route::put('/admin/update-kuota', [DashboardAdminController::class, 'updateKuota'])->name('admin.update.kuota');
 
@@ -66,6 +68,9 @@ Route::middleware(AdminMiddleware::class)->group(function () {
     Route::get('/admin/detail-peserta/{id}', [DashboardAdminController::class, 'detailPesertaAktif'])->name('admin.detail.peserta');
     Route::get('/admin/detail-riwayat/{id}', [DashboardAdminController::class, 'detailPesertaSelesai'])->name('admin.detail.riwayat');
 
+    Route::get('/admin/logbook/{id}', [DashboardAdminController::class, 'logbookPeserta'])
+    ->name('admin.logbook');
+
     // aksi
     Route::post('/admin/terima/{id}', [DashboardAdminController::class, 'terima'])->name('admin.terima');
     Route::post('/admin/tolak/{id}', [DashboardAdminController::class, 'tolak'])->name('admin.tolak');
@@ -74,12 +79,34 @@ Route::middleware(AdminMiddleware::class)->group(function () {
     Route::post('/admin/upload-balasan/{id}',[DashboardAdminController::class, 'uploadBalasan'])->name('admin.upload.balasan');
     Route::get('/admin/pembimbing',[DashboardAdminController::class, 'pembimbing'])->name('admin.pembimbing');
     Route::post('/admin/pembimbing/store',[DashboardAdminController::class, 'storePembimbing'])->name('admin.pembimbing.store');
-    Route::post('/admin/presensi/buka', [PresensiController::class, 'bukaPresensi']);
-    Route::post('/admin/simpan-presensi', [PresensiController::class, 'simpanPresensi'])->name('admin.simpan.presensi');
-
+Route::post('/admin/presensi/atur-waktu', [PresensiController::class, 'aturWaktu'])->name('admin.presensi.aturWaktu');
+Route::post('/admin/presensi/simpan-status', [PresensiController::class, 'simpanStatus'])->name('admin.presensi.simpanStatus');
+Route::post('/admin/presensi/tutup-manual', [PresensiController::class, 'tutupPresensiManual'])->name('admin.presensi.tutupManual');
     Route::get('/admin/presensi', [PresensiController::class, 'halamanPresensi'])->name('admin.presensi');
     Route::get('/admin/rekap-presensi', [PresensiController::class, 'rekapPresensi'])->name('admin.rekap.presensi');
     Route::get('/admin/rekap-surat', [PresensiController::class, 'rekapSurat'])->name('admin.rekap.surat');
+Route::get('/admin/rekap-presensi/export', [PresensiController::class, 'exportRekapPresensi'])
+    ->name('admin.rekap.presensi.export');
+
+    Route::get('/admin/jurusan', [DashboardAdminController::class, 'jurusan'])
+    ->name('admin.jurusan');
+
+Route::post('/admin/jurusan', [DashboardAdminController::class, 'storeJurusan'])
+    ->name('admin.jurusan.store');
+
+Route::get('/admin/sekolah', [DashboardAdminController::class, 'sekolah'])
+    ->name('admin.sekolah');
+
+Route::post('/admin/sekolah', [DashboardAdminController::class, 'storeSekolahKampus'])
+    ->name('admin.sekolah.store');
+
+Route::put('/admin/jurusan/update/{id}',
+    [DashboardAdminController::class, 'updateJurusan'])
+    ->name('admin.jurusan.update');
+
+Route::put('/admin/sekolah/update/{id}',
+    [DashboardAdminController::class, 'updateSekolahKampus'])
+    ->name('admin.sekolah.update');
 
     // 🔥 PENILAIAN PEMBIMBING
 Route::get('/pembimbing/penilaian/{id}', [PenilaianController::class, 'form'])
@@ -94,6 +121,9 @@ Route::post('/pembimbing/kriteria', [PenilaianController::class, 'storeKriteria'
 
 Route::delete('/pembimbing/kriteria/{id}', [PenilaianController::class, 'deleteKriteria'])
     ->name('pembimbing.kriteria.delete');
+
+Route::delete('/pembimbing/penilaian/{peserta}/{kriteria}', [PenilaianController::class, 'hapusNilai'])
+    ->name('pembimbing.penilaian.delete');
 
     Route::post('/pembimbing/penilaian/assign/{id}', [PenilaianController::class, 'assignKriteria'])
     ->name('pembimbing.penilaian.assign');
@@ -112,6 +142,7 @@ Route::middleware(PesertaMiddleware::class)->group(function () {
     Route::post('/peserta/presensi', [DashboardPesertaController::class, 'kirimPresensi'])->name('peserta.presensi');
     Route::get('/logbook', [LogbookController::class, 'index'])->name('peserta.logbook');
     Route::post('/logbook/store', [LogbookController::class, 'store'])->name('peserta.logbook.store');
+    Route::put('/logbook/update/{id}', [LogbookController::class, 'update'])->name('peserta.logbook.update');
 });
 
 // ✅ dashboard CALON

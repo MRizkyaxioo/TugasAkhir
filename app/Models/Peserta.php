@@ -13,9 +13,9 @@ class Peserta extends Authenticatable
     protected $fillable = [
         'id_periode',
         'nama',
-        'sekolah',
-        'bidang_jurusan',
-        'nisn',
+        'id_jurusan',
+        'id_sekolah_kampus',
+        'nisn_nim',
         'semester',
         'awal_magang',
         'akhir_magang',
@@ -33,7 +33,7 @@ class Peserta extends Authenticatable
 
     public function getAuthIdentifierName()
 {
-    return 'nisn';
+    return 'nisn_nim';
 }
 
 
@@ -80,5 +80,15 @@ class Peserta extends Authenticatable
         'id_peserta',
         'id_kriteria_nilai'
     )->withPivot('nilai');
+}
+
+public function jurusan()
+{
+    return $this->belongsTo(Jurusan::class, 'id_jurusan');
+}
+
+public function sekolahKampus()
+{
+    return $this->belongsTo(SekolahKampus::class, 'id_sekolah_kampus');
 }
 }

@@ -313,6 +313,15 @@
                 </svg>
                 Data Pembimbing
             </a>
+            <a href="{{ route('admin.jurusan') }}"
+   class="nav-item {{ request()->routeIs('admin.jurusan') ? 'active' : '' }}">
+    Data Jurusan
+</a>
+
+<a href="{{ route('admin.sekolah') }}"
+   class="nav-item {{ request()->routeIs('admin.sekolah') ? 'active' : '' }}">
+    Data Sekolah/Kampus
+</a>
         </nav>
         <div class="sidebar-footer">
             <form action="{{ route('admin.logout') }}" method="POST">
@@ -348,49 +357,62 @@
 
                 <!-- ACTION BAR -->
                 <div class="action-bar">
-                    <div class="action-group">
-                        <span class="action-label">Buka Presensi</span>
-                        <form method="POST"
-      action="/admin/presensi/buka"
-      id="form-buka-presensi">
-    @csrf
+    {{-- Tombol Atur Waktu --}}
+    <div class="action-group">
+        <span class="action-label">Atur Waktu Presensi</span>
+        <button type="button" id="btn-atur-waktu" class="btn btn-primary btn-sm">
+            Atur Waktu
+        </button>
+    </div>
 
-    <button type="submit" class="btn btn-primary btn-sm">
-        Buka Presensi
-    </button>
-</form>
-                    </div>
+    {{-- Simpan Perubahan Status --}}
+    <div class="action-group">
+        <span class="action-label">Simpan Perubahan Kehadiran</span>
+        <button type="button" id="btn-simpan-status" class="btn btn-outline btn-sm">
+            Simpan Perubahan
+        </button>
+    </div>
 
-                    <div class="action-group">
-                        <span class="action-label">Simpan Presensi</span>
-                        <button type="button"
-        id="btn-simpan-presensi"
-        class="btn btn-primary btn-sm">
-    Simpan Presensi
-</button>
-                    </div>
+    <div class="action-group">
+        <span class="action-label">Rekap Presensi</span>
+        <a href="{{ route('admin.rekap.presensi') }}" class="btn btn-outline btn-sm">Rekap Presensi</a>
+    </div>
+    <div class="action-group">
+        <span class="action-label">Rekap Surat</span>
+        <a href="{{ route('admin.rekap.surat') }}" class="btn btn-outline btn-sm">Rekap Surat</a>
+    </div>
+</div>
 
-                    <div class="action-group">
-                        <span class="action-label">Rekap Presensi</span>
-                        <a href="{{ route('admin.rekap.presensi') }}" class="btn btn-outline btn-sm">Rekap Presensi</a>
-                    </div>
-
-                    <div class="action-group">
-                        <span class="action-label">Rekap Surat</span>
-                        <a href="{{ route('admin.rekap.surat') }}" class="btn btn-outline btn-sm">Rekap Surat</a>
-                    </div>
+{{-- INFORMASI JADWAL PRESENSI --}}
+            @if($presensi)
+                <div style="margin-bottom:16px; padding:10px 14px; background:#F0FDF4; border:1px solid #BBF7D0; border-radius:8px; font-size:0.85rem; color:#166534;">
+                    ⏰ Presensi dibuka: <strong>{{ \Carbon\Carbon::parse($presensi->jam_buka)->format('H:i') }} WITA</strong>
+                    &nbsp;|&nbsp;
+                    Ditutup: <strong>{{ \Carbon\Carbon::parse($presensi->jam_tutup)->format('H:i') }} WITA</strong>
+                    @if($presensi->is_open)
+                        <span style="color: var(--gold); font-weight:500;"> (Sedang dibuka)</span>
+                    @elseif($presensi->closed_at)
+                        <span style="color: #C0392B;"> (Sudah ditutup)</span>
+                    @else
+                        <span style="color: var(--muted);"> (Belum dibuka)</span>
+                    @endif
                 </div>
+            @else
+                <div style="margin-bottom:16px; padding:10px 14px; background:#FEF2F2; border:1px solid #FECACA; border-radius:8px; font-size:0.85rem; color:#C0392B;">
+                    ⚠️ Belum ada jadwal presensi hari ini.
+                </div>
+            @endif
 
                 <!-- TABLE -->
-                <form id="form-presensi" method="POST" action="{{ route('admin.simpan.presensi') }}">
+                <form id="form-presensi" method="POST" action="{{ route('admin.presensi.simpanStatus') }}">
                     @csrf
                     <div class="table-wrap">
                         <table>
                             <thead>
                                 <tr>
-                                    <th>NISN</th>
+                                    <th>NISN/NIM</th>
                                     <th>Nama</th>
-                                    <th>Tanggal Presensi</th>
+                                    <th>Waktu Presensi</th>
                                     <th>Status</th>
                                     <th>Surat</th>
                                 </tr>
@@ -398,7 +420,7 @@
                             <tbody>
                                 @forelse($data as $i => $d)
                                 <tr>
-                                    <td>{{ $d->peserta->nisn }}</td>
+                                    <td>{{ $d->peserta->nisn_nim }}</td>
                                     <td>{{ $d->peserta->nama }}</td>
                                     <td>{{ \Carbon\Carbon::parse($d->tanggal_presensi)->timezone('Asia/Makassar')->format('d-m-Y H:i') }} WITA</td>
                                     <td>
@@ -407,7 +429,7 @@
                                             <option value="hadir"  {{ $d->status_kehadiran == 'hadir'  ? 'selected' : '' }}>Hadir</option>
                                             <option value="izin"   {{ $d->status_kehadiran == 'izin'   ? 'selected' : '' }}>Izin</option>
                                             <option value="sakit"  {{ $d->status_kehadiran == 'sakit'  ? 'selected' : '' }}>Sakit</option>
-                                            <option value="alpha"  {{ $d->status_kehadiran == 'alpha'  ? 'selected' : '' }}>Alpha</option>
+                                            <option value="alpa"  {{ $d->status_kehadiran == 'alpa'  ? 'selected' : '' }}>Alpa</option>
                                         </select>
                                     </td>
                                     <td>
@@ -436,58 +458,56 @@
     </div>
 <script>
 
-    // SWEETALERT BUKA PRESENSI
-    document.getElementById('form-buka-presensi')
-    .addEventListener('submit', function(e){
-
-        e.preventDefault();
-
-        Swal.fire({
-            title: 'Buka Presensi?',
-            text: 'Presensi hari ini akan dibuka.',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#C8873A',
-            cancelButtonColor: '#7A6E62',
-            confirmButtonText: 'Ya, Buka',
-            cancelButtonText: 'Batal',
-            background: '#FFFDF9',
-            color: '#1A1208'
-        }).then((result) => {
-
-            if(result.isConfirmed){
-                this.submit();
+    document.getElementById('btn-atur-waktu').addEventListener('click', function() {
+    Swal.fire({
+        title: 'Atur Waktu Presensi',
+        html:
+            '<input id="swal-tanggal" type="date" class="swal2-input" value="{{ date("Y-m-d") }}">' +
+            '<input id="swal-buka" type="time" class="swal2-input" placeholder="Jam Buka" value="08:00">' +
+            '<input id="swal-tutup" type="time" class="swal2-input" placeholder="Jam Tutup" value="16:00">',
+        focusConfirm: false,
+        showCancelButton: true,
+        confirmButtonText: 'Simpan',
+        preConfirm: () => {
+            const tanggal = document.getElementById('swal-tanggal').value;
+            const buka = document.getElementById('swal-buka').value;
+            const tutup = document.getElementById('swal-tutup').value;
+            if (!tanggal || !buka || !tutup) {
+                Swal.showValidationMessage('Lengkapi semua field');
+                return false;
             }
-
-        });
-
+            return { tanggal, buka, tutup };
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '{{ route("admin.presensi.aturWaktu") }}';
+            form.innerHTML = `
+                @csrf
+                <input name="tanggal" value="${result.value.tanggal}">
+                <input name="jam_buka" value="${result.value.buka}">
+                <input name="jam_tutup" value="${result.value.tutup}">
+            `;
+            document.body.appendChild(form);
+            form.submit();
+        }
     });
+});
 
-
-    // SWEETALERT SIMPAN PRESENSI
-    document.getElementById('btn-simpan-presensi')
-    .addEventListener('click', function(){
-
-        Swal.fire({
-            title: 'Simpan Presensi?',
-            text: 'Presensi akan disimpan dan ditutup.',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#C8873A',
-            cancelButtonColor: '#7A6E62',
-            confirmButtonText: 'Ya, Simpan',
-            cancelButtonText: 'Batal',
-            background: '#FFFDF9',
-            color: '#1A1208'
-        }).then((result) => {
-
-            if(result.isConfirmed){
-                document.getElementById('form-presensi').submit();
-            }
-
-        });
-
+document.getElementById('btn-simpan-status').addEventListener('click', function() {
+    Swal.fire({
+        title: 'Simpan Perubahan?',
+        text: 'Status peserta akan diperbarui tanpa menutup presensi.',
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonText: 'Ya, Simpan',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById('form-presensi').submit();
+        }
     });
+});
 
 </script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

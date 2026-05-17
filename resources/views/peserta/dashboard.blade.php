@@ -360,7 +360,7 @@
 
             <!-- KIRI: PRESENSI -->
             <div class="card">
-                <div class="card-label">Presentasi</div>
+                <div class="card-label">Presensi</div>
 
                 @if(session('success'))
                     <div class="alert-success">{{ session('success') }}</div>
@@ -375,6 +375,13 @@
                             ✔ Kamu sudah presensi hari ini
                         </div>
                     @else
+
+                        {{-- COUNTDOWN --}}
+        <div style="text-align:center; margin-bottom:12px; font-size:0.85rem; color: var(--muted);">
+            Sisa waktu presensi:
+            <span id="countdown" style="font-weight:600; color: var(--gold);"></span>
+        </div>
+
                         {{-- TOMBOL HADIR / IZIN / SAKIT --}}
                         <div class="presensi-grid">
                             <div class="presensi-col">
@@ -449,6 +456,28 @@
                 document.getElementById('input-status-tidak-hadir').value = status;
             });
         });
+
+        @if(isset($closeTime) && $closeTime)
+    const closeTime = "{{ $closeTime }}";
+    const [hours, minutes] = closeTime.split(':').map(Number);
+
+    function updateCountdown() {
+        const now = new Date();
+        const target = new Date();
+        target.setHours(hours, minutes, 0, 0);
+        const diff = target - now;
+        if (diff <= 0) {
+            document.getElementById('countdown').textContent = 'Presensi telah ditutup';
+            return;
+        }
+        const h = Math.floor(diff / 3600000);
+        const m = Math.floor((diff % 3600000) / 60000);
+        const s = Math.floor((diff % 60000) / 1000);
+        document.getElementById('countdown').textContent = `${h}j ${m}m ${s}d`;
+    }
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+@endif
     </script>
 
 </body>

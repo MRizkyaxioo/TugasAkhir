@@ -293,16 +293,28 @@
                     </div>
 
                     <div class="field">
-                        <label>Nisn</label>
-                        <input type="text" name="nisn" value="{{ old('nisn') }}">
-                        @error('nisn')<span class="field-error">{{ $message }}</span>@enderror
+                        <label>Nisn/Nim</label>
+                        <input type="text" name="nisn_nim" value="{{ old('nisn_nim') }}">
+                        @error('nisn_nim')<span class="field-error">{{ $message }}</span>@enderror
                     </div>
 
                     <div class="field">
-                        <label>Jurusan</label>
-                        <input type="text" name="bidang_jurusan" value="{{ old('bidang_jurusan') }}">
-                        @error('bidang_jurusan')<span class="field-error">{{ $message }}</span>@enderror
-                    </div>
+    <label>Jurusan</label>
+
+    <select name="id_jurusan">
+        <option value="">Pilih Jurusan</option>
+
+        @foreach($jurusan as $j)
+            <option value="{{ $j->id_jurusan }}">
+                {{ $j->jurusan }}
+            </option>
+        @endforeach
+    </select>
+
+    @error('id_jurusan')
+        <span class="field-error">{{ $message }}</span>
+    @enderror
+</div>
 
                     <div class="field">
                         <label>Kelas</label>
@@ -317,10 +329,22 @@
                     </div>
 
                     <div class="field">
-                        <label>Sekolah</label>
-                        <input type="text" name="sekolah" value="{{ old('sekolah') }}">
-                        @error('sekolah')<span class="field-error">{{ $message }}</span>@enderror
-                    </div>
+    <label>Sekolah/Kampus</label>
+
+    <select name="id_sekolah_kampus">
+        <option value="">Pilih Sekolah/Kampus</option>
+
+        @foreach($sekolah as $s)
+            <option value="{{ $s->id_sekolah_kampus }}">
+                {{ $s->nama_sekolah_kampus }}
+            </option>
+        @endforeach
+    </select>
+
+    @error('id_sekolah_kampus')
+        <span class="field-error">{{ $message }}</span>
+    @enderror
+</div>
 
                     <div class="field">
                         <label>No. Telpon</label>

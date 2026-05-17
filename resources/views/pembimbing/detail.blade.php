@@ -211,16 +211,16 @@
                 <span class="info-value">{{ $peserta->nama }}</span>
             </div>
             <div class="info-row">
-                <span class="info-label">Nisn</span>
-                <span class="info-value">{{ $peserta->nisn }}</span>
+                <span class="info-label">NISN/NIM</span>
+                <span class="info-value">{{ $peserta->nisn_nim }}</span>
             </div>
             <div class="info-row">
                 <span class="info-label">Sekolah</span>
-                <span class="info-value">{{ $peserta->sekolah }}</span>
+                <span class="info-value">{{ $peserta->sekolahKampus->nama_sekolah_kampus ?? '-' }}</span>
             </div>
             <div class="info-row">
                 <span class="info-label">Jurusan</span>
-                <span class="info-value">{{ $peserta->bidang_jurusan }}</span>
+                <span class="info-value">{{ $peserta->jurusan->jurusan ?? '-' }}</span>
             </div>
             <div class="info-row">
                 <span class="info-label">Kelas</span>
@@ -270,6 +270,25 @@
                 </span>
             </div>
         </div>
+        <div class="info-row">
+    <span class="info-label">Hadir</span>
+    <span class="info-value">{{ $hadir }} Hari</span>
+</div>
+
+<div class="info-row">
+    <span class="info-label">Sakit</span>
+    <span class="info-value">{{ $sakit }} Hari</span>
+</div>
+
+<div class="info-row">
+    <span class="info-label">Izin</span>
+    <span class="info-value">{{ $izin }} Hari</span>
+</div>
+
+<div class="info-row">
+    <span class="info-label">Alpa</span>
+    <span class="info-value">{{ $alpa }} Hari</span>
+</div>
     </main>
 
     <!-- FOOTER -->

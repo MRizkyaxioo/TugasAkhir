@@ -364,6 +364,16 @@
                 </svg>
                 Data Pembimbing
             </a>
+
+            <a href="{{ route('admin.jurusan') }}"
+   class="nav-item {{ request()->routeIs('admin.jurusan') ? 'active' : '' }}">
+    Data Jurusan
+</a>
+
+<a href="{{ route('admin.sekolah') }}"
+   class="nav-item {{ request()->routeIs('admin.sekolah') ? 'active' : '' }}">
+    Data Sekolah/Kampus
+</a>
         </nav>
 
         <div class="sidebar-footer">

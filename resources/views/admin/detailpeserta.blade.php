@@ -419,16 +419,16 @@
                         <span class="info-value">{{ $peserta->nama }}</span>
                     </div>
                     <div class="info-row">
-                        <span class="info-label">Nisn</span>
-                        <span class="info-value">{{ $peserta->nisn }}</span>
+                        <span class="info-label">NISN/NIM</span>
+                        <span class="info-value">{{ $peserta->nisn_nim }}</span>
                     </div>
                     <div class="info-row">
-                        <span class="info-label">Sekolah</span>
-                        <span class="info-value">{{ $peserta->sekolah }}</span>
+                        <span class="info-label">Sekolah/Kampus</span>
+                        <span class="info-value">{{ $peserta->sekolahKampus->nama_sekolah_kampus ?? '-' }}</span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">Jurusan</span>
-                        <span class="info-value">{{ $peserta->bidang_jurusan }}</span>
+                        <span class="info-value">{{ $peserta->jurusan->jurusan ?? '-' }}</span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">Kelas</span>
@@ -518,15 +518,20 @@
 
                         <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
                             <div class="card-label">Akhiri Sesi Magang</div>
-                            <form action="{{ route('admin.selesai', $peserta->id_peserta) }}" method="POST">
-                                @csrf
-                                <button type="submit" class="btn btn-success">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                        <polyline points="20 6 9 17 4 12"/>
-                                    </svg>
-                                    Tandai Selesai
-                                </button>
-                            </form>
+                            <form id="formSelesai"
+      action="{{ route('admin.selesai', $peserta->id_peserta) }}"
+      method="POST">
+    @csrf
+
+    <button type="submit" class="btn btn-success">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2.5"
+             stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        Tandai Selesai
+    </button>
+</form>
                         </div>
                     </div>
 
@@ -544,6 +549,28 @@
             </a>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+document.getElementById('formSelesai').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    Swal.fire({
+        title: 'Akhiri sesi magang?',
+        text: 'Peserta akan dipindahkan ke riwayat peserta magang.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#166534',
+        cancelButtonColor: '#7A6E62',
+        confirmButtonText: 'Ya, Selesaikan',
+        cancelButtonText: 'Batal',
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            this.submit();
+        }
+    });
+});
+</script>
 
 </body>
 </html>

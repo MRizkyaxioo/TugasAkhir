@@ -321,6 +321,16 @@
                 </svg>
                 Data Pembimbing
             </a>
+
+            <a href="{{ route('admin.jurusan') }}"
+   class="nav-item {{ request()->routeIs('admin.jurusan') ? 'active' : '' }}">
+    Data Jurusan
+</a>
+
+<a href="{{ route('admin.sekolah') }}"
+   class="nav-item {{ request()->routeIs('admin.sekolah') ? 'active' : '' }}">
+    Data Sekolah/Kampus
+</a>
         </nav>
         <div class="sidebar-footer">
             <form action="{{ route('admin.logout') }}" method="POST">
@@ -354,22 +364,32 @@
                             <input type="text" name="nama" placeholder="Nama Peserta" value="{{ request('nama') }}">
                         </div>
                         <div class="filter-group">
-                            <label>Jurusan</label>
-                            <input type="text" name="jurusan" placeholder="Jurusan" value="{{ request('jurusan') }}">
-                        </div>
-                        <div class="filter-group">
-                            <label>Sekolah</label>
-                            <input type="text" name="sekolah" placeholder="Sekolah" value="{{ request('sekolah') }}">
-                        </div>
-                        <div class="filter-group">
-                            <label>Status</label>
-                            <select name="status">
-                                <option value="">Status</option>
-                                <option value="pending"   {{ request('status') == 'pending'   ? 'selected' : '' }}>Pending</option>
-                                <option value="diterima"  {{ request('status') == 'diterima'  ? 'selected' : '' }}>Diterima</option>
-                                <option value="ditolak"   {{ request('status') == 'ditolak'   ? 'selected' : '' }}>Ditolak</option>
-                            </select>
-                        </div>
+    <label>Jurusan</label>
+    <select name="jurusan">
+        <option value="">Semua Jurusan</option>
+
+        @foreach($jurusan as $j)
+            <option value="{{ $j->id_jurusan }}"
+                {{ request('jurusan') == $j->id_jurusan ? 'selected' : '' }}>
+                {{ $j->jurusan }}
+            </option>
+        @endforeach
+    </select>
+</div>
+
+<div class="filter-group">
+    <label>Sekolah/Kampus</label>
+    <select name="sekolah_kampus">
+        <option value="">Semua Sekolah/Kampus</option>
+
+        @foreach($sekolah as $s)
+            <option value="{{ $s->id_sekolah_kampus }}"
+                {{ request('sekolah_kampus') == $s->id_sekolah_kampus ? 'selected' : '' }}>
+                {{ $s->nama_sekolah_kampus }}
+            </option>
+        @endforeach
+    </select>
+</div>
                         <div class="filter-actions">
                             <a href="{{ route('admin.calon') }}" class="btn btn-reset">Reset Filter</a>
                             <button type="submit" class="btn btn-primary">
@@ -389,7 +409,7 @@
                             <tr>
                                 <th>No</th>
                                 <th>Nama</th>
-                                <th>Nisn</th>
+                                <th>Nisn/NIM</th>
                                 <th>Sekolah</th>
                                 <th>Jurusan</th>
                                 <th>Status</th>
@@ -401,9 +421,9 @@
                             <tr>
                                 <td>{{ $i + 1 }}</td>
                                 <td>{{ $d->nama }}</td>
-                                <td>{{ $d->nisn }}</td>
-                                <td>{{ $d->sekolah }}</td>
-                                <td>{{ $d->bidang_jurusan }}</td>
+                                <td>{{ $d->nisn_nim }}</td>
+                                <td>{{ $d->sekolahKampus->nama_sekolah_kampus ?? '-' }}</td>
+                                <td>{{ $d->jurusan->jurusan ?? '-' }}</td>
                                 <td>
                                     @php $status = $d->hasilPendaftaran->status ?? 'pending'; @endphp
                                     <span class="badge badge-{{ $status }}">{{ ucfirst($status) }}</span>

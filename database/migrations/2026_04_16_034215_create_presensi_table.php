@@ -13,7 +13,10 @@ return new class extends Migration
     {
         Schema::create('presensi', function (Blueprint $table) {
             $table->id('id_presensi');
-            $table->boolean('is_open');
+            $table->date('tanggal')->unique();
+            $table->time('jam_buka');
+            $table->time('jam_tutup');
+            $table->boolean('is_open')->default(0);
             $table->dateTime('opened_at')->nullable();
             $table->dateTime('closed_at')->nullable();
             $table->timestamps();

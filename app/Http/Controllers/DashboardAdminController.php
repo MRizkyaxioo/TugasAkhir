@@ -3,12 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Mail\PesertaDiterimaMail;
+use App\Mail\PesertaDitolakMail;
 use App\Models\KuotaMagang;
 use App\Models\Peserta;
 use App\Models\HasilPendaftaran;
+use App\Models\Logbook;
 use App\Models\Pembimbing;
 use App\Models\PembimbingPeserta;
 use App\Models\PresensiPeserta;
+use App\Models\Jurusan;
+use App\Models\SekolahKampus;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
@@ -54,37 +58,54 @@ class DashboardAdminController extends Controller
     // 🔹 List calon peserta (pending)
     public function calonPeserta(Request $request)
 {
-    $query = Peserta::whereHas('hasilPendaftaran', function ($q) {
+    $query = Peserta::with([
+        'hasilPendaftaran',
+        'jurusan',
+        'sekolahKampus'
+    ])->whereHas('hasilPendaftaran', function ($q) {
         $q->where('status', 'pending');
     });
 
-    // 🔍 Filter nama
+    // FILTER NAMA
     if ($request->nama) {
         $query->where('nama', 'like', '%' . $request->nama . '%');
     }
 
-    // 🔍 Filter jurusan
+    // FILTER JURUSAN
     if ($request->jurusan) {
-        $query->where('bidang_jurusan', 'like', '%' . $request->jurusan . '%');
+        $query->where('id_jurusan', $request->jurusan);
     }
 
-    // 🔍 Filter sekolah
-    if ($request->sekolah) {
-        $query->where('sekolah', 'like', '%' . $request->sekolah . '%');
+    // FILTER SEKOLAH/KAMPUS
+    if ($request->sekolah_kampus) {
+        $query->where('id_sekolah_kampus', $request->sekolah_kampus);
     }
 
-    if ($request->nisn) {
-        $query->where('nisn', 'like', '%' . $request->nisn . '%');
+    // FILTER NISN/NIM
+    if ($request->nisn_nim) {
+        $query->where('nisn_nim', 'like', '%' . $request->nisn_nim . '%');
     }
 
-    $data = $query->with('hasilPendaftaran')->get();
+    $data = $query->get();
 
-    return view('admin.calon', compact('data'));
+    // dropdown data
+    $jurusan = Jurusan::orderBy('jurusan')->get();
+    $sekolah = SekolahKampus::orderBy('nama_sekolah_kampus')->get();
+
+    return view('admin.calon', compact(
+        'data',
+        'jurusan',
+        'sekolah'
+    ));
 }
 
 public function pesertaMagang(Request $request)
 {
-    $query = Peserta::whereHas('hasilPendaftaran', function ($q) {
+    $query = Peserta::with([
+        'hasilPendaftaran',
+        'jurusan',
+        'sekolahKampus'
+    ])->whereHas('hasilPendaftaran', function ($q) {
         $q->where('status', 'diterima');
     });
 
@@ -92,26 +113,37 @@ public function pesertaMagang(Request $request)
         $query->where('nama', 'like', '%' . $request->nama . '%');
     }
 
+    // FILTER JURUSAN
     if ($request->jurusan) {
-        $query->where('bidang_jurusan', 'like', '%' . $request->jurusan . '%');
+        $query->where('id_jurusan', $request->jurusan);
     }
 
-    if ($request->sekolah) {
-        $query->where('sekolah', 'like', '%' . $request->sekolah . '%');
+    // FILTER SEKOLAH/KAMPUS
+    if ($request->sekolah_kampus) {
+        $query->where('id_sekolah_kampus', $request->sekolah_kampus);
     }
 
-    if ($request->nisn) {
-        $query->where('nisn', 'like', '%' . $request->nisn . '%');
+    if ($request->nisn_nim) {
+        $query->where('nisn_nim', 'like', '%' . $request->nisn_nim . '%');
     }
 
     $data = $query->with('hasilPendaftaran')->get();
 
-    return view('admin.peserta', compact('data'));
+    // dropdown
+    $jurusan = Jurusan::orderBy('jurusan')->get();
+    $sekolah = SekolahKampus::orderBy('nama_sekolah_kampus')->get();
+
+    return view('admin.peserta', compact('data', 'jurusan',
+        'sekolah'));
 }
 
     public function riwayat(Request $request)
 {
-    $query = Peserta::whereHas('hasilPendaftaran', function ($q) {
+    $query = Peserta::with([
+        'hasilPendaftaran',
+        'jurusan',
+        'sekolahKampus'
+    ])->whereHas('hasilPendaftaran', function ($q) {
         $q->where('status', 'selesai');
     });
 
@@ -120,38 +152,47 @@ public function pesertaMagang(Request $request)
         $query->where('nama', 'like', '%' . $request->nama . '%');
     }
 
-    // 🔍 Filter jurusan
+    // FILTER JURUSAN
     if ($request->jurusan) {
-        $query->where('bidang_jurusan', 'like', '%' . $request->jurusan . '%');
+        $query->where('id_jurusan', $request->jurusan);
     }
 
-    // 🔍 Filter sekolah
-    if ($request->sekolah) {
-        $query->where('sekolah', 'like', '%' . $request->sekolah . '%');
+    // FILTER SEKOLAH/KAMPUS
+    if ($request->sekolah_kampus) {
+        $query->where('id_sekolah_kampus', $request->sekolah_kampus);
     }
 
-    // 🔍 Filter nisn
-    if ($request->nisn) {
-        $query->where('nisn', 'like', '%' . $request->nisn . '%');
+    // 🔍 Filter nisn/nim
+    if ($request->nisn_nim) {
+        $query->where('nisn_nim', 'like', '%' . $request->nisn_nim . '%');
     }
 
     $data = $query->with(['hasilPendaftaran', 'pembimbing'])->get();
 
-    return view('admin.riwayat', compact('data'));
+    // dropdown
+    $jurusan = Jurusan::orderBy('jurusan')->get();
+    $sekolah = SekolahKampus::orderBy('nama_sekolah_kampus')->get();
+
+    return view('admin.riwayat', compact('data', 'jurusan',
+        'sekolah'));
 }
 
     // 🔹 Detail peserta
     public function detailPeserta($id)
     {
-        $peserta = Peserta::with('hasilPendaftaran.berkas')
-            ->findOrFail($id);
+        $peserta = Peserta::with([
+        'hasilPendaftaran.berkas',
+        'jurusan',
+        'sekolahKampus'
+    ])->findOrFail($id);
 
-        return view('admin.detail', compact('peserta'));
+    return view('admin.detail', compact('peserta'));
     }
 
     public function detailPesertaAktif($id)
 {
-    $peserta = Peserta::with(['hasilPendaftaran.berkas', 'pembimbing'])
+    $peserta = Peserta::with(['hasilPendaftaran.berkas', 'jurusan',
+        'sekolahKampus', 'pembimbing'])
         ->findOrFail($id);
 
     $pembimbing = Pembimbing::all();
@@ -162,7 +203,8 @@ public function pesertaMagang(Request $request)
 // 🔹 Detail riwayat
     public function detailPesertaSelesai($id)
     {
-        $peserta = Peserta::with('hasilPendaftaran.berkas')
+        $peserta = Peserta::with('hasilPendaftaran.berkas', 'jurusan',
+        'sekolahKampus')
             ->findOrFail($id);
 
         return view('admin.detailriwayat', compact('peserta'));
@@ -186,12 +228,23 @@ public function pesertaMagang(Request $request)
 
     // 🔹 Tolak peserta
     public function tolak($id)
-    {
-        HasilPendaftaran::where('id_peserta', $id)
-            ->update(['status' => 'ditolak']);
+{
+    $peserta = Peserta::findOrFail($id);
 
-        return redirect()->route('admin.calon')->with('success', 'Peserta ditolak');
-    }
+    //kirim email
+        if ($peserta->email) {
+            Mail::to($peserta->email)->send(new PesertaDitolakMail($peserta));
+        }
+
+    // hapus hasil pendaftaran
+    HasilPendaftaran::where('id_peserta', $id)->delete();
+
+    // hapus peserta
+    $peserta->delete();
+
+    return redirect()->route('admin.calon')
+        ->with('success', 'Peserta berhasil ditolak dan dihapus');
+}
 
     public function selesai($id)
 {
@@ -263,6 +316,86 @@ public function storePembimbing(Request $request)
     ]);
 
     return back()->with('success', 'Pembimbing berhasil ditambahkan');
+}
+
+public function logbookPeserta($id)
+{
+    $peserta = Peserta::findOrFail($id);
+    $data = Logbook::where('id_peserta', $id)
+        ->orderBy('tanggal', 'asc')
+        ->get();
+
+    return view('admin.logbook', compact('peserta', 'data'));
+}
+
+public function jurusan()
+{
+    $data = Jurusan::all();
+
+    return view('admin.jurusan', compact('data'));
+}
+
+public function storeJurusan(Request $request)
+{
+    $request->validate([
+        'jurusan' => 'required'
+    ]);
+
+    Jurusan::create([
+        'jurusan' => $request->jurusan
+    ]);
+
+    return back()->with('success', 'Jurusan berhasil ditambahkan');
+}
+
+public function sekolah()
+{
+    $data = SekolahKampus::all();
+
+    return view('admin.sekolah', compact('data'));
+}
+
+public function storeSekolahKampus(Request $request)
+{
+    $request->validate([
+        'nama_sekolah_kampus' => 'required'
+    ]);
+
+    SekolahKampus::create([
+        'nama_sekolah_kampus' => $request->nama_sekolah_kampus
+    ]);
+
+    return back()->with('success', 'Sekolah/Kampus berhasil ditambahkan');
+}
+
+public function updateJurusan(Request $request, $id)
+{
+    $request->validate([
+        'jurusan' => 'required'
+    ]);
+
+    $jurusan = Jurusan::findOrFail($id);
+
+    $jurusan->update([
+        'jurusan' => $request->jurusan
+    ]);
+
+    return back()->with('success', 'Jurusan berhasil diupdate');
+}
+
+public function updateSekolahKampus(Request $request, $id)
+{
+    $request->validate([
+        'nama_sekolah_kampus' => 'required'
+    ]);
+
+    $sekolah = SekolahKampus::findOrFail($id);
+
+    $sekolah->update([
+        'nama_sekolah_kampus' => $request->nama_sekolah_kampus
+    ]);
+
+    return back()->with('success', 'Sekolah/Kampus berhasil diupdate');
 }
 
 }

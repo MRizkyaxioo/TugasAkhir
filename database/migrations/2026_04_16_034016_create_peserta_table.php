@@ -13,10 +13,14 @@ return new class extends Migration
     {
         Schema::create('peserta', function (Blueprint $table) {
             $table->id('id_peserta');
+            $table->foreignId('id_jurusan')
+                ->constrained('jurusan', 'id_jurusan')
+                ->cascadeOnDelete();
+            $table->foreignId('id_sekolah_kampus')
+                ->constrained('sekolah_kampus', 'id_sekolah_kampus')
+                ->cascadeOnDelete();
             $table->string('nama', 60);
-            $table->string('sekolah', 50);
-            $table->string('bidang_jurusan', 15);
-            $table->string('nisn', 20);
+            $table->string('nisn_nim', 20);
             $table->smallInteger('semester');
             $table->date('awal_magang');
             $table->date('akhir_magang');

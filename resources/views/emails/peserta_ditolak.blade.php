@@ -1,7 +1,7 @@
-<h2>Selamat {{ $peserta->nama }} 🎉</h2>
+<h2>Mohon Maaf {{ $peserta->nama }} 🙏</h2>
 
 <p>
-    Anda telah <b>DITERIMA</b> sebagai peserta magang.
+    Anda <b>DITOLAK</b> sebagai peserta magang.
 </p>
 
 <p>
@@ -17,9 +17,6 @@
     {{ $peserta->nisn_nim }}
 </p>
 
-<p>
-    Silakan login ke sistem menggunakan NISN/NIM dan password yang telah didaftarkan.
-</p>
 
 <br>
 

@@ -113,7 +113,7 @@
             border: 1px solid rgba(200,135,58,0.08);
             padding: 24px 28px;
             max-width: 800px;
-            margin: 0 auto; 
+            margin: 0 auto;
         }
 
         /* FILTER */
@@ -147,6 +147,23 @@
         }
 
         .filter-group input:focus { border-color: var(--gold); }
+
+        .filter-group select {
+    padding: 8px 14px;
+    border: 1.5px solid #E8D5B5;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    color: var(--dark);
+    background: var(--warm-white);
+    outline: none;
+    min-width: 180px;
+    transition: border-color 0.2s;
+}
+
+.filter-group select:focus {
+    border-color: var(--gold);
+}
 
         .btn {
             display: inline-flex;
@@ -254,13 +271,30 @@
                         <input type="text" name="nama" placeholder="Nama Peserta" value="{{ request('nama') }}">
                     </div>
                     <div class="filter-group">
-                        <label>Jurusan</label>
-                        <input type="text" name="jurusan" placeholder="Jurusan" value="{{ request('jurusan') }}">
-                    </div>
-                    <div class="filter-group">
-                        <label>Sekolah</label>
-                        <input type="text" name="sekolah" placeholder="Sekolah" value="{{ request('sekolah') }}">
-                    </div>
+    <label>Jurusan</label>
+    <select name="jurusan">
+        <option value="">Semua Jurusan</option>
+        @foreach($jurusan as $j)
+            <option value="{{ $j->id_jurusan }}"
+                {{ request('jurusan') == $j->id_jurusan ? 'selected' : '' }}>
+                {{ $j->jurusan }}
+            </option>
+        @endforeach
+    </select>
+</div>
+
+<div class="filter-group">
+    <label>Sekolah/Kampus</label>
+    <select name="sekolah_kampus">
+        <option value="">Semua Sekolah/Kampus</option>
+        @foreach($sekolah as $s)
+            <option value="{{ $s->id_sekolah_kampus }}"
+                {{ request('sekolah_kampus') == $s->id_sekolah_kampus ? 'selected' : '' }}>
+                {{ $s->nama_sekolah_kampus }}
+            </option>
+        @endforeach
+    </select>
+</div>
                     <div style="display:flex; align-items:flex-end;">
                         <button type="submit" class="btn btn-primary">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -279,8 +313,8 @@
                         <tr>
                             <th>No</th>
                             <th>Nama</th>
-                            <th>Nisn</th>
-                            <th>Sekolah</th>
+                            <th>NIM/NISN</th>
+                            <th>Sekolah/Kampus</th>
                             <th>Jurusan</th>
                             <th>Status</th>
                             <th>Aksi</th>
@@ -291,9 +325,9 @@
                         <tr>
                             <td>{{ $i + 1 }}</td>
                             <td>{{ $d->nama }}</td>
-                            <td>{{ $d->nisn }}</td>
-                            <td>{{ $d->sekolah }}</td>
-                            <td>{{ $d->bidang_jurusan }}</td>
+                            <td>{{ $d->nisn_nim }}</td>
+                            <td>{{ $d->sekolahKampus->nama_sekolah_kampus ?? '-' }}</td>
+<td>{{ $d->jurusan->jurusan ?? '-' }}</td>
                             <td>
                                 @php $status = $d->hasilPendaftaran->status ?? '-'; @endphp
                                 @if($status == 'diterima')
@@ -310,6 +344,8 @@
                                        class="btn btn-outline btn-sm">Detail</a>
                                     <a href="{{ route('pembimbing.penilaian', $d->id_peserta) }}"
                                        class="btn btn-primary btn-sm">Kasih Nilai</a>
+                                    <a href="{{ route('pembimbing.logbook', $d->id_peserta) }}"
+           class="btn btn-outline btn-sm">Lihat Logbook</a>
                                 </div>
                             </td>
                         </tr>

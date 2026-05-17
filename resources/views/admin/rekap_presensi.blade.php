@@ -195,6 +195,34 @@
             .main-content { margin-left: 0; }
             .page-body { padding: 16px; }
         }
+
+        .filter{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    margin: 20px 36px;
+}
+
+.filter select,
+.filter button{
+    padding:10px 14px;
+    border-radius:10px;
+    border:1px solid #ddd;
+}
+
+.btn-export{
+    text-decoration:none;
+    background:#1D6F42;
+    color:white;
+    padding:10px 16px;
+    border-radius:10px;
+    font-size:14px;
+    font-weight:500;
+}
+
+.btn-export:hover{
+    opacity:0.9;
+}
     </style>
 </head>
 <body>
@@ -275,20 +303,25 @@
 
         <form method="GET" class="filter">
 
-        <select name="bulan">
-            <option value="">Keseluruhan</option>
+    <select name="bulan">
+        <option value="">Keseluruhan</option>
 
-            @for($i=1; $i<=12; $i++)
-                <option value="{{ $i }}"
-                    {{ $bulan == $i ? 'selected' : '' }}>
-                    {{ date('F', mktime(0,0,0,$i,1)) }}
-                </option>
-            @endfor
-        </select>
+        @for($i=1; $i<=12; $i++)
+            <option value="{{ $i }}"
+                {{ $bulan == $i ? 'selected' : '' }}>
+                {{ date('F', mktime(0,0,0,$i,1)) }}
+            </option>
+        @endfor
+    </select>
 
-        <button type="submit">Terapkan</button>
+    <button type="submit">Terapkan</button>
 
-    </form>
+    <a href="{{ route('admin.rekap.presensi.export', ['bulan' => $bulan]) }}"
+       class="btn-export">
+       Cetak Rekap
+    </a>
+
+</form>
 
         <div class="page-body">
             <div class="card">
@@ -296,23 +329,23 @@
                     <table>
                         <thead>
                             <tr>
-                                <th>NISN</th>
+                                <th>NISN/NIM</th>
                                 <th>Nama</th>
                                 <th style="text-align:center;">Hadir</th>
                                 <th style="text-align:center;">Izin</th>
                                 <th style="text-align:center;">Sakit</th>
-                                <th style="text-align:center;">Alfa</th>
+                                <th style="text-align:center;">Alpa</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($data as $i => $d)
                             <tr>
-                                <td>{{ $d->peserta->nisn }}</td>
+                                <td>{{ $d->peserta->nisn_nim }}</td>
                                 <td>{{ $d->peserta->nama }}</td>
                                 <td class="count-cell count-hadir">{{ $d->hadir }}</td>
                                 <td class="count-cell count-izin">{{ $d->izin }}</td>
                                 <td class="count-cell count-sakit">{{ $d->sakit }}</td>
-                                <td class="count-cell count-alpha">{{ $d->alpha }}</td>
+                                <td class="count-cell count-alpha">{{ $d->alpa }}</td>
                             </tr>
                             @empty
                             <tr>

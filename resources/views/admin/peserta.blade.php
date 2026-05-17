@@ -157,36 +157,52 @@
         }
 
         /* FILTER */
-        .filter-bar {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            align-items: flex-end;
-            margin-bottom: 20px;
-        }
+.filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: flex-end;
+    margin-bottom: 20px;
+}
 
-        .filter-group { display: flex; flex-direction: column; gap: 4px; }
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
 
-        .filter-group label {
-            font-size: 0.78rem;
-            font-weight: 500;
-            color: var(--muted);
-        }
+.filter-group label {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--muted);
+}
 
-        .filter-group input {
-            padding: 8px 14px;
-            border: 1.5px solid #E8D5B5;
-            border-radius: 8px;
-            font-family: 'DM Sans', sans-serif;
-            font-size: 0.85rem;
-            color: var(--dark);
-            background: var(--warm-white);
-            outline: none;
-            min-width: 140px;
-            transition: border-color 0.2s;
-        }
+.filter-group input,
+.filter-group select {
+    padding: 8px 14px;
+    border: 1.5px solid #E8D5B5;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    color: var(--dark);
+    background: var(--warm-white);
+    outline: none;
+    min-width: 140px;
+    transition: border-color 0.2s;
+}
 
-        .filter-group input:focus { border-color: var(--gold); }
+.filter-group input:focus,
+.filter-group select:focus {
+    border-color: var(--gold);
+}
+
+.filter-group select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237A6E62' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 28px;
+}
 
         .btn {
             display: inline-flex;
@@ -380,6 +396,15 @@
                 </svg>
                 Data Pembimbing
             </a>
+            <a href="{{ route('admin.jurusan') }}"
+   class="nav-item {{ request()->routeIs('admin.jurusan') ? 'active' : '' }}">
+    Data Jurusan
+</a>
+
+<a href="{{ route('admin.sekolah') }}"
+   class="nav-item {{ request()->routeIs('admin.sekolah') ? 'active' : '' }}">
+    Data Sekolah/Kampus
+</a>
         </nav>
         <div class="sidebar-footer">
             <form action="{{ route('admin.logout') }}" method="POST">
@@ -423,13 +448,32 @@
                             <input type="text" name="nama" placeholder="Nama Peserta" value="{{ request('nama') }}">
                         </div>
                         <div class="filter-group">
-                            <label>Jurusan</label>
-                            <input type="text" name="jurusan" placeholder="Jurusan" value="{{ request('jurusan') }}">
-                        </div>
-                        <div class="filter-group">
-                            <label>Sekolah</label>
-                            <input type="text" name="sekolah" placeholder="Sekolah" value="{{ request('sekolah') }}">
-                        </div>
+    <label>Jurusan</label>
+    <select name="jurusan">
+        <option value="">Semua Jurusan</option>
+
+        @foreach($jurusan as $j)
+            <option value="{{ $j->id_jurusan }}"
+                {{ request('jurusan') == $j->id_jurusan ? 'selected' : '' }}>
+                {{ $j->jurusan }}
+            </option>
+        @endforeach
+    </select>
+</div>
+
+<div class="filter-group">
+    <label>Sekolah/Kampus</label>
+    <select name="sekolah_kampus">
+        <option value="">Semua Sekolah/Kampus</option>
+
+        @foreach($sekolah as $s)
+            <option value="{{ $s->id_sekolah_kampus }}"
+                {{ request('sekolah_kampus') == $s->id_sekolah_kampus ? 'selected' : '' }}>
+                {{ $s->nama_sekolah_kampus }}
+            </option>
+        @endforeach
+    </select>
+</div>
                         <div style="display:flex; align-items:flex-end;">
                             <button type="submit" class="btn btn-primary">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -448,8 +492,8 @@
                             <tr>
                                 <th>No</th>
                                 <th>Nama</th>
-                                <th>Nisn</th>
-                                <th>Sekolah</th>
+                                <th>NISN/NIM</th>
+                                <th>Sekolah/Kampus</th>
                                 <th>Jurusan</th>
                                 <th>Status</th>
                                 <th>Aksi</th>
@@ -460,14 +504,16 @@
                             <tr>
                                 <td>{{ $i + 1 }}</td>
                                 <td>{{ $d->nama }}</td>
-                                <td>{{ $d->nisn }}</td>
-                                <td>{{ $d->sekolah }}</td>
-                                <td>{{ $d->bidang_jurusan }}</td>
+                                <td>{{ $d->nisn_nim }}</td>
+                                <td>{{ $d->sekolahKampus->nama_sekolah_kampus ?? '-' }}</td>
+                                <td>{{ $d->jurusan->jurusan ?? '-' }}</td>
                                 <td><span class="badge badge-diterima">Diterima</span></td>
                                 <td>
                                     <div class="aksi-cell">
                                         <a href="{{ route('admin.detail.peserta', $d->id_peserta) }}"
                                            class="btn btn-outline btn-sm">Detail</a>
+                                           <a href="{{ route('admin.logbook', $d->id_peserta) }}"
+   class="btn btn-outline btn-sm">Logbook</a>
                                         <button type="button"
                                                 class="btn btn-primary btn-sm"
                                                 onclick="openModal('modal-{{ $d->id_peserta }}')">

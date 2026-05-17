@@ -7,6 +7,8 @@ use App\Models\Peserta;
 use App\Models\BerkasMagang;
 use App\Models\HasilPendaftaran;
 use App\Models\KuotaMagang;
+use App\Models\Jurusan;
+use App\Models\SekolahKampus;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -24,7 +26,10 @@ class PesertaAuthController extends Controller
             ->with('error', 'Pendaftaran ditutup');
     }
 
-    return view('peserta.register');
+    $jurusan = Jurusan::all();
+    $sekolah = SekolahKampus::all();
+
+    return view('peserta.register', compact('jurusan', 'sekolah'));
 }
 
     public function showLogin()
@@ -43,8 +48,10 @@ class PesertaAuthController extends Controller
 
         $request->validate([
             'nama' => 'required',
-            'nisn' => 'required|unique:peserta,nisn',
+            'nisn_nim' => 'required|unique:peserta,nisn_nim',
             'password' => 'required',
+            'id_jurusan' => 'required|exists:jurusan,id_jurusan',
+            'id_sekolah_kampus' => 'required|exists:sekolah_kampus,id_sekolah_kampus',
             'file_berkas' => 'required|file|mimes:pdf|max:5120',
             'awal_magang' => 'required|date',
             'akhir_magang' => 'required|date|after_or_equal:awal_magang',
@@ -61,10 +68,10 @@ class PesertaAuthController extends Controller
         // 1. Simpan peserta
         $peserta = Peserta::create([
             'nama' => $request->nama,
-            'nisn' => $request->nisn,
+            'nisn_nim' => $request->nisn_nim,
             'password' => Hash::make($request->password),
-            'sekolah' => $request->sekolah,
-            'bidang_jurusan' => $request->bidang_jurusan,
+            'id_jurusan' => $request->id_jurusan,
+            'id_sekolah_kampus' => $request->id_sekolah_kampus,
             'semester' => $request->semester,
             'awal_magang' => $request->awal_magang,
             'akhir_magang' => $request->akhir_magang,
@@ -103,7 +110,7 @@ class PesertaAuthController extends Controller
 
     public function login(Request $request)
 {
-    $credentials = $request->only('nisn', 'password');
+    $credentials = $request->only('nisn_nim', 'password');
 
     if (!Auth::guard('peserta')->attempt($credentials)) {
         return back()->with('error', 'Login gagal');

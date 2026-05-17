@@ -280,7 +280,7 @@
                     </div>
                     <div class="avatar-info">
                         <h3>{{ $peserta->nama }}</h3>
-                        <p>{{ $peserta->nisn }}</p>
+                        <p>{{ $peserta->nisn_nim }}</p>
                     </div>
                 </div>
 
@@ -291,15 +291,15 @@
                     </div>
                     <div class="info-row">
                         <span class="info-label">NISN</span>
-                        <span class="info-value">{{ $peserta->nisn }}</span>
+                        <span class="info-value">{{ $peserta->nisn_nim }}</span>
                     </div>
                     <div class="info-row">
-                        <span class="info-label">Sekolah</span>
-                        <span class="info-value">{{ $peserta->sekolah }}</span>
+                        <span class="info-label">Sekolah/Kampus</span>
+                        <span class="info-value">{{ $peserta->sekolahKampus->nama_sekolah_kampus ?? '-' }}</span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">Jurusan</span>
-                        <span class="info-value">{{ $peserta->bidang_jurusan }}</span>
+                        <span class="info-value">{{ $peserta->jurusan->jurusan ?? '-' }}</span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">Status</span>

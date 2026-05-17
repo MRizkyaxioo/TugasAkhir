@@ -380,16 +380,16 @@
                         <span class="info-value">{{ $peserta->nama }}</span>
                     </div>
                     <div class="info-row">
-                        <span class="info-label">Nisn</span>
-                        <span class="info-value">{{ $peserta->nisn }}</span>
+                        <span class="info-label">NISN/NIM</span>
+                        <span class="info-value">{{ $peserta->nisn_nim }}</span>
                     </div>
                     <div class="info-row">
-                        <span class="info-label">Sekolah</span>
-                        <span class="info-value">{{ $peserta->sekolah }}</span>
+                        <span class="info-label">Sekolah/Kampus</span>
+                        <span class="info-value">{{ $peserta->sekolahKampus->nama_sekolah_kampus ?? '-' }}</span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">Jurusan</span>
-                        <span class="info-value">{{ $peserta->bidang_jurusan }}</span>
+                        <span class="info-value">{{ $peserta->jurusan->jurusan ?? '-' }}</span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">Kelas</span>
@@ -434,25 +434,39 @@
                     </div>
 
                     <div class="aksi-group">
-                        <form action="{{ route('admin.terima', $peserta->id_peserta) }}" method="POST">
-                            @csrf
-                            <button type="submit" class="btn btn-success">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="20 6 9 17 4 12"/>
-                                </svg>
-                                Terima
-                            </button>
-                        </form>
-                        <form action="{{ route('admin.tolak', $peserta->id_peserta) }}" method="POST">
-                            @csrf
-                            <button type="submit" class="btn btn-danger">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                                </svg>
-                                Tolak
-                            </button>
-                        </form>
-                    </div>
+
+    <!-- TERIMA -->
+    <form id="formTerima"
+          action="{{ route('admin.terima', $peserta->id_peserta) }}"
+          method="POST">
+        @csrf
+        <button type="submit" class="btn btn-success">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2.5"
+                 stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            Terima
+        </button>
+    </form>
+
+    <!-- TOLAK -->
+    <form id="formTolak"
+          action="{{ route('admin.tolak', $peserta->id_peserta) }}"
+          method="POST">
+        @csrf
+        <button type="submit" class="btn btn-danger">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2.5"
+                 stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+            Tolak
+        </button>
+    </form>
+
+</div>
 
                 </div>
             </div>
@@ -468,6 +482,49 @@
             </a>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    // KONFIRMASI TERIMA
+    document.getElementById('formTerima').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        Swal.fire({
+            title: 'Terima peserta?',
+            text: 'Peserta akan diterima sebagai peserta magang.',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#166534',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Ya, Terima',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                this.submit();
+            }
+        });
+    });
+
+    // KONFIRMASI TOLAK
+    document.getElementById('formTolak').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        Swal.fire({
+            title: 'Tolak peserta?',
+            text: 'Data peserta akan dihapus permanen!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#991B1B',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Ya, Tolak',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                this.submit();
+            }
+        });
+    });
+</script>
 
 </body>
 </html>

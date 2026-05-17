@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Riwayat Peserta Magang - Admin</title>
+    <title>Logbook - {{ $peserta->nama }} | Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -146,54 +146,60 @@
             padding: 24px 28px;
         }
 
-        /* FILTER */
-.filter-bar {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    align-items: flex-end;
-    margin-bottom: 20px;
-}
+        /* INFO */
+        .info-row {
+            display: flex;
+            align-items: baseline;
+            padding: 5px 0;
+            border-bottom: 1px solid #F5E6D0;
+            gap: 10px;
+        }
+        .info-label {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--muted);
+            width: 100px;
+        }
+        .info-label::after { content: ' :'; }
+        .info-value { font-size: 0.85rem; color: var(--dark); }
 
-.filter-group {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
+        /* TABLE */
+        .table-wrap { overflow-x: auto; margin-top: 16px; }
 
-.filter-group label {
-    font-size: 0.78rem;
-    font-weight: 500;
-    color: var(--muted);
-}
+        table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
 
-.filter-group input,
-.filter-group select {
-    padding: 8px 14px;
-    border: 1.5px solid #E8D5B5;
-    border-radius: 8px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.85rem;
-    color: var(--dark);
-    background: var(--warm-white);
-    outline: none;
-    min-width: 140px;
-    transition: border-color 0.2s;
-}
+        thead tr { background: var(--cream); }
+        thead th {
+            padding: 10px 14px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.82rem;
+            color: var(--muted);
+            border-bottom: 2px solid #E8D5B5;
+        }
 
-.filter-group input:focus,
-.filter-group select:focus {
-    border-color: var(--gold);
-}
+        tbody tr { border-bottom: 1px solid #F5E6D0; transition: background 0.15s; }
+        tbody tr:hover { background: #FFFDF9; }
+        tbody td { padding: 10px 14px; color: var(--dark); vertical-align: middle; }
 
-.filter-group select {
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237A6E62' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-    padding-right: 28px;
-}
+        .bukti-img {
+            max-width: 80px;
+            max-height: 80px;
+            border-radius: 6px;
+            object-fit: cover;
+        }
 
+        .bukti-link {
+            color: var(--gold);
+            text-decoration: none;
+            font-size: 0.82rem;
+            font-weight: 500;
+        }
+        .bukti-link:hover { text-decoration: underline; }
+
+        .empty-row td { text-align: center; color: var(--muted); padding: 28px; }
+
+        /* BUTTONS */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -209,50 +215,11 @@
             text-decoration: none;
             white-space: nowrap;
         }
-
         .btn-primary { background: var(--gold); color: #fff; box-shadow: 0 3px 10px rgba(200,135,58,0.3); }
         .btn-primary:hover { background: var(--gold-light); transform: translateY(-1px); }
         .btn-outline { background: transparent; border: 1.5px solid var(--gold); color: var(--gold); }
         .btn-outline:hover { background: var(--gold); color: #fff; }
         .btn-sm { padding: 5px 14px; font-size: 0.78rem; }
-
-        /* TABLE */
-        .table-wrap { overflow-x: auto; }
-
-        table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
-
-        thead tr { background: var(--cream); }
-        thead th {
-            padding: 11px 14px;
-            text-align: left;
-            font-weight: 600;
-            font-size: 0.82rem;
-            color: var(--muted);
-            border-bottom: 2px solid #E8D5B5;
-        }
-
-        tbody tr { border-bottom: 1px solid #F5E6D0; transition: background 0.15s; }
-        tbody tr:hover { background: #FFFDF9; }
-        tbody td { padding: 11px 14px; color: var(--dark); vertical-align: middle; }
-
-        .badge {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 50px;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-
-        .badge-selesai { background: #E0F2FE; color: #075985; border: 1px solid #BAE6FD; }
-
-        .aksi-cell { display: flex; gap: 8px; align-items: center; }
-
-        .empty-row td {
-            text-align: center;
-            color: var(--muted);
-            padding: 28px;
-            font-size: 0.875rem;
-        }
 
         @media (max-width: 768px) {
             .sidebar { transform: translateX(-100%); }
@@ -285,7 +252,7 @@
                 </svg>
                 Daftar Calon Peserta
             </a>
-            <a href="{{ route('admin.peserta') }}" class="nav-item">
+            <a href="{{ route('admin.peserta') }}" class="nav-item active">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
                     <circle cx="9" cy="7" r="4"/>
@@ -294,7 +261,7 @@
                 </svg>
                 Daftar Peserta Magang
             </a>
-            <a href="{{ route('admin.riwayat') }}" class="nav-item active">
+            <a href="{{ route('admin.riwayat') }}" class="nav-item">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
                     <circle cx="9" cy="7" r="4"/>
@@ -317,15 +284,6 @@
                 </svg>
                 Data Pembimbing
             </a>
-            <a href="{{ route('admin.jurusan') }}"
-   class="nav-item {{ request()->routeIs('admin.jurusan') ? 'active' : '' }}">
-    Data Jurusan
-</a>
-
-<a href="{{ route('admin.sekolah') }}"
-   class="nav-item {{ request()->routeIs('admin.sekolah') ? 'active' : '' }}">
-    Data Sekolah/Kampus
-</a>
         </nav>
         <div class="sidebar-footer">
             <form action="{{ route('admin.logout') }}" method="POST">
@@ -342,110 +300,68 @@
         </div>
     </aside>
 
-    <!-- MAIN -->
+    <!-- MAIN CONTENT -->
     <div class="main-content">
         <div class="page-header">
-            <div class="page-header-title">Riwayat Peserta Magang</div>
+            <div class="page-header-title">Logbook {{ $peserta->nama }}</div>
         </div>
 
         <div class="page-body">
+            <!-- Info Peserta -->
+            <div class="card" style="margin-bottom:20px;">
+                <div style="display:flex; flex-wrap:wrap; gap:16px; font-size:0.85rem;">
+                    <div><strong>Nama:</strong> {{ $peserta->nama }}</div>
+                    <div><strong>NISN/NIM:</strong> {{ $peserta->nisn_nim }}</div>
+                    <div><strong>Sekolah:</strong> {{ $peserta->sekolahKampus->nama_sekolah_kampus ?? '-' }}</div>
+                    <div><strong>Jurusan:</strong> {{ $peserta->jurusan->jurusan ?? '-' }}</div>
+                </div>
+            </div>
+
+            <!-- Tabel Logbook -->
             <div class="card">
-
-                <!-- FILTER -->
-                <form method="GET" action="{{ route('admin.riwayat') }}">
-                    <div class="filter-bar">
-                        <div class="filter-group">
-                            <label>Nama Peserta</label>
-                            <input type="text" name="nama" placeholder="Nama Peserta" value="{{ request('nama') }}">
-                        </div>
-                        <div class="filter-group">
-    <label>Jurusan</label>
-    <select name="jurusan">
-        <option value="">Semua Jurusan</option>
-
-        @foreach($jurusan as $j)
-            <option value="{{ $j->id_jurusan }}"
-                {{ request('jurusan') == $j->id_jurusan ? 'selected' : '' }}>
-                {{ $j->jurusan }}
-            </option>
-        @endforeach
-    </select>
-</div>
-
-<div class="filter-group">
-    <label>Sekolah/Kampus</label>
-    <select name="sekolah_kampus">
-        <option value="">Semua Sekolah/Kampus</option>
-
-        @foreach($sekolah as $s)
-            <option value="{{ $s->id_sekolah_kampus }}"
-                {{ request('sekolah_kampus') == $s->id_sekolah_kampus ? 'selected' : '' }}>
-                {{ $s->nama_sekolah_kampus }}
-            </option>
-        @endforeach
-    </select>
-</div>
-                        <div style="display:flex; align-items:flex-end;">
-                            <button type="submit" class="btn btn-primary">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                                </svg>
-                                Cari
-                            </button>
-                        </div>
-                    </div>
-                </form>
-
-                <!-- TABLE -->
                 <div class="table-wrap">
                     <table>
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th>Nama</th>
-                                <th>Nisn/NIM</th>
-                                <th>Sekolah/Kampus</th>
-                                <th>Jurusan</th>
-                                <th>Status</th>
-                                <th>Aksi</th>
+                                <th>Tanggal</th>
+                                <th>Kegiatan</th>
+                                <th>Bukti Kegiatan</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($data as $i => $d)
                             <tr>
                                 <td>{{ $i + 1 }}</td>
-                                <td>{{ $d->nama }}</td>
-                                <td>{{ $d->nisn_nim }}</td>
-                                <td>{{ $d->sekolahKampus->nama_sekolah_kampus ?? '-' }}</td>
-                                <td>{{ $d->jurusan->jurusan ?? '-' }}</td>
-                                <td><span class="badge badge-selesai">Selesai</span></td>
+                                <td>{{ \Carbon\Carbon::parse($d->tanggal)->format('d-m-Y') }}</td>
+                                <td>{{ $d->kegiatan }}</td>
                                 <td>
-                                    <div class="aksi-cell">
-                                        <a href="{{ route('admin.detail.riwayat', $d->id_peserta) }}"
-                                           class="btn btn-outline btn-sm">Detail</a>
-                                        <a href="{{ route('peserta.nilai.pdf', $d->id_peserta) }}"
-                                           target="_blank"
-                                           class="btn btn-primary btn-sm">
-                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                                <polyline points="14 2 14 8 20 8"/>
-                                                <line x1="12" y1="18" x2="12" y2="12"/>
-                                                <line x1="9" y1="15" x2="15" y2="15"/>
-                                            </svg>
-                                            Cetak Nilai
-                                        </a>
-                                    </div>
+                                    @if($d->bukti_foto)
+                                        @php $ext = pathinfo($d->bukti_foto, PATHINFO_EXTENSION); @endphp
+                                        @if(in_array(strtolower($ext), ['jpg','jpeg','png','gif']))
+                                            <img src="{{ asset('storage/'.$d->bukti_foto) }}" class="bukti-img" alt="Bukti">
+                                        @else
+                                            <a href="{{ asset('storage/'.$d->bukti_foto) }}" target="_blank" class="bukti-link">Lihat Bukti (PDF)</a>
+                                        @endif
+                                    @else
+                                        <span style="color:var(--muted); font-size:0.8rem;">-</span>
+                                    @endif
                                 </td>
                             </tr>
                             @empty
                             <tr class="empty-row">
-                                <td colspan="7">Data tidak ditemukan</td>
+                                <td colspan="4">Belum ada data logbook</td>
                             </tr>
                             @endforelse
                         </tbody>
                     </table>
                 </div>
+            </div>
 
+            <div style="margin-top:20px;">
+                <a href="{{ route('admin.peserta') }}" class="btn btn-outline">
+                    ← Kembali ke Daftar Peserta
+                </a>
             </div>
         </div>
     </div>

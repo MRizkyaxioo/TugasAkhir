@@ -1,7 +1,7 @@
 <h2>Nilai Peserta Magang</h2>
 
 <p><b>Nama:</b> {{ $peserta->nama }}</p>
-
+<p><b>Sekolah/Kampus:</b> {{ $peserta->sekolahKampus->nama_sekolah_kampus ?? '-' }}</p>
 <table border="1" width="100%" cellpadding="5">
 <tr>
     <th>Kriteria</th>
