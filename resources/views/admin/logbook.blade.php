@@ -359,6 +359,11 @@
             </div>
 
             <div style="margin-top:20px;">
+                <a href="{{ route('admin.logbook.pdf', $peserta->id_peserta) }}"
+       class="btn btn-primary">
+        Cetak PDF
+    </a>
+
                 <a href="{{ route('admin.peserta') }}" class="btn btn-outline">
                     ← Kembali ke Daftar Peserta
                 </a>

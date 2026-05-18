@@ -7,6 +7,8 @@ use App\Models\Jurusan;
 use App\Models\SekolahKampus;
 use Illuminate\Http\Request;
 use App\Models\Logbook;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardPembimbingController extends Controller
@@ -40,12 +42,19 @@ class DashboardPembimbingController extends Controller
             $query->where('id_sekolah_kampus', $request->sekolah_kampus);
         }
 
+        // FILTER STATUS
+if ($request->status) {
+    $query->whereHas('hasilPendaftaran', function ($q) use ($request) {
+        $q->where('status', $request->status);
+    });
+}
+
         // FILTER NISN/NIM
         if ($request->nisn_nim) {
             $query->where('nisn_nim', 'like', '%' . $request->nisn_nim . '%');
         }
 
-        $data = $query->get();
+        $data = $query->paginate(5)->withQueryString();
 
         // dropdown
         $jurusan = Jurusan::orderBy('jurusan')->get();
@@ -73,6 +82,25 @@ class DashboardPembimbingController extends Controller
 
         return view('pembimbing.logbook', compact('peserta', 'data'));
     }
+
+    public function exportLogbookPembimbing($id)
+{
+    $pembimbing = Auth::guard('pembimbing')->user();
+
+    // Pastikan peserta memang milik pembimbing ini
+    $peserta = Peserta::whereHas('pembimbing', function ($q) use ($pembimbing) {
+        $q->where('pembimbing_lapangan.id_pembimbing', $pembimbing->id_pembimbing);
+    })->findOrFail($id);
+
+    $data = Logbook::where('id_peserta', $id)
+        ->orderBy('tanggal', 'asc')
+        ->get();
+
+    $pdf = Pdf::loadView('pembimbing.logbook_pdf', compact('peserta', 'data'))
+        ->setPaper('A4', 'portrait');
+
+    return $pdf->download('logbook_'.$peserta->nama.'.pdf');
+}
 
     public function detail($id)
 {
@@ -110,4 +138,56 @@ class DashboardPembimbingController extends Controller
         'alpa'
     ));
 }
+
+public function exportPesertaPdf(Request $request)
+{
+    $pembimbing = Auth::guard('pembimbing')->user();
+
+    $query = $pembimbing->peserta()
+        ->with([
+            'hasilPendaftaran',
+            'jurusan',
+            'sekolahKampus'
+        ])
+        ->whereHas('hasilPendaftaran', function ($q) {
+            $q->whereIn('status', ['diterima', 'selesai']);
+        });
+
+    // FILTER NAMA
+    if ($request->nama) {
+        $query->where('nama', 'like', '%' . $request->nama . '%');
+    }
+
+    // FILTER JURUSAN
+    if ($request->jurusan) {
+        $query->where('id_jurusan', $request->jurusan);
+    }
+
+    // FILTER SEKOLAH/KAMPUS
+    if ($request->sekolah_kampus) {
+        $query->where('id_sekolah_kampus', $request->sekolah_kampus);
+    }
+
+    // FILTER STATUS
+    if ($request->status) {
+        $query->whereHas('hasilPendaftaran', function ($q) use ($request) {
+            $q->where('status', $request->status);
+        });
+    }
+
+    // FILTER NISN/NIM
+    if ($request->nisn_nim) {
+        $query->where('nisn_nim', 'like', '%' . $request->nisn_nim . '%');
+    }
+
+    $data = $query->get();
+
+    $pdf = Pdf::loadView(
+        'pembimbing.peserta_pdf',
+        compact('data', 'pembimbing')
+    )->setPaper('A4', 'portrait');
+
+    return $pdf->download('data_peserta_bimbingan.pdf');
+}
+
 }

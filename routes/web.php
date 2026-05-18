@@ -57,6 +57,8 @@ Route::middleware(AdminMiddleware::class)->group(function () {
     Route::get('/pembimbing/detail/{id}', [DashboardPembimbingController::class, 'detail'])->name('pembimbing.detail');
     Route::get('/pembimbing/logbook/{id}', [DashboardPembimbingController::class, 'logbook'])
     ->name('pembimbing.logbook');
+     Route::get('/pembimbing/logbook/pdf/{id}',[DashboardPembimbingController::class, 'exportLogbookPembimbing'])
+    ->name('pembimbing.logbook.pdf');
 
     Route::put('/admin/update-kuota', [DashboardAdminController::class, 'updateKuota'])->name('admin.update.kuota');
 
@@ -70,6 +72,12 @@ Route::middleware(AdminMiddleware::class)->group(function () {
 
     Route::get('/admin/logbook/{id}', [DashboardAdminController::class, 'logbookPeserta'])
     ->name('admin.logbook');
+    Route::get('/admin/logbook/pdf/{id}',
+    [DashboardAdminController::class, 'exportLogbookAdmin'])
+    ->name('admin.logbook.pdf');
+    Route::get('/pembimbing/peserta/pdf',
+    [DashboardPembimbingController::class, 'exportPesertaPdf'])
+    ->name('pembimbing.peserta.pdf');
 
     // aksi
     Route::post('/admin/terima/{id}', [DashboardAdminController::class, 'terima'])->name('admin.terima');

@@ -210,6 +210,14 @@
     border:1px solid #ddd;
 }
 
+.filter input{
+    padding:10px 14px;
+    border-radius:10px;
+    border:1px solid #ddd;
+    outline:none;
+    min-width:220px;
+}
+
 .btn-export{
     text-decoration:none;
     background:#1D6F42;
@@ -304,19 +312,27 @@
         <form method="GET" class="filter">
 
     <select name="bulan">
-        <option value="">Keseluruhan</option>
+        <option value="">Keseluruhan Bulan</option>
 
         @for($i=1; $i<=12; $i++)
             <option value="{{ $i }}"
-                {{ $bulan == $i ? 'selected' : '' }}>
+                {{ request('bulan') == $i ? 'selected' : '' }}>
                 {{ date('F', mktime(0,0,0,$i,1)) }}
             </option>
         @endfor
     </select>
 
+    <input type="text"
+           name="nama"
+           placeholder="Cari nama peserta"
+           value="{{ request('nama') }}">
+
     <button type="submit">Terapkan</button>
 
-    <a href="{{ route('admin.rekap.presensi.export', ['bulan' => $bulan]) }}"
+    <a href="{{ route('admin.rekap.presensi.export', [
+        'bulan' => request('bulan'),
+        'nama' => request('nama')
+    ]) }}"
        class="btn-export">
        Cetak Rekap
     </a>

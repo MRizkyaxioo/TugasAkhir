@@ -333,6 +333,80 @@
             margin-right: 8px;
         }
 
+        /* PAGINATION */
+.pagination-wrapper {
+    margin-top: 24px;
+    display: flex;
+    justify-content: center;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.pagination .page-item {
+    list-style: none;
+}
+
+.pagination .page-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 14px;
+    border-radius: 12px;
+    border: 1.5px solid #E8D5B5;
+    background: var(--warm-white);
+    color: var(--muted);
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(26,18,8,0.04);
+}
+
+.pagination .page-link:hover {
+    background: rgba(200,135,58,0.12);
+    border-color: var(--gold);
+    color: var(--gold);
+    transform: translateY(-1px);
+}
+
+.pagination .page-item.active .page-link {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(200,135,58,0.25);
+}
+
+.pagination .page-item.disabled .page-link {
+    background: #F9F5EE;
+    color: #B8ADA1;
+    border-color: #EFE3D1;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+@media (max-width: 768px) {
+    .pagination {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .pagination .page-link {
+        min-width: 36px;
+        height: 36px;
+        font-size: 0.8rem;
+        border-radius: 10px;
+    }
+}
+
         @media (max-width: 768px) {
             .sidebar { transform: translateX(-100%); }
             .main-content { margin-left: 0; }
@@ -502,7 +576,7 @@
                         <tbody>
                             @forelse($data as $i => $d)
                             <tr>
-                                <td>{{ $i + 1 }}</td>
+                                <td>{{ $data->firstItem() + $i }}</td>
                                 <td>{{ $d->nama }}</td>
                                 <td>{{ $d->nisn_nim }}</td>
                                 <td>{{ $d->sekolahKampus->nama_sekolah_kampus ?? '-' }}</td>
@@ -529,6 +603,21 @@
                             @endforelse
                         </tbody>
                     </table>
+                    @if ($data->hasPages())
+    <div class="pagination-wrapper">
+        <ul class="pagination">
+
+            @foreach ($data->getUrlRange(1, $data->lastPage()) as $page => $url)
+                <li class="page-item {{ $page == $data->currentPage() ? 'active' : '' }}">
+                    <a class="page-link" href="{{ $url }}">
+                        {{ $page }}
+                    </a>
+                </li>
+            @endforeach
+
+        </ul>
+    </div>
+@endif
                 </div>
             </div>
         </div>

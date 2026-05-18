@@ -14,6 +14,8 @@ use App\Models\PresensiPeserta;
 use App\Models\Jurusan;
 use App\Models\SekolahKampus;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
 
@@ -86,7 +88,7 @@ class DashboardAdminController extends Controller
         $query->where('nisn_nim', 'like', '%' . $request->nisn_nim . '%');
     }
 
-    $data = $query->get();
+    $data = $query->paginate(5)->withQueryString();
 
     // dropdown data
     $jurusan = Jurusan::orderBy('jurusan')->get();
@@ -127,7 +129,9 @@ public function pesertaMagang(Request $request)
         $query->where('nisn_nim', 'like', '%' . $request->nisn_nim . '%');
     }
 
-    $data = $query->with('hasilPendaftaran')->get();
+    $data = $query->with('hasilPendaftaran')
+    ->paginate(5)
+    ->withQueryString();
 
     // dropdown
     $jurusan = Jurusan::orderBy('jurusan')->get();
@@ -167,7 +171,9 @@ public function pesertaMagang(Request $request)
         $query->where('nisn_nim', 'like', '%' . $request->nisn_nim . '%');
     }
 
-    $data = $query->with(['hasilPendaftaran', 'pembimbing'])->get();
+    $data = $query->with(['hasilPendaftaran', 'pembimbing'])
+    ->paginate(5)
+    ->withQueryString();
 
     // dropdown
     $jurusan = Jurusan::orderBy('jurusan')->get();
@@ -326,6 +332,21 @@ public function logbookPeserta($id)
         ->get();
 
     return view('admin.logbook', compact('peserta', 'data'));
+}
+
+public function exportLogbookAdmin($id)
+{
+    $peserta = Peserta::with(['jurusan', 'sekolahKampus'])
+        ->findOrFail($id);
+
+    $data = Logbook::where('id_peserta', $id)
+        ->orderBy('tanggal', 'asc')
+        ->get();
+
+    $pdf = Pdf::loadView('admin.logbook_pdf', compact('peserta', 'data'))
+        ->setPaper('A4', 'portrait');
+
+    return $pdf->download('logbook_'.$peserta->nama.'.pdf');
 }
 
 public function jurusan()

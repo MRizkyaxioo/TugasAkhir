@@ -10,10 +10,12 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 class RekapPresensiExport implements FromCollection, WithHeadings
 {
     protected $bulan;
+    protected $nama;
 
-    public function __construct($bulan = null)
+    public function __construct($bulan = null, $nama = null)
     {
         $this->bulan = $bulan;
+        $this->nama  = $nama;
     }
 
     public function collection()
@@ -33,6 +35,12 @@ class RekapPresensiExport implements FromCollection, WithHeadings
 
         if ($this->bulan) {
             $query->whereMonth('tanggal_presensi', $this->bulan);
+        }
+
+        if ($this->nama) {
+            $query->whereHas('peserta', function ($q) {
+                $q->where('nama', 'like', '%' . $this->nama . '%');
+            });
         }
 
         $data = $query->groupBy('id_peserta')->get();

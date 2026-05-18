@@ -164,6 +164,7 @@
 
         .btn-back:hover { background: var(--gold-light); }
 
+
         @media (max-width: 768px) {
             header, main { padding-left: 20px; padding-right: 20px; }
         }
@@ -248,6 +249,11 @@
             </svg>
             Kembali ke Dashboard
         </a>
+
+        <a href="{{ route('pembimbing.logbook.pdf', $peserta->id_peserta) }}"
+       class="btn-back">
+        Cetak PDF
+    </a>
     </main>
 
 </body>

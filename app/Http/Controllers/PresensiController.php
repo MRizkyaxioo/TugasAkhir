@@ -114,34 +114,39 @@ class PresensiController extends Controller
         return back()->with('success', 'Presensi ditutup & data disimpan final.');
     }
 
-    // Rekap presensi (tidak berubah)
     public function rekapPresensi(Request $request)
-    {
-        $bulan = $request->bulan;
+{
+    $bulan = $request->bulan;
+    $nama  = $request->nama;
 
-        $query = PresensiPeserta::select(
-            'id_peserta',
-            DB::raw("SUM(status_kehadiran='hadir') as hadir"),
-            DB::raw("SUM(status_kehadiran='izin') as izin"),
-            DB::raw("SUM(status_kehadiran='sakit') as sakit"),
-            DB::raw("SUM(status_kehadiran='alpa') as alpa")
-        )
-        ->with('peserta')
-        ->where('is_final', 1)
-        ->whereHas('peserta.hasilPendaftaran', function ($q) {
-            $q->where('status', 'diterima');
-        });
+    $query = PresensiPeserta::select(
+        'id_peserta',
+        DB::raw("SUM(status_kehadiran='hadir') as hadir"),
+        DB::raw("SUM(status_kehadiran='izin') as izin"),
+        DB::raw("SUM(status_kehadiran='sakit') as sakit"),
+        DB::raw("SUM(status_kehadiran='alpa') as alpa")
+    )
+    ->with('peserta')
+    ->where('is_final', 1)
+    ->whereHas('peserta.hasilPendaftaran', function ($q) {
+        $q->where('status', 'diterima');
+    });
 
-        if ($bulan) {
-            $query->whereMonth('tanggal_presensi', $bulan);
-        }
-
-        $data = $query->groupBy('id_peserta')->get();
-
-        return view('admin.rekap_presensi', compact('data', 'bulan'));
+    if ($bulan) {
+        $query->whereMonth('tanggal_presensi', $bulan);
     }
 
-    // Rekap surat (tidak berubah)
+    if ($nama) {
+        $query->whereHas('peserta', function ($q) use ($nama) {
+            $q->where('nama', 'like', '%' . $nama . '%');
+        });
+    }
+
+    $data = $query->groupBy('id_peserta')->get();
+
+    return view('admin.rekap_presensi', compact('data', 'bulan', 'nama'));
+}
+
     public function rekapSurat()
     {
         $data = PresensiPeserta::with('peserta')
@@ -159,20 +164,26 @@ class PresensiController extends Controller
     public function exportRekapPresensi(Request $request)
 {
     $bulan = $request->bulan;
+    $nama  = $request->nama;
 
     $namaFile = 'rekap_presensi';
 
+    // jika ada bulan
     if ($bulan) {
-        $namaBulan = date('F', mktime(0, 0, 0, $bulan, 1));
-        $namaFile .= '_' . strtolower($namaBulan);
-    } else {
-        $namaFile .= '_keseluruhan';
+        $namaBulan = strtolower(date('F', mktime(0, 0, 0, $bulan, 1)));
+        $namaFile .= '_' . $namaBulan;
+    }
+
+    // jika ada nama
+    if ($nama) {
+        $namaPeserta = strtolower(str_replace(' ', '_', $nama));
+        $namaFile .= '_' . $namaPeserta;
     }
 
     $namaFile .= '.xlsx';
 
     return Excel::download(
-        new RekapPresensiExport($bulan),
+        new RekapPresensiExport($bulan, $nama),
         $namaFile
     );
 }
