@@ -13,6 +13,7 @@ class Pembimbing extends Authenticatable
     protected $fillable = [
         'id_role',
         'nama',
+        'no_telp',
         'nip_nidn',
         'password',
         'username'

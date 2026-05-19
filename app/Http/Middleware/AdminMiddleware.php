@@ -11,26 +11,44 @@ class AdminMiddleware
 {
     /**
      * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
-{
-    if (!Auth::guard('admin')->check() && !Auth::guard('pembimbing')->check()) {
-        return redirect()->route('admin.login')
-            ->with('error', 'Anda harus login terlebih dahulu');
-    }
+    {
+        // cek apakah login salah satu guard
+        if (
+            !Auth::guard('admin')->check() &&
+            !Auth::guard('pembimbing')->check() &&
+            !Auth::guard('pembimbing_asal')->check()
+        ) {
+            return redirect()
+                ->route('admin.login')
+                ->with('error', 'Anda harus login terlebih dahulu');
+        }
 
-    // 🔒 proteksi admin
-    if ($request->is('dashboard-admin') && !Auth::guard('admin')->check()) {
-        abort(403, 'Akses ditolak');
-    }
+        // 🔒 proteksi dashboard admin
+        if (
+            $request->is('dashboard-admin') &&
+            !Auth::guard('admin')->check()
+        ) {
+            abort(403, 'Akses ditolak');
+        }
 
-    // 🔒 proteksi pembimbing
-    if ($request->is('dashboard-pembimbing') && !Auth::guard('pembimbing')->check()) {
-        abort(403, 'Akses ditolak');
-    }
+        // 🔒 proteksi dashboard pembimbing lapangan
+        if (
+            $request->is('dashboard-pembimbing') &&
+            !Auth::guard('pembimbing')->check()
+        ) {
+            abort(403, 'Akses ditolak');
+        }
 
-    return $next($request);
-}
+        // 🔒 proteksi dashboard pembimbing asal
+        if (
+            $request->is('dashboard-pembimbing-asal') &&
+            !Auth::guard('pembimbing_asal')->check()
+        ) {
+            abort(403, 'Akses ditolak');
+        }
+
+        return $next($request);
+    }
 }

@@ -20,7 +20,9 @@ class DashboardPesertaController extends Controller
 
 public function peserta()
 {
-    $peserta = Auth::guard('peserta')->user();
+    $peserta = Auth::guard('peserta')
+    ->user()
+    ->load('pembimbing');
     $status = $peserta->hasilPendaftaran->status;
 
     if ($status == 'selesai') {

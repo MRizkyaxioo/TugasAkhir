@@ -110,7 +110,8 @@ if ($request->status) {
         'presensiPeserta',
         'jurusan',
         'sekolahKampus',
-        'pembimbing'
+        'pembimbing',
+        'pembimbingAsal'
     ])->findOrFail($id);
 
     // Hitung rekap presensi
@@ -189,5 +190,7 @@ public function exportPesertaPdf(Request $request)
 
     return $pdf->download('data_peserta_bimbingan.pdf');
 }
+
+
 
 }

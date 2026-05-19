@@ -12,6 +12,7 @@ use App\Models\Pembimbing;
 use App\Models\PembimbingPeserta;
 use App\Models\PresensiPeserta;
 use App\Models\Jurusan;
+use App\Models\PembimbingAsal;
 use App\Models\SekolahKampus;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -197,13 +198,26 @@ public function pesertaMagang(Request $request)
 
     public function detailPesertaAktif($id)
 {
-    $peserta = Peserta::with(['hasilPendaftaran.berkas', 'jurusan',
-        'sekolahKampus', 'pembimbing'])
-        ->findOrFail($id);
+    $peserta = Peserta::with([
+        'hasilPendaftaran.berkas',
+        'jurusan',
+        'sekolahKampus',
+        'pembimbing',
+        'pembimbingAsal'
+    ])->findOrFail($id);
 
     $pembimbing = Pembimbing::all();
 
-    return view('admin.detailpeserta', compact('peserta', 'pembimbing'));
+    // hanya pembimbing asal dari sekolah/kampus peserta
+    $pembimbingAsal = PembimbingAsal::where(
+        'id_sekolah_kampus',
+        $peserta->id_sekolah_kampus
+    )->get();
+
+    return view(
+        'admin.detailpeserta',
+        compact('peserta', 'pembimbing', 'pembimbingAsal')
+    );
 }
 
 // 🔹 Detail riwayat
@@ -301,21 +315,32 @@ public function uploadBalasan(Request $request, $id)
 public function pembimbing()
 {
     $data = Pembimbing::all();
-    return view('admin.pembimbing', compact('data'));
+
+    $pembimbingAsal = PembimbingAsal::all();
+
+    $sekolah = SekolahKampus::orderBy('nama_sekolah_kampus')->get();
+
+    return view('admin.pembimbing', compact(
+        'data',
+        'pembimbingAsal',
+        'sekolah'
+    ));
 }
 
 public function storePembimbing(Request $request)
 {
     $request->validate([
         'nama' => 'required',
+        'no_telp' => 'required',
         'nip_nidn' => 'required',
         'username' => 'required|unique:pembimbing_lapangan,username',
         'password' => 'required|min:5'
     ]);
 
     Pembimbing::create([
-        'id_role' => 2, // default role pembimbing
+        'id_role' => 2, // role pembimbing
         'nama' => $request->nama,
+        'no_telp' => $request->no_telp,
         'nip_nidn' => $request->nip_nidn,
         'username' => $request->username,
         'password' => Hash::make($request->password)
@@ -417,6 +442,112 @@ public function updateSekolahKampus(Request $request, $id)
     ]);
 
     return back()->with('success', 'Sekolah/Kampus berhasil diupdate');
+}
+
+public function updatePembimbing(Request $request, $id)
+{
+    $request->validate([
+        'nama' => 'required',
+        'no_telp' => 'required',
+        'nip_nidn' => 'required',
+        'username' => 'required|unique:pembimbing_lapangan,username,' . $id . ',id_pembimbing',
+        'password' => 'nullable|min:5'
+    ]);
+
+    $pembimbing = Pembimbing::findOrFail($id);
+
+    $data = [
+        'nama' => $request->nama,
+        'no_telp' => $request->no_telp,
+        'nip_nidn' => $request->nip_nidn,
+        'username' => $request->username,
+    ];
+
+    // jika password diisi
+    if ($request->filled('password')) {
+        $data['password'] = Hash::make($request->password);
+    }
+
+    $pembimbing->update($data);
+
+    return back()->with('success', 'Data pembimbing berhasil diupdate');
+}
+
+public function storePembimbingAsal(Request $request)
+{
+    $request->validate([
+        'nama' => 'required',
+        'id_sekolah_kampus' => 'required|exists:sekolah_kampus,id_sekolah_kampus',
+        'no_telp' => 'required',
+        'username' => 'required|unique:pembimbing_asal,username',
+        'password' => 'required|min:5'
+    ]);
+
+    PembimbingAsal::create([
+        'id_role' => 3,
+        'nama' => $request->nama,
+        'id_sekolah_kampus' => $request->id_sekolah_kampus,
+        'no_telp' => $request->no_telp,
+        'username' => $request->username,
+        'password' => Hash::make($request->password)
+    ]);
+
+    return back()->with(
+        'success',
+        'Pembimbing sekolah/kampus berhasil ditambahkan'
+    );
+}
+
+public function updatePembimbingAsal(Request $request, $id)
+{
+    $request->validate([
+        'nama' => 'required',
+        'id_sekolah_kampus' => 'required|exists:sekolah_kampus,id_sekolah_kampus',
+        'no_telp' => 'required',
+        'username' => 'required|unique:pembimbing_asal,username,' . $id . ',id_pembimbing_asal',
+        'password' => 'nullable|min:5'
+    ]);
+
+    $pembimbing = PembimbingAsal::findOrFail($id);
+
+    $data = [
+        'nama' => $request->nama,
+        'id_sekolah_kampus' => $request->id_sekolah_kampus,
+        'no_telp' => $request->no_telp,
+        'username' => $request->username,
+    ];
+
+    if ($request->filled('password')) {
+        $data['password'] = Hash::make($request->password);
+    }
+
+    $pembimbing->update($data);
+
+    return back()->with(
+        'success',
+        'Pembimbing sekolah/kampus berhasil diupdate'
+    );
+}
+
+public function assignPembimbingAsal(Request $request, $id)
+{
+    $request->validate([
+        'id_pembimbing_asal' =>
+            'required|exists:pembimbing_asal,id_pembimbing_asal'
+    ]);
+
+    \App\Models\PembimbingAsalPeserta::updateOrCreate(
+        ['id_peserta' => $id],
+        [
+            'id_pembimbing_asal' =>
+                $request->id_pembimbing_asal
+        ]
+    );
+
+    return back()->with(
+        'success',
+        'Pembimbing asal berhasil ditentukan'
+    );
 }
 
 }

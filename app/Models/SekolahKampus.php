@@ -18,4 +18,13 @@ class SekolahKampus extends Model
     {
         return $this->hasMany(Peserta::class, 'id_sekolah_kampus');
     }
+
+    public function pembimbingAsal()
+{
+    return $this->hasMany(
+        PembimbingAsal::class,
+        'id_sekolah_kampus',
+        'id_sekolah_kampus'
+    );
+}
 }

@@ -15,8 +15,9 @@ class PembimbingSeeder extends Seeder
     public function run(): void
     {
         DB::table('pembimbing_lapangan')->insert([
-            'id_role' => 2, // pembimbing
+            'id_role' => 2,
             'nama' => 'Bayu',
+            'no_telp' => '089691600398',
             'nip_nidn' => 199501032025101001,
             'username' => 'pembimbing1',
             'password' => Hash::make('poliban123')

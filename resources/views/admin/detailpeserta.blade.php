@@ -163,7 +163,7 @@
         /* BARIS KANAN BAWAH: pembimbing + akhiri sesi */
         .right-bottom {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 1fr 1fr;
             gap: 16px;
         }
 
@@ -515,6 +515,40 @@
                                 <button type="submit" class="btn btn-primary">Pilih</button>
                             </form>
                         </div>
+
+                        <div class="card">
+    <div class="card-label">Pembimbing Asal</div>
+
+    <form method="POST"
+          action="{{ route('admin.assign.pembimbing.asal', $peserta->id_peserta) }}">
+        @csrf
+
+        <select name="id_pembimbing_asal" class="styled-select">
+            <option value="">Pilih Pembimbing Asal</option>
+
+            @foreach($pembimbingAsal as $p)
+                <option value="{{ $p->id_pembimbing_asal }}"
+                    {{ $peserta->pembimbingAsal->first()?->id_pembimbing_asal == $p->id_pembimbing_asal ? 'selected' : '' }}>
+
+                    {{ $p->nama }}
+                </option>
+            @endforeach
+        </select>
+
+        @if($peserta->pembimbingAsal->count())
+            <p class="pembimbing-info">
+                Pembimbing Saat ini :
+                <strong>
+                    {{ $peserta->pembimbingAsal->first()->nama }}
+                </strong>
+            </p>
+        @endif
+
+        <button type="submit" class="btn btn-primary">
+            Pilih
+        </button>
+    </form>
+</div>
 
                         <div class="card" style="display:flex; flex-direction:column; justify-content:space-between;">
                             <div class="card-label">Akhiri Sesi Magang</div>

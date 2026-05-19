@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\PesertaAuthController;
 use App\Http\Controllers\DashboardAdminController;
 use App\Http\Controllers\PesertaDashboardController;
+use App\Http\Controllers\DashboardPembimbingAsalController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DashboardPembimbingController;
 use App\Http\Controllers\DashboardPesertaController;
@@ -96,6 +97,25 @@ Route::post('/admin/presensi/tutup-manual', [PresensiController::class, 'tutupPr
 Route::get('/admin/rekap-presensi/export', [PresensiController::class, 'exportRekapPresensi'])
     ->name('admin.rekap.presensi.export');
 
+    Route::put('/admin/pembimbing/update/{id}',
+    [DashboardAdminController::class, 'updatePembimbing'])
+    ->name('admin.pembimbing.update');
+
+    Route::post(
+    '/admin/pembimbing-asal/store',
+    [DashboardAdminController::class, 'storePembimbingAsal']
+)->name('admin.pembimbing-asal.store');
+
+Route::post(
+    '/admin/assign-pembimbing-asal/{id}',
+    [DashboardAdminController::class, 'assignPembimbingAsal']
+)->name('admin.assign.pembimbing.asal');
+
+Route::put(
+    '/admin/pembimbing-asal/update/{id}',
+    [DashboardAdminController::class, 'updatePembimbingAsal']
+)->name('admin.pembimbing-asal.update');
+
     Route::get('/admin/jurusan', [DashboardAdminController::class, 'jurusan'])
     ->name('admin.jurusan');
 
@@ -141,6 +161,18 @@ Route::delete('/pembimbing/penilaian/{peserta}/{kriteria}', [PenilaianController
 
     // riwayat peserta
     Route::get('/admin/riwayat', [DashboardAdminController::class, 'riwayat'])->name('admin.riwayat');
+
+    Route::get('/dashboard-pembimbing-asal',
+    [DashboardPembimbingAsalController::class, 'index'])
+    ->name('pembimbing_asal.dashboard');
+
+Route::get('/pembimbing-asal/detail/{id}',
+    [DashboardPembimbingAsalController::class, 'detail'])
+    ->name('pembimbing_asal.detail');
+
+Route::get('/pembimbing-asal/logbook/{id}',
+    [DashboardPembimbingAsalController::class, 'logbook'])
+    ->name('pembimbing_asal.logbook');
 
 });
 

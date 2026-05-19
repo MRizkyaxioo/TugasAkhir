@@ -34,6 +34,12 @@ class AdminAuthController extends Controller
         return redirect('/dashboard-pembimbing');
     }
 
+    // 🔹 Coba login sebagai PEMBIMBING ASAL
+if (Auth::guard('pembimbing_asal')->attempt($credentials)) {
+    $request->session()->regenerate();
+    return redirect('/dashboard-pembimbing-asal');
+}
+
     return back()->with('error', 'Username atau password salah')->withInput();
 }
 
@@ -46,6 +52,10 @@ public function logout(Request $request)
     if (Auth::guard('pembimbing')->check()) {
         Auth::guard('pembimbing')->logout();
     }
+
+    if (Auth::guard('pembimbing_asal')->check()) {
+    Auth::guard('pembimbing_asal')->logout();
+}
 
     $request->session()->invalidate();
     $request->session()->regenerateToken();

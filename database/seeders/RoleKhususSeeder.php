@@ -21,6 +21,10 @@ class RoleKhususSeeder extends Seeder
             [
                 'id_role' => 2,
                 'role' => 'pembimbing'
+            ],
+            [
+                'id_role' => 3,
+                'role' => 'pembimbing_sekolah_kampus'
             ]
         ]);
     }

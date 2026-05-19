@@ -351,10 +351,33 @@
 
     <!-- MAIN -->
     <div class="main-content">
-
+@php
+    $pembimbing = $peserta->pembimbing->first();
+@endphp
         <div class="topbar">
-            <div class="topbar-title">Selamat Datang {{ $peserta->nama }}</div>
+    <div class="topbar-title">
+        <div style="text-align:center;">
+            <div>
+                Selamat Datang {{ $peserta->nama }}
+            </div>
+
+            @if($pembimbing)
+                <div style="
+                    margin-top:6px;
+                    font-size:0.78rem;
+                    font-family:'DM Sans', sans-serif;
+                    font-weight:400;
+                    color: var(--muted);
+                ">
+                    Pembimbing Lapangan:
+                    <strong>{{ $pembimbing->nama }}</strong>
+                    |
+                   NO HP: {{ $pembimbing->no_telp }}
+                </div>
+            @endif
         </div>
+    </div>
+</div>
 
         <div class="page-body">
 

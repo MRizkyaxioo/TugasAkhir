@@ -72,6 +72,16 @@ class Peserta extends Authenticatable
         );
     }
 
+    public function pembimbingAsal()
+{
+    return $this->belongsToMany(
+        PembimbingAsal::class,
+        'pembimbing_asal_peserta',
+        'id_peserta',
+        'id_pembimbing_asal'
+    );
+}
+
     public function kriteriaDipakai()
 {
     return $this->belongsToMany(

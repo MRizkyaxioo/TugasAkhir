@@ -270,16 +270,16 @@
                 </span>
             </div>
             <div class="info-row">
-    <span class="info-label">Pembimbing Sekolah/Kampus</span>
+    <span class="info-label">Pembimbing Lapangan</span>
     <span class="info-value">
-        {{ $peserta->pembimbingAsal->first()->nama ?? 'Belum ditentukan' }}
+        {{ $peserta->pembimbing->first()->nama ?? '-' }}
     </span>
 </div>
 
 <div class="info-row">
-    <span class="info-label">No. Telp Pembimbing Sekolah/Kampus</span>
+    <span class="info-label">No. HP Pembimbing</span>
     <span class="info-value">
-        {{ $peserta->pembimbingAsal->first()->no_telp ?? '-' }}
+        {{ $peserta->pembimbing->first()->no_telp ?? '-' }}
     </span>
 </div>
         </div>
@@ -302,11 +302,33 @@
     <span class="info-label">Alpa</span>
     <span class="info-value">{{ $alpa }} Hari</span>
 </div>
+
+<div class="card" style="margin-top:20px;">
+    <div class="card-label">Nilai Peserta</div>
+
+    @forelse($peserta->penilaian as $nilai)
+        <div class="info-row">
+            <span class="info-label">
+                {{ $nilai->kriteria->nama_kriteria }}
+            </span>
+
+            <span class="info-value">
+                {{ $nilai->nilai }}
+            </span>
+        </div>
+    @empty
+        <div class="info-row">
+            <span class="info-value">
+                Belum ada nilai
+            </span>
+        </div>
+    @endforelse
+</div>
     </main>
 
     <!-- FOOTER -->
     <footer>
-        <a href="{{ route('pembimbing.dashboard') }}" class="btn-back">
+        <a href="{{ route('pembimbing_asal.dashboard') }}" class="btn-back">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="15 18 9 12 15 6"/>
             </svg>

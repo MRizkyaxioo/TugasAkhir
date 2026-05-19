@@ -11,18 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pembimbing_lapangan', function (Blueprint $table) {
-            $table->id('id_pembimbing');
-
+        Schema::create('pembimbing_asal', function (Blueprint $table) {
+            $table->id('id_pembimbing_asal');
             $table->foreignId('id_role')
                 ->constrained('role_khusus', 'id_role')
                 ->cascadeOnDelete();
-
             $table->string('nama', 60);
-            $table->string('no_telp', 20);
-            $table->string('nip_nidn', 20)->nullable();
             $table->string('password', 60);
             $table->string('username', 60);
+            $table->foreignId('id_sekolah_kampus')
+                ->constrained('sekolah_kampus', 'id_sekolah_kampus')
+                ->cascadeOnDelete();
+            $table->string('no_telp', 20);
             $table->timestamps();
         });
     }
@@ -32,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pembimbing_lapangan');
+        Schema::dropIfExists('pembimbing_sekolah_kampus');
     }
 };

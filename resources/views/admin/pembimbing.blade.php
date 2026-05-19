@@ -219,7 +219,8 @@
             color: var(--muted);
         }
 
-        .field input {
+        .field input,
+        .field select {
             padding: 9px 14px;
             border: 1.5px solid #E8D5B5;
             border-radius: 8px;
@@ -232,6 +233,10 @@
         }
 
         .field input:focus { border-color: var(--gold); }
+
+        .field select:focus {
+    border-color: var(--gold);
+}
 
         .form-footer {
             margin-top: 18px;
@@ -279,6 +284,100 @@
         }
 
         .btn-back:hover { background: #E8D5B5; color: var(--dark); }
+
+        /* BUTTON EDIT */
+.btn-edit{
+    padding: 7px 16px;
+    border: none;
+    border-radius: 50px;
+    background: var(--gold);
+    color: white;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: 0.2s;
+}
+
+.btn-edit:hover{
+    background: var(--gold-light);
+}
+
+/* MODAL */
+.modal{
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+
+.modal-content{
+    width: 100%;
+    max-width: 500px;
+    background: white;
+    border-radius: 18px;
+    padding: 28px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    animation: popup .2s ease;
+}
+
+@keyframes popup{
+    from{
+        transform: scale(.95);
+        opacity: 0;
+    }
+    to{
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.modal-header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.modal-title{
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.btn-close{
+    border: none;
+    background: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--muted);
+}
+
+.password-wrapper{
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-wrapper input{
+    width: 100%;
+    padding-right: 45px;
+}
+
+.toggle-password{
+    position: absolute;
+    right: 14px;
+    cursor: pointer;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+}
+
+.toggle-password svg{
+    width: 18px;
+    height: 18px;
+}
 
         @media (max-width: 900px) {
             .content-grid { grid-template-columns: 1fr; }
@@ -396,79 +495,664 @@
 
             <div class="content-grid">
 
-                <!-- KIRI: LIST PEMBIMBING -->
-                <div class="card">
-                    <div class="card-label">List Pembimbing Magang</div>
-                    <div class="table-wrap">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Nama</th>
-                                    <th>NIP/NIDN</th>
-                                    <th>Username</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse($data as $i => $d)
-                                <tr>
-                                    <td>{{ $i + 1 }}</td>
-                                    <td>{{ $d->nama }}</td>
-                                    <td>{{ $d->nip_nidn }}</td>
-                                    <td>{{ $d->username }}</td>
-                                </tr>
-                                @empty
-                                <tr class="empty-row">
-                                    <td colspan="4">Belum ada data pembimbing</td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
+                <!-- KIRI -->
+<div style="display:flex; flex-direction:column; gap:20px;">
+
+    <!-- LIST PEMBIMBING LAPANGAN -->
+    <div class="card">
+        <div class="card-label">
+            List Pembimbing Lapangan
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Nama</th>
+                        <th>No HP</th>
+                        <th>NIP/NIDN</th>
+                        <th>Username</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                @forelse($data as $i => $d)
+
+                    <tr>
+                        <td>{{ $i + 1 }}</td>
+                        <td>{{ $d->nama }}</td>
+                        <td>{{ $d->no_telp }}</td>
+                        <td>{{ $d->nip_nidn }}</td>
+                        <td>{{ $d->username }}</td>
+
+                        <td>
+                            <button
+                                class="btn-edit"
+
+                                onclick="openEditModal(
+                                    '{{ $d->id_pembimbing }}',
+                                    '{{ $d->nama }}',
+                                    '{{ $d->no_telp }}',
+                                    '{{ $d->nip_nidn }}',
+                                    '{{ $d->username }}'
+                                )"
+                            >
+                                Edit
+                            </button>
+                        </td>
+                    </tr>
+
+                @empty
+
+                    <tr class="empty-row">
+                        <td colspan="6">
+                            Tidak ada data pembimbing lapangan
+                        </td>
+                    </tr>
+
+                @endforelse
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- LIST PEMBIMBING ASAL -->
+    <div class="card">
+
+        <div class="card-label">
+            List Pembimbing Sekolah/Kampus
+        </div>
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Nama</th>
+                        <th>Sekolah/Kampus</th>
+                        <th>No HP</th>
+                        <th>Username</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                @forelse($pembimbingAsal as $i => $d)
+
+                    <tr>
+
+                        <td>{{ $i + 1 }}</td>
+
+                        <td>{{ $d->nama }}</td>
+
+                        <td>
+                            {{ $d->sekolahKampus->nama_sekolah_kampus ?? '-' }}
+                        </td>
+
+                        <td>{{ $d->no_telp }}</td>
+
+                        <td>{{ $d->username }}</td>
+
+                        <td>
+
+                            <button
+                                class="btn-edit"
+
+                                onclick="openEditModalAsal(
+                                    '{{ $d->id_pembimbing_asal }}',
+                                    '{{ $d->nama }}',
+                                    '{{ $d->no_telp }}',
+                                    '{{ $d->username }}',
+                                    '{{ $d->id_sekolah_kampus }}'
+                                )"
+                            >
+                                Edit
+                            </button>
+
+                        </td>
+
+                    </tr>
+
+                @empty
+
+                    <tr class="empty-row">
+                        <td colspan="6">
+                            Tidak ada data pembimbing sekolah/kampus
+                        </td>
+                    </tr>
+
+                @endforelse
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+                <!-- KANAN: FORM TAMBAH -->
+                <div style="display:flex; flex-direction:column; gap:20px;">
+
+    <!-- FORM PEMBIMBING LAPANGAN -->
+    <div class="card">
+        <div class="card-label">
+            Tambah Pembimbing Magang
+        </div>
+
+        <form action="{{ route('admin.pembimbing.store') }}"
+              method="POST">
+
+            @csrf
+
+            <div class="form-fields">
+
+                <div class="field">
+                    <label>Nama</label>
+                    <input type="text"
+                           name="nama"
+                           value="{{ old('nama') }}">
+                </div>
+
+                <div class="field">
+                    <label>No hp</label>
+                    <input type="text"
+                           name="no_telp"
+                           value="{{ old('no_telp') }}">
+                </div>
+
+                <div class="field">
+                    <label>NIP/NIDN</label>
+                    <input type="text"
+                           name="nip_nidn"
+                           value="{{ old('nip_nidn') }}">
+                </div>
+
+                <div class="field">
+                    <label>Username</label>
+                    <input type="text"
+                           name="username"
+                           value="{{ old('username') }}">
+                </div>
+
+                <div class="field">
+                    <label>Password</label>
+
+                    <div class="password-wrapper">
+
+                        <input type="password"
+                               name="password"
+                               id="passwordTambah">
+
+                        <span class="toggle-password"
+                              onclick="togglePassword('passwordTambah', this)">
+
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 fill="none"
+                                 viewBox="0 0 24 24"
+                                 stroke="currentColor"
+                                 stroke-width="2">
+
+                                <path stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/>
+
+                                <circle cx="12"
+                                        cy="12"
+                                        r="3"/>
+
+                            </svg>
+
+                        </span>
+
                     </div>
                 </div>
 
-                <!-- KANAN: FORM TAMBAH -->
-                <div class="card">
-                    <div class="card-label">Tambah Pembimbing Magang</div>
-                    <form action="{{ route('admin.pembimbing.store') }}" method="POST">
-                        @csrf
-                        <div class="form-fields">
-                            <div class="field">
-                                <label>Nama</label>
-                                <input type="text" name="nama" value="{{ old('nama') }}" placeholder="Nama lengkap">
-                            </div>
-                            <div class="field">
-                                <label>NIP/NIDN</label>
-                                <input type="text" name="nip_nidn" value="{{ old('nip_nidn') }}" placeholder="NIP atau NIDN">
-                            </div>
-                            <div class="field">
-                                <label>Username</label>
-                                <input type="text" name="username" value="{{ old('username') }}" placeholder="Username login">
-                            </div>
-                            <div class="field">
-                                <label>Password</label>
-                                <input type="password" name="password" placeholder="Password">
-                            </div>
-                        </div>
-                        <div class="form-footer">
-                            <button type="submit" class="btn-submit">Tambah</button>
+            </div>
+
+            <div class="form-footer">
+                <button type="submit"
+                        class="btn-submit">
+                    Tambah
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+    <!-- FORM PEMBIMBING ASAL -->
+    <div class="card">
+
+        <div class="card-label">
+            Tambah Pembimbing Sekolah/Kampus
+        </div>
+
+        <form action="{{ route('admin.pembimbing-asal.store') }}"
+              method="POST">
+
+            @csrf
+
+            <div class="form-fields">
+
+                <div class="field">
+                    <label>Nama</label>
+                    <input type="text" name="nama">
+                </div>
+
+                <div class="field">
+    <label>Asal Sekolah/Kampus</label>
+
+    <select name="id_sekolah_kampus">
+        <option value="">-- Pilih Sekolah/Kampus --</option>
+
+        @foreach($sekolah as $s)
+            <option value="{{ $s->id_sekolah_kampus }}">
+                {{ $s->nama_sekolah_kampus }}
+            </option>
+        @endforeach
+    </select>
+</div>
+
+                <div class="field">
+                    <label>No HP</label>
+                    <input type="text"
+                           name="no_telp">
+                </div>
+
+                <div class="field">
+                    <label>Username</label>
+                    <input type="text"
+                           name="username">
+                </div>
+
+                <div class="field">
+
+    <label>Password</label>
+
+    <div class="password-wrapper">
+
+        <input type="password"
+               name="password"
+               id="passwordTambahAsal">
+
+        <span class="toggle-password"
+              onclick="togglePassword('passwordTambahAsal')">
+
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 fill="none"
+                 viewBox="0 0 24 24"
+                 stroke="currentColor"
+                 stroke-width="2">
+
+                <path stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/>
+
+                <circle cx="12"
+                        cy="12"
+                        r="3"/>
+
+            </svg>
+
+        </span>
+
+    </div>
+
+</div>
+
+            </div>
+
+            <div class="form-footer">
+                <button type="submit"
+                        class="btn-submit">
+                    Tambah
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+</div>
                         </div>
                     </form>
                 </div>
 
             </div>
         </div>
+    </div>
+<!-- MODAL EDIT PEMBIMBING LAPANGAN -->
+<div class="modal" id="editModal">
 
-        <!-- KEMBALI -->
-        <div class="page-footer">
-            <a href="{{ route('admin.dashboard') }}" class="btn-back">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="15 18 9 12 15 6"/>
-                </svg>
-                Kembali
-            </a>
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <div class="modal-title">
+                Edit Pembimbing
+            </div>
+
+            <button class="btn-close"
+                    onclick="closeModal()">
+                &times;
+            </button>
+
         </div>
+
+        <form id="editForm" method="POST">
+
+            @csrf
+            @method('PUT')
+
+            <div class="form-fields">
+
+                <div class="field">
+                    <label>Nama</label>
+
+                    <input type="text"
+                           name="nama"
+                           id="editNama">
+                </div>
+
+                <div class="field">
+                    <label>No hp</label>
+
+                    <input type="text"
+                           name="no_telp"
+                           id="editNoTelp">
+                </div>
+
+                <div class="field">
+                    <label>NIP/NIDN (Opsional)</label>
+
+                    <input type="text"
+                           name="nip_nidn"
+                           id="editNip">
+                </div>
+
+                <div class="field">
+                    <label>Username</label>
+
+                    <input type="text"
+                           name="username"
+                           id="editUsername">
+                </div>
+
+                <div class="field">
+
+                    <label>Password Baru</label>
+
+                    <div class="password-wrapper">
+
+                        <input
+                            type="password"
+                            name="password"
+                            id="passwordEdit"
+                            placeholder="Kosongkan jika tidak ingin diubah"
+                        >
+
+                        <span class="toggle-password"
+                              onclick="togglePassword('passwordEdit')">
+
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 fill="none"
+                                 viewBox="0 0 24 24"
+                                 stroke="currentColor"
+                                 stroke-width="2">
+
+                                <path stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/>
+
+                                <circle cx="12"
+                                        cy="12"
+                                        r="3"/>
+
+                            </svg>
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="form-footer">
+
+                <button type="submit"
+                        class="btn-submit">
+                    Update
+                </button>
+
+            </div>
+
+        </form>
+
     </div>
 
+</div>
+
+
+<!-- MODAL EDIT PEMBIMBING ASAL -->
+<div class="modal" id="editModalAsal">
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <div class="modal-title">
+                Edit Pembimbing Sekolah/Kampus
+            </div>
+
+            <button class="btn-close"
+                    onclick="closeModalAsal()">
+                &times;
+            </button>
+
+        </div>
+
+        <form id="editFormAsal"
+              method="POST">
+
+            @csrf
+            @method('PUT')
+
+            <div class="form-fields">
+
+                <div class="field">
+                    <label>Nama</label>
+
+                    <input type="text"
+                           name="nama"
+                           id="editNamaAsal">
+                </div>
+
+                <div class="field">
+
+                    <label>Asal Sekolah/Kampus</label>
+
+                    <select name="id_sekolah_kampus"
+                            id="editSekolahAsal">
+
+                        @foreach($sekolah as $s)
+
+                            <option value="{{ $s->id_sekolah_kampus }}">
+                                {{ $s->nama_sekolah_kampus }}
+                            </option>
+
+                        @endforeach
+
+                    </select>
+
+                </div>
+
+                <div class="field">
+                    <label>No HP</label>
+
+                    <input type="text"
+                           name="no_telp"
+                           id="editNoTelpAsal">
+                </div>
+
+                <div class="field">
+                    <label>Username</label>
+
+                    <input type="text"
+                           name="username"
+                           id="editUsernameAsal">
+                </div>
+
+                <div class="field">
+
+                    <label>Password Baru</label>
+
+                    <div class="password-wrapper">
+
+                        <input
+                            type="password"
+                            name="password"
+                            id="passwordEditAsal"
+                            placeholder="Kosongkan jika tidak ingin diubah"
+                        >
+
+                        <span class="toggle-password"
+                              onclick="togglePassword('passwordEditAsal')">
+
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 fill="none"
+                                 viewBox="0 0 24 24"
+                                 stroke="currentColor"
+                                 stroke-width="2">
+
+                                <path stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/>
+
+                                <circle cx="12"
+                                        cy="12"
+                                        r="3"/>
+
+                            </svg>
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="form-footer">
+
+                <button type="submit"
+                        class="btn-submit">
+                    Update
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+<script>
+
+    // =========================
+    // MODAL PEMBIMBING LAPANGAN
+    // =========================
+
+    function openEditModal(id, nama, no_telp, nip_nidn, username)
+    {
+        document.getElementById('editModal').style.display = 'flex';
+
+        document.getElementById('editNama').value = nama;
+        document.getElementById('editNoTelp').value = no_telp;
+        document.getElementById('editNip').value = nip_nidn;
+        document.getElementById('editUsername').value = username;
+
+        document.getElementById('editForm').action =
+            `/admin/pembimbing/update/${id}`;
+    }
+
+    function closeModal()
+    {
+        document.getElementById('editModal').style.display = 'none';
+    }
+
+
+    // =========================
+    // MODAL PEMBIMBING ASAL
+    // =========================
+
+    function openEditModalAsal(
+        id,
+        nama,
+        no_telp,
+        username,
+        id_sekolah_kampus
+    )
+    {
+        document.getElementById('editModalAsal').style.display = 'flex';
+
+        document.getElementById('editNamaAsal').value = nama;
+        document.getElementById('editNoTelpAsal').value = no_telp;
+        document.getElementById('editUsernameAsal').value = username;
+        document.getElementById('editSekolahAsal').value = id_sekolah_kampus;
+
+        document.getElementById('editFormAsal').action =
+            `/admin/pembimbing-asal/update/${id}`;
+    }
+
+    function closeModalAsal()
+    {
+        document.getElementById('editModalAsal').style.display = 'none';
+    }
+
+
+    // =========================
+    // CLOSE MODAL SAAT KLIK LUAR
+    // =========================
+
+    window.onclick = function(e)
+    {
+        let modal1 = document.getElementById('editModal');
+        let modal2 = document.getElementById('editModalAsal');
+
+        if(e.target == modal1){
+            closeModal();
+        }
+
+        if(e.target == modal2){
+            closeModalAsal();
+        }
+    }
+
+
+    // =========================
+    // TOGGLE PASSWORD
+    // =========================
+
+    function togglePassword(id)
+    {
+        let input = document.getElementById(id);
+
+        if(input.type === 'password'){
+            input.type = 'text';
+        }else{
+            input.type = 'password';
+        }
+    }
+
+</script>
 </body>
 </html>
