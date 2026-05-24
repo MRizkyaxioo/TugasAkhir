@@ -60,6 +60,18 @@ class PenilaianController extends Controller
     return back()->with('success', 'Kriteria dan semua nilai terkait berhasil dihapus.');
 }
 
+public function updateKriteria(Request $request, $id)
+{
+    $request->validate([
+        'kriteria' => 'required'
+    ]);
+
+    KriteriaNilai::where('id_kriteria_nilai', $id)
+        ->update(['kriteria_nilai' => $request->kriteria]);
+
+    return back()->with('success', 'Kriteria berhasil diupdate');
+}
+
 public function hapusNilai($id_peserta, $id_kriteria)
 {
     // Pastikan peserta dan kriteria valid

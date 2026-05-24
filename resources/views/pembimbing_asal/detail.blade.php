@@ -204,7 +204,10 @@
 </header>
 
     <!-- MAIN -->
-    <main>
+    <main style="align-items:flex-start;">
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; max-width:960px; width:100%; align-items:start;">
+
+        {{-- CARD PROFIL --}}
         <div class="card">
             <div class="info-row">
                 <span class="info-label">Nama</span>
@@ -264,67 +267,64 @@
                 </span>
             </div>
             <div class="info-row">
-                <span class="info-label">Pembimbing</span>
-                <span class="info-value">
-                    {{ $peserta->pembimbing->first()->nama ?? 'Belum ditentukan' }}
-                </span>
+                <span class="info-label">Pembimbing Lapangan</span>
+                <span class="info-value">{{ $peserta->pembimbing->first()->nama ?? '-' }}</span>
             </div>
             <div class="info-row">
-    <span class="info-label">Pembimbing Lapangan</span>
-    <span class="info-value">
-        {{ $peserta->pembimbing->first()->nama ?? '-' }}
-    </span>
-</div>
-
-<div class="info-row">
-    <span class="info-label">No. HP Pembimbing</span>
-    <span class="info-value">
-        {{ $peserta->pembimbing->first()->no_telp ?? '-' }}
-    </span>
-</div>
+                <span class="info-label">No. HP Pembimbing</span>
+                <span class="info-value">{{ $peserta->pembimbing->first()->no_telp ?? '-' }}</span>
+            </div>
         </div>
-        <div class="info-row">
-    <span class="info-label">Hadir</span>
-    <span class="info-value">{{ $hadir }} Hari</span>
-</div>
 
-<div class="info-row">
-    <span class="info-label">Sakit</span>
-    <span class="info-value">{{ $sakit }} Hari</span>
-</div>
+        {{-- KOLOM KANAN --}}
+        <div style="display:flex; flex-direction:column; gap:16px;">
 
-<div class="info-row">
-    <span class="info-label">Izin</span>
-    <span class="info-value">{{ $izin }} Hari</span>
-</div>
+            {{-- CARD KEHADIRAN --}}
+            <div class="card">
+                <div class="card-label">Rekap Kehadiran</div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                    <div style="background:#DCFCE7; border:1px solid #BBF7D0; border-radius:12px; padding:16px; text-align:center;">
+                        <div style="font-size:0.75rem; color:#166534; font-weight:500; margin-bottom:6px;">Hadir</div>
+                        <div style="font-family:'Playfair Display',serif; font-size:1.8rem; font-weight:700; color:#166534;">{{ $hadir }}</div>
+                        <div style="font-size:0.72rem; color:#166534;">Hari</div>
+                    </div>
+                    <div style="background:#E0F2FE; border:1px solid #BAE6FD; border-radius:12px; padding:16px; text-align:center;">
+                        <div style="font-size:0.75rem; color:#075985; font-weight:500; margin-bottom:6px;">Izin</div>
+                        <div style="font-family:'Playfair Display',serif; font-size:1.8rem; font-weight:700; color:#075985;">{{ $izin }}</div>
+                        <div style="font-size:0.72rem; color:#075985;">Hari</div>
+                    </div>
+                    <div style="background:#FEF9C3; border:1px solid #FDE68A; border-radius:12px; padding:16px; text-align:center;">
+                        <div style="font-size:0.75rem; color:#92400E; font-weight:500; margin-bottom:6px;">Sakit</div>
+                        <div style="font-family:'Playfair Display',serif; font-size:1.8rem; font-weight:700; color:#92400E;">{{ $sakit }}</div>
+                        <div style="font-size:0.72rem; color:#92400E;">Hari</div>
+                    </div>
+                    <div style="background:#FEE2E2; border:1px solid #FECACA; border-radius:12px; padding:16px; text-align:center;">
+                        <div style="font-size:0.75rem; color:#991B1B; font-weight:500; margin-bottom:6px;">Alpa</div>
+                        <div style="font-family:'Playfair Display',serif; font-size:1.8rem; font-weight:700; color:#991B1B;">{{ $alpa }}</div>
+                        <div style="font-size:0.72rem; color:#991B1B;">Hari</div>
+                    </div>
+                </div>
+            </div>
 
-<div class="info-row">
-    <span class="info-label">Alpa</span>
-    <span class="info-value">{{ $alpa }} Hari</span>
-</div>
+            {{-- CARD NILAI --}}
+            <div class="card">
+                <div class="card-label">Nilai Peserta</div>
+                @forelse($peserta->penilaian as $nilai)
+                    <div class="info-row">
+                        <span class="info-label">{{ $nilai->kriteria->kriteria_nilai }}</span>
+                        <span class="info-value">{{ $nilai->nilai }}</span>
+                    </div>
+                @empty
+                    <p style="text-align:center; color:var(--muted); font-size:0.82rem; padding:12px 0;">
+                        Belum ada nilai
+                    </p>
+                @endforelse
+            </div>
 
-<div class="card" style="margin-top:20px;">
-    <div class="card-label">Nilai Peserta</div>
-
-    @forelse($peserta->penilaian as $nilai)
-        <div class="info-row">
-            <span class="info-label">
-                {{ $nilai->kriteria->nama_kriteria }}
-            </span>
-
-            <span class="info-value">
-                {{ $nilai->nilai }}
-            </span>
         </div>
-    @empty
-        <div class="info-row">
-            <span class="info-value">
-                Belum ada nilai
-            </span>
-        </div>
-    @endforelse
-</div>
-    </main>
+
+    </div>
+</main>
 
     <!-- FOOTER -->
     <footer>

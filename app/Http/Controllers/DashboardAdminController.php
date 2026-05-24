@@ -444,6 +444,18 @@ public function updateSekolahKampus(Request $request, $id)
     return back()->with('success', 'Sekolah/Kampus berhasil diupdate');
 }
 
+public function deleteJurusan($id)
+{
+    \App\Models\Jurusan::findOrFail($id)->delete();
+    return back()->with('success', 'Jurusan berhasil dihapus');
+}
+
+public function deleteSekolahKampus($id)
+{
+    \App\Models\SekolahKampus::findOrFail($id)->delete();
+    return back()->with('success', 'Sekolah/Kampus berhasil dihapus');
+}
+
 public function updatePembimbing(Request $request, $id)
 {
     $request->validate([

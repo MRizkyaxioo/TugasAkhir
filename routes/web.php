@@ -97,6 +97,8 @@ Route::post('/admin/presensi/tutup-manual', [PresensiController::class, 'tutupPr
 Route::get('/admin/rekap-presensi/export', [PresensiController::class, 'exportRekapPresensi'])
     ->name('admin.rekap.presensi.export');
 
+
+
     Route::put('/admin/pembimbing/update/{id}',
     [DashboardAdminController::class, 'updatePembimbing'])
     ->name('admin.pembimbing.update');
@@ -136,6 +138,13 @@ Route::put('/admin/sekolah/update/{id}',
     [DashboardAdminController::class, 'updateSekolahKampus'])
     ->name('admin.sekolah.update');
 
+    Route::delete('/admin/jurusan/delete/{id}',
+    [DashboardAdminController::class, 'deleteJurusan'])
+    ->name('admin.jurusan.delete');
+    Route::delete('/admin/sekolah/delete/{id}',
+    [DashboardAdminController::class, 'deleteSekolahKampus'])
+    ->name('admin.sekolah.delete');
+
     // 🔥 PENILAIAN PEMBIMBING
 Route::get('/pembimbing/penilaian/{id}', [PenilaianController::class, 'form'])
     ->name('pembimbing.penilaian');
@@ -144,6 +153,9 @@ Route::post('/pembimbing/penilaian/{id}', [PenilaianController::class, 'simpan']
     ->name('pembimbing.penilaian.simpan');
 
 // 🔥 KRITERIA NILAI
+Route::put('/pembimbing/kriteria/{id}/update', [PenilaianController::class, 'updateKriteria'])
+    ->name('pembimbing.kriteria.update');
+    
 Route::post('/pembimbing/kriteria', [PenilaianController::class, 'storeKriteria'])
     ->name('pembimbing.kriteria.store');
 

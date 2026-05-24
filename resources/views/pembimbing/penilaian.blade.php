@@ -134,7 +134,7 @@
             font-size: 0.8rem;
             font-weight: 500;
             color: var(--muted);
-            width: 80px;
+            width: 120px;
             flex-shrink: 0;
         }
 
@@ -361,12 +361,46 @@
     <div class="card-label">Daftar Kriteria Penilaian</div>
     @forelse($kriteria as $k)
         <div class="kriteria-item">
-            <span>{{ $k->kriteria_nilai }}</span>
-            <form action="{{ route('pembimbing.kriteria.delete', $k->id_kriteria_nilai) }}" method="POST" class="form-hapus-kriteria" style="display:inline;">
-    @csrf
-    @method('DELETE')
-    <button type="button" class="btn-hapus btn-hapus-kriteria">Hapus</button>
-</form>
+            <span id="label-{{ $k->id_kriteria_nilai }}">{{ $k->kriteria_nilai }}</span>
+
+            {{-- FORM EDIT (tersembunyi, muncul saat klik Edit) --}}
+            <form id="form-edit-{{ $k->id_kriteria_nilai }}"
+                  action="{{ route('pembimbing.kriteria.update', $k->id_kriteria_nilai) }}"
+                  method="POST"
+                  style="display:none; flex:1; margin-left:10px; gap:6px; align-items:center;">
+                @csrf
+                @method('PUT')
+                <input type="text" name="kriteria"
+                       value="{{ $k->kriteria_nilai }}"
+                       style="flex:1; padding:5px 10px; border:1.5px solid #E8D5B5; border-radius:8px;
+                              font-family:'DM Sans',sans-serif; font-size:0.82rem; outline:none;">
+                <button type="submit"
+                        style="padding:4px 12px; background:var(--gold); color:#fff; border:none;
+                               border-radius:50px; font-size:0.78rem; cursor:pointer;">
+                    Simpan
+                </button>
+                <button type="button"
+                        onclick="cancelEdit({{ $k->id_kriteria_nilai }})"
+                        style="padding:4px 12px; background:none; border:1px solid #E8D5B5;
+                               border-radius:50px; font-size:0.78rem; cursor:pointer; color:var(--muted);">
+                    Batal
+                </button>
+            </form>
+
+            <div id="aksi-{{ $k->id_kriteria_nilai }}" style="display:flex; gap:8px; align-items:center;">
+                <button type="button"
+                        onclick="startEdit({{ $k->id_kriteria_nilai }})"
+                        style="background:none; border:none; color:var(--gold); cursor:pointer;
+                               font-size:0.8rem; text-decoration:underline;">
+                    Edit
+                </button>
+                <form action="{{ route('pembimbing.kriteria.delete', $k->id_kriteria_nilai) }}"
+                      method="POST" class="form-hapus-kriteria" style="display:inline;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="button" class="btn-hapus btn-hapus-kriteria">Hapus</button>
+                </form>
+            </div>
         </div>
     @empty
         <p class="empty-text">Belum ada kriteria</p>
@@ -458,8 +492,24 @@
         </a>
     </footer>
 
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    
     <script>
+function startEdit(id) {
+    document.getElementById('label-' + id).style.display = 'none';
+    document.getElementById('aksi-' + id).style.display = 'none';
+    const form = document.getElementById('form-edit-' + id);
+    form.style.display = 'flex';
+}
+
+function cancelEdit(id) {
+    document.getElementById('label-' + id).style.display = 'inline';
+    document.getElementById('aksi-' + id).style.display = 'flex';
+    document.getElementById('form-edit-' + id).style.display = 'none';
+}
+        
 document.addEventListener('DOMContentLoaded', function() {
     // Hapus kriteria
     document.querySelectorAll('.btn-hapus-kriteria').forEach(function(btn) {
