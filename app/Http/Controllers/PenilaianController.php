@@ -12,12 +12,22 @@ class PenilaianController extends Controller
 {
     // 🔹 FORM PENILAIAN
     public function form($id)
-    {
-        $peserta = Peserta::with('penilaian')->findOrFail($id);
-        $kriteria = KriteriaNilai::all();
+{
+    $peserta = Peserta::with('penilaian.kriteria')->findOrFail($id);
 
-        return view('pembimbing.penilaian', compact('peserta', 'kriteria'));
-    }
+    $kriteria = KriteriaNilai::all();
+
+    // ambil nilai lama peserta
+    $nilaiLama = PenilaianPeserta::where('id_peserta', $id)
+        ->get()
+        ->keyBy('id_kriteria_nilai');
+
+    return view('pembimbing.penilaian', compact(
+        'peserta',
+        'kriteria',
+        'nilaiLama'
+    ));
+}
 
     // 🔹 SIMPAN NILAI
     public function simpan(Request $request, $id)

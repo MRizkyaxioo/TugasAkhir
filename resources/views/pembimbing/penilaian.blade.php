@@ -411,15 +411,48 @@
                 <div class="card">
     <div class="card-label">Nilai Peserta Magang</div>
     @forelse($peserta->penilaian as $n)
-        <div class="nilai-item">
-            <span>{{ $n->kriteria->kriteria_nilai }}</span>
-            <span class="nilai-score">: {{ $n->nilai }}</span>
-            <form action="{{ route('pembimbing.penilaian.delete', ['peserta' => $peserta->id_peserta, 'kriteria' => $n->id_kriteria_nilai]) }}" method="POST" class="form-hapus-nilai" style="display:inline;">
-    @csrf
-    @method('DELETE')
-    <button type="button" class="btn-hapus btn-hapus-nilai">Hapus</button>
-</form>
-        </div>
+        <div class="nilai-item" style="align-items:center; gap:10px;">
+    <span style="flex:1;">
+        {{ $n->kriteria->kriteria_nilai }}
+    </span>
+
+    <form action="{{ route('pembimbing.penilaian.simpan', $peserta->id_peserta) }}"
+          method="POST"
+          style="display:flex; align-items:center; gap:8px;">
+        @csrf
+
+        <input type="hidden"
+               name="kriteria_id"
+               value="{{ $n->id_kriteria_nilai }}">
+
+        <input type="number"
+               name="nilai"
+               min="1"
+               max="100"
+               value="{{ $n->nilai }}"
+               style="width:80px; padding:6px 10px;
+                      border:1.5px solid #E8D5B5;
+                      border-radius:8px;">
+
+        <button type="submit"
+                class="btn btn-primary"
+                style="padding:6px 14px;">
+            Update
+        </button>
+    </form>
+
+    <form action="{{ route('pembimbing.penilaian.delete', ['peserta' => $peserta->id_peserta, 'kriteria' => $n->id_kriteria_nilai]) }}"
+          method="POST"
+          class="form-hapus-nilai">
+        @csrf
+        @method('DELETE')
+
+        <button type="button"
+                class="btn-hapus btn-hapus-nilai">
+            Hapus
+        </button>
+    </form>
+</div>
     @empty
         <p class="empty-text">Belum ada nilai</p>
     @endforelse
@@ -438,7 +471,7 @@
                         <div class="field">
                             <input type="text" name="kriteria" placeholder="Tambah Kriteria" required>
                         </div>
-                        <button type="submit" class="btn btn-primary" style="width:100%;">Pilih</button>
+                        <button type="submit" class="btn btn-primary" style="width:100%;">Tambah</button>
                     </form>
                 </div>
 
@@ -495,7 +528,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    
+
     <script>
 function startEdit(id) {
     document.getElementById('label-' + id).style.display = 'none';
@@ -509,7 +542,7 @@ function cancelEdit(id) {
     document.getElementById('aksi-' + id).style.display = 'flex';
     document.getElementById('form-edit-' + id).style.display = 'none';
 }
-        
+
 document.addEventListener('DOMContentLoaded', function() {
     // Hapus kriteria
     document.querySelectorAll('.btn-hapus-kriteria').forEach(function(btn) {

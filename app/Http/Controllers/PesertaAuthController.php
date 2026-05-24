@@ -47,20 +47,98 @@ class PesertaAuthController extends Controller
     }
 
         $request->validate([
-            'nama' => 'required',
-            'nisn_nim' => 'required|unique:peserta,nisn_nim',
-            'password' => 'required',
-            'id_jurusan' => 'required|exists:jurusan,id_jurusan',
-            'id_sekolah_kampus' => 'required|exists:sekolah_kampus,id_sekolah_kampus',
-            'file_berkas' => 'required|file|mimes:pdf|max:5120',
-            'awal_magang' => 'required|date',
-            'akhir_magang' => 'required|date|after_or_equal:awal_magang',
-        ], [
-            // CUSTOM MESSAGE
-            'file_berkas.required' => 'File wajib diupload',
-            'file_berkas.mimes' => 'File harus berupa PDF',
-            'file_berkas.max' => 'Ukuran maksimal 5MB',
-        ]);
+    'nama' => 'required|string|max:255',
+
+    'nisn_nim' => 'required|digits_between:1,11|unique:peserta,nisn_nim',
+
+    'password' => 'required|min:6',
+
+    'id_jurusan' => 'required|exists:jurusan,id_jurusan',
+
+    'id_sekolah_kampus' => 'required|exists:sekolah_kampus,id_sekolah_kampus',
+
+    'semester' => 'required|integer|min:1|max:14',
+
+    'kelas' => 'required|string|max:50',
+
+    'no_telp' => 'required|digits_between:10,15',
+
+    'email' => 'required|email|unique:peserta,email',
+
+    'jenis_kelamin' => 'required|in:L,P',
+
+    'alamat' => 'required|string|max:255',
+
+    'awal_magang' => 'required|date',
+
+    'akhir_magang' => 'required|date|after_or_equal:awal_magang',
+
+    'file_berkas' => 'required|file|mimes:pdf|max:5120',
+
+], [
+
+    // NAMA
+    'nama.required' => 'Nama lengkap wajib diisi',
+    'nama.max' => 'Nama maksimal 255 karakter',
+
+    // NISN / NIM
+    'nisn_nim.required' => 'NISN/NIM wajib diisi',
+    'nisn_nim.digits_between' => 'NISN/NIM maksimal 11 digit',
+    'nisn_nim.unique' => 'NISN/NIM sudah digunakan',
+
+    // PASSWORD
+    'password.required' => 'Password wajib diisi',
+    'password.min' => 'Password minimal 6 karakter',
+
+    // JURUSAN
+    'id_jurusan.required' => 'Jurusan wajib dipilih',
+    'id_jurusan.exists' => 'Jurusan tidak valid',
+
+    // SEKOLAH
+    'id_sekolah_kampus.required' => 'Sekolah/Kampus wajib dipilih',
+    'id_sekolah_kampus.exists' => 'Sekolah/Kampus tidak valid',
+
+    // SEMESTER
+    'semester.required' => 'Semester wajib diisi',
+    'semester.integer' => 'Semester harus berupa angka',
+    'semester.min' => 'Semester minimal 1',
+    'semester.max' => 'Semester maksimal 14',
+
+    // KELAS
+    'kelas.required' => 'Kelas wajib diisi',
+    'kelas.max' => 'Kelas terlalu panjang',
+
+    // NO TELP
+    'no_telp.required' => 'Nomor telepon wajib diisi',
+    'no_telp.digits_between' => 'Nomor telepon harus 10-15 digit',
+
+    // EMAIL
+    'email.required' => 'Email wajib diisi',
+    'email.email' => 'Format email tidak valid',
+    'email.unique' => 'Email sudah digunakan',
+
+    // JENIS KELAMIN
+    'jenis_kelamin.required' => 'Jenis kelamin wajib dipilih',
+    'jenis_kelamin.in' => 'Jenis kelamin tidak valid',
+
+    // ALAMAT
+    'alamat.required' => 'Alamat wajib diisi',
+    'alamat.max' => 'Alamat terlalu panjang',
+
+    // TANGGAL
+    'awal_magang.required' => 'Tanggal awal magang wajib diisi',
+    'awal_magang.date' => 'Format tanggal awal tidak valid',
+
+    'akhir_magang.required' => 'Tanggal akhir magang wajib diisi',
+    'akhir_magang.date' => 'Format tanggal akhir tidak valid',
+    'akhir_magang.after_or_equal' => 'Tanggal akhir harus setelah atau sama dengan tanggal awal',
+
+    // FILE
+    'file_berkas.required' => 'File wajib diupload',
+    'file_berkas.file' => 'Upload harus berupa file',
+    'file_berkas.mimes' => 'File harus berupa PDF',
+    'file_berkas.max' => 'Ukuran maksimal file 5MB',
+]);
 
         DB::beginTransaction();
 
