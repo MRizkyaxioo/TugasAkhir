@@ -347,6 +347,10 @@
                         <span class="info-value">{{ $peserta->nama }}</span>
                     </div>
                     <div class="info-row">
+                        <span class="info-label">NISN/NIM</span>
+                        <span class="info-value">{{ $peserta->nisn_nim }}</span>
+                    </div>
+                    <div class="info-row">
                         <span class="info-label">Sekolah/Kampus</span>
                         <span class="info-value">{{ $peserta->sekolahKampus->nama_sekolah_kampus ?? '-' }}</span>
                     </div>

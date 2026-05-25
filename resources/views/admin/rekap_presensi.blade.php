@@ -340,6 +340,10 @@
         @endfor
     </select>
 
+    <input type="date"
+           name="tanggal"
+           value="{{ request('tanggal') }}">
+
     <input type="text"
            name="nama"
            placeholder="Cari nama peserta"
@@ -349,6 +353,7 @@
 
     <a href="{{ route('admin.rekap.presensi.export', [
         'bulan' => request('bulan'),
+        'tanggal' => request('tanggal'),
         'nama' => request('nama')
     ]) }}"
        class="btn-export">

@@ -11,10 +11,12 @@ class RekapPresensiExport implements FromCollection, WithHeadings
 {
     protected $bulan;
     protected $nama;
+    protected $tanggal;
 
-    public function __construct($bulan = null, $nama = null)
+    public function __construct($bulan = null, $tanggal = null, $nama = null)
     {
         $this->bulan = $bulan;
+        $this->tanggal  = $tanggal;
         $this->nama  = $nama;
     }
 
@@ -33,15 +35,22 @@ class RekapPresensiExport implements FromCollection, WithHeadings
             $q->where('status', 'diterima');
         });
 
-        if ($this->bulan) {
-            $query->whereMonth('tanggal_presensi', $this->bulan);
-        }
+        // FILTER BULAN
+if ($this->bulan) {
+    $query->whereMonth('tanggal_presensi', $this->bulan);
+}
 
-        if ($this->nama) {
-            $query->whereHas('peserta', function ($q) {
-                $q->where('nama', 'like', '%' . $this->nama . '%');
-            });
-        }
+// FILTER TANGGAL
+if ($this->tanggal) {
+    $query->whereDate('tanggal_presensi', $this->tanggal);
+}
+
+// FILTER NAMA
+if ($this->nama) {
+    $query->whereHas('peserta', function ($q) {
+        $q->where('nama', 'like', '%' . $this->nama . '%');
+    });
+}
 
         $data = $query->groupBy('id_peserta')->get();
 

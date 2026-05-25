@@ -116,8 +116,9 @@ class PresensiController extends Controller
 
     public function rekapPresensi(Request $request)
 {
-    $bulan = $request->bulan;
-    $nama  = $request->nama;
+    $bulan   = $request->bulan;
+    $tanggal = $request->tanggal;
+    $nama    = $request->nama;
 
     $query = PresensiPeserta::select(
         'id_peserta',
@@ -132,10 +133,17 @@ class PresensiController extends Controller
         $q->where('status', 'diterima');
     });
 
+    // FILTER BULAN
     if ($bulan) {
         $query->whereMonth('tanggal_presensi', $bulan);
     }
 
+    // FILTER TANGGAL
+    if ($tanggal) {
+        $query->whereDate('tanggal_presensi', $tanggal);
+    }
+
+    // FILTER NAMA
     if ($nama) {
         $query->whereHas('peserta', function ($q) use ($nama) {
             $q->where('nama', 'like', '%' . $nama . '%');
@@ -144,7 +152,12 @@ class PresensiController extends Controller
 
     $data = $query->groupBy('id_peserta')->get();
 
-    return view('admin.rekap_presensi', compact('data', 'bulan', 'nama'));
+    return view('admin.rekap_presensi', compact(
+        'data',
+        'bulan',
+        'tanggal',
+        'nama'
+    ));
 }
 
     public function rekapSurat()
@@ -163,18 +176,24 @@ class PresensiController extends Controller
 
     public function exportRekapPresensi(Request $request)
 {
-    $bulan = $request->bulan;
-    $nama  = $request->nama;
+    $bulan   = $request->bulan;
+    $tanggal = $request->tanggal;
+    $nama    = $request->nama;
 
     $namaFile = 'rekap_presensi';
 
-    // jika ada bulan
+    // tanggal
+    if ($tanggal) {
+        $namaFile .= '_' . $tanggal;
+    }
+
+    // bulan
     if ($bulan) {
         $namaBulan = strtolower(date('F', mktime(0, 0, 0, $bulan, 1)));
         $namaFile .= '_' . $namaBulan;
     }
 
-    // jika ada nama
+    // nama
     if ($nama) {
         $namaPeserta = strtolower(str_replace(' ', '_', $nama));
         $namaFile .= '_' . $namaPeserta;
@@ -183,7 +202,7 @@ class PresensiController extends Controller
     $namaFile .= '.xlsx';
 
     return Excel::download(
-        new RekapPresensiExport($bulan, $nama),
+        new RekapPresensiExport($bulan, $tanggal, $nama),
         $namaFile
     );
 }
