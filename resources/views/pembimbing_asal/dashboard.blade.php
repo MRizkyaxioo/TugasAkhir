@@ -338,7 +338,7 @@
         <div class="card">
 
             <!-- FILTER -->
-            <form method="GET" action="{{ route('pembimbing.dashboard') }}">
+            <form method="GET" action="{{ route('pembimbing_asal.dashboard') }}">
                 <div class="filter-bar">
                     <div class="filter-group">
                         <label>Nama Peserta</label>
