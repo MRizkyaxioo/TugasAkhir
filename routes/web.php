@@ -96,6 +96,11 @@ Route::post('/admin/presensi/tutup-manual', [PresensiController::class, 'tutupPr
     Route::get('/admin/rekap-surat', [PresensiController::class, 'rekapSurat'])->name('admin.rekap.surat');
 Route::get('/admin/rekap-presensi/export', [PresensiController::class, 'exportRekapPresensi'])
     ->name('admin.rekap.presensi.export');
+Route::get('/admin/detail-presensi/{id}', [PresensiController::class, 'detailPresensi'])
+->name('admin.detail.presensi');
+Route::get('/admin/detail-presensi/export/{id}', [PresensiController::class, 'exportDetailPresensi'])
+->name('admin.detail.presensi.export');
+
 
 
 
@@ -155,7 +160,7 @@ Route::post('/pembimbing/penilaian/{id}', [PenilaianController::class, 'simpan']
 // 🔥 KRITERIA NILAI
 Route::put('/pembimbing/kriteria/{id}/update', [PenilaianController::class, 'updateKriteria'])
     ->name('pembimbing.kriteria.update');
-    
+
 Route::post('/pembimbing/kriteria', [PenilaianController::class, 'storeKriteria'])
     ->name('pembimbing.kriteria.store');
 

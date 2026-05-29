@@ -7,6 +7,7 @@ use App\Models\PresensiPeserta;
 use App\Models\Peserta;
 use Carbon\Carbon;
 use App\Exports\RekapPresensiExport;
+use App\Exports\DetailPresensiExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -203,6 +204,36 @@ class PresensiController extends Controller
 
     return Excel::download(
         new RekapPresensiExport($bulan, $tanggal, $nama),
+        $namaFile
+    );
+}
+
+public function detailPresensi($id)
+    {
+        $peserta = Peserta::findOrFail($id);
+
+        $presensiData = PresensiPeserta::with('presensi')
+            ->where('id_peserta', $id)
+            ->where('is_final', 1)
+            ->orderBy('tanggal_presensi', 'desc')
+            ->get();
+
+        return view('admin.detail_presensi', compact('peserta', 'presensiData'));
+    }
+
+    public function exportDetailPresensi($id)
+{
+    $peserta = Peserta::findOrFail($id);
+
+    $presensiData = PresensiPeserta::where('id_peserta', $id)
+        ->where('is_final', 1)
+        ->orderBy('tanggal_presensi', 'asc')
+        ->get();
+
+    $namaFile = 'presensi_' . strtolower(str_replace(' ', '_', $peserta->nama)) . '.xlsx';
+
+    return Excel::download(
+        new \App\Exports\DetailPresensiExport($peserta, $presensiData),
         $namaFile
     );
 }

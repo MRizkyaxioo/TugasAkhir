@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rekap Presensi - Admin</title>
+    <title>Detail Presensi - Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -144,6 +144,35 @@
             padding: 24px 28px;
         }
 
+        .info-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(200,135,58,0.12);
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .info-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
         .table-wrap { overflow-x: auto; }
 
         table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
@@ -162,11 +191,45 @@
         tbody tr:hover { background: #FFFDF9; }
         tbody td { padding: 11px 14px; color: var(--dark); vertical-align: middle; }
 
-        .count-cell { text-align: center; font-weight: 500; }
-        .count-hadir { color: #166534; }
-        .count-izin  { color: #92400E; }
-        .count-sakit { color: #075985; }
-        .count-alpha { color: #991B1B; }
+        .status-hadir {
+            background: #DCFCE7;
+            color: #166534;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 500;
+            display: inline-block;
+            font-size: 0.8rem;
+        }
+
+        .status-izin {
+            background: #FEF3C7;
+            color: #92400E;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 500;
+            display: inline-block;
+            font-size: 0.8rem;
+        }
+
+        .status-sakit {
+            background: #BFDBFE;
+            color: #075985;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 500;
+            display: inline-block;
+            font-size: 0.8rem;
+        }
+
+        .status-alpa {
+            background: #FCA5A5;
+            color: #991B1B;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 500;
+            display: inline-block;
+            font-size: 0.8rem;
+        }
 
         .page-footer { padding: 0 36px 40px; }
 
@@ -187,72 +250,21 @@
             transition: background 0.2s;
         }
 
-
         .btn-back:hover { background: #E8D5B5; color: var(--dark); }
 
         @media (max-width: 768px) {
             .sidebar { transform: translateX(-100%); }
             .main-content { margin-left: 0; }
             .page-body { padding: 16px; }
+            .info-section { grid-template-columns: 1fr; }
         }
 
-        .filter{
-    display:flex;
-    gap:10px;
-    align-items:center;
-    margin: 20px 36px;
-}
-
-.filter select,
-.filter button{
-    padding:10px 14px;
-    border-radius:10px;
-    border:1px solid #ddd;
-}
-
-.filter input{
-    padding:10px 14px;
-    border-radius:10px;
-    border:1px solid #ddd;
-    outline:none;
-    min-width:220px;
-}
-
-.btn-export{
-    text-decoration:none;
-    background:#1D6F42;
-    color:white;
-    padding:10px 16px;
-    border-radius:10px;
-    font-size:14px;
-    font-weight:500;
-}
-
-.btn-export:hover{
-    opacity:0.9;
-}
-
-.btn-detail {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 12px;
-    background: var(--gold-light);
-    border: none;
-    border-radius: 6px;
-    color: white;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.8rem;
-    font-weight: 500;
-    cursor: pointer;
-    text-decoration: none;
-    transition: background 0.2s;
-    white-space: nowrap;
-}
-
-.btn-detail:hover {
-    background: var(--gold);
-}
+        .empty-message {
+            text-align: center;
+            color: var(--muted);
+            padding: 28px;
+            font-size: 0.95rem;
+        }
     </style>
 </head>
 <body>
@@ -346,81 +358,97 @@
 
     <div class="main-content">
         <div class="page-header">
-            <div class="page-header-title">Rekap Presensi</div>
+            <div class="page-header-title">Detail Presensi Peserta Magang</div>
         </div>
-
-        <form method="GET" class="filter">
-
-    <select name="bulan">
-        <option value="">Keseluruhan Bulan</option>
-
-        @for($i=1; $i<=12; $i++)
-            <option value="{{ $i }}"
-                {{ request('bulan') == $i ? 'selected' : '' }}>
-                {{ date('F', mktime(0,0,0,$i,1)) }}
-            </option>
-        @endfor
-    </select>
-
-    <input type="date"
-           name="tanggal"
-           value="{{ request('tanggal') }}">
-
-    <input type="text"
-           name="nama"
-           placeholder="Cari nama peserta"
-           value="{{ request('nama') }}">
-
-    <button type="submit">Terapkan</button>
-
-    <a href="{{ route('admin.rekap.presensi.export', [
-        'bulan' => request('bulan'),
-        'tanggal' => request('tanggal'),
-        'nama' => request('nama')
-    ]) }}"
-       class="btn-export">
-       Cetak Rekap
-    </a>
-
-</form>
 
         <div class="page-body">
             <div class="card">
+                <div class="info-section">
+                    <div class="info-item">
+                        <span class="info-label">NISN/NIM</span>
+                        <span class="info-value">{{ $peserta->nisn_nim }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Nama Peserta</span>
+                        <span class="info-value">{{ $peserta->nama }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Sekolah/Kampus</span>
+                        <span class="info-value">{{ $peserta->sekolahKampus->nama_sekolah_kampus ?? '-' }}</span>
+                    </div>
+                </div>
+
                 <div class="table-wrap">
                     <table>
                         <thead>
                             <tr>
-                                <th>NISN/NIM</th>
-                                <th>Nama</th>
-                                <th style="text-align:center;">Hadir</th>
-                                <th style="text-align:center;">Izin</th>
-                                <th style="text-align:center;">Sakit</th>
-                                <th style="text-align:center;">Alpa</th>
-                                <th style="text-align:center;">Aksi</th>
+                                <th>Hari</th>
+                                <th>Tanggal</th>
+                                <th>Keterangan</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($data as $i => $d)
+                            @forelse($presensiData as $p)
                             <tr>
-                                <td>{{ $d->peserta->nisn_nim }}</td>
-                                <td>{{ $d->peserta->nama }}</td>
-                                <td class="count-cell count-hadir">{{ $d->hadir }}</td>
-                                <td class="count-cell count-izin">{{ $d->izin }}</td>
-                                <td class="count-cell count-sakit">{{ $d->sakit }}</td>
-                                <td class="count-cell count-alpha">{{ $d->alpa }}</td>
-                                <td style="text-align:center;">
-                                    <a href="{{ route('admin.detail.presensi', $d->id_peserta) }}" class="btn-detail">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
-                                        </svg>
-                                        Detail
-                                    </a>
+                                <td>
+                                    @if($p->tanggal_presensi)
+                                        @php
+                                            $hari = date('l', strtotime($p->tanggal_presensi));
+                                            $hariIndonesia = [
+                                                'Monday' => 'Senin',
+                                                'Tuesday' => 'Selasa',
+                                                'Wednesday' => 'Rabu',
+                                                'Thursday' => 'Kamis',
+                                                'Friday' => 'Jumat',
+                                                'Saturday' => 'Sabtu',
+                                                'Sunday' => 'Minggu'
+                                            ];
+                                        @endphp
+                                        {{ $hariIndonesia[$hari] ?? $hari }}
+                                    @else
+                                        -
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($p->tanggal_presensi)
+                                        {{ date('d-m-Y', strtotime($p->tanggal_presensi)) }}
+                                    @else
+                                        -
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($p->surat_pendukung_izin)
+                                        <a href="{{ asset('storage/' . $p->surat_pendukung_izin) }}" target="_blank" style="color: var(--gold); text-decoration: none;">Lihat Surat</a>
+                                    @else
+                                        -
+                                    @endif
+                                </td>
+                                <td>
+                                    <span class="status-{{ strtolower($p->status_kehadiran) }}">
+                                        @switch($p->status_kehadiran)
+                                            @case('hadir')
+                                                Hadir
+                                                @break
+                                            @case('izin')
+                                                Izin
+                                                @break
+                                            @case('sakit')
+                                                Sakit
+                                                @break
+                                            @case('alpa')
+                                                Alpa
+                                                @break
+                                            @default
+                                                {{ ucfirst($p->status_kehadiran) }}
+                                        @endswitch
+                                    </span>
                                 </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="7" style="text-align:center; color:var(--muted); padding:28px;">
-                                    Belum ada data rekap presensi
+                                <td colspan="4" class="empty-message">
+                                    Belum ada data presensi untuk siswa ini
                                 </td>
                             </tr>
                             @endforelse
@@ -430,14 +458,29 @@
             </div>
         </div>
 
-        <div class="page-footer">
-            <a href="{{ route('admin.presensi') }}" class="btn-back">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="15 18 9 12 15 6"/>
-                </svg>
-                Kembali
-            </a>
-        </div>
+        <div class="page-footer" style="display:flex; gap:12px; align-items:center;">
+    <a href="{{ route('admin.detail.presensi.export', $peserta->id_peserta) }}"
+       style="display:inline-flex; align-items:center; gap:6px; padding:9px 22px;
+              background:#1D6F42; border:none; border-radius:50px; color:#fff;
+              font-family:'DM Sans',sans-serif; font-size:0.875rem; font-weight:500;
+              text-decoration:none; transition:opacity 0.2s;"
+       onmouseover="this.style.opacity='0.85'"
+       onmouseout="this.style.opacity='1'">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Export Excel
+    </a>
+
+    <a href="{{ route('admin.rekap.presensi') }}" class="btn-back">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Kembali
+    </a>
+</div>
     </div>
 
 </body>
