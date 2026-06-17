@@ -30,7 +30,7 @@
             flex-direction: column;
         }
 
-        /* HEADER */
+        /* ── HEADER ── */
         header {
             background: var(--warm-white);
             border-bottom: 1px solid rgba(200,135,58,0.15);
@@ -53,12 +53,20 @@
 
         .logo-wrap img { width: 100%; height: 100%; object-fit: contain; }
 
+        .brand-text {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+        }
+
         .brand-text h1 {
             font-family: 'Playfair Display', serif;
             font-size: 1.3rem;
             font-weight: 700;
             color: var(--dark);
             line-height: 1.2;
+            white-space: nowrap;
         }
 
         .brand-text p {
@@ -67,7 +75,7 @@
             font-weight: 300;
         }
 
-        /* MAIN */
+        /* ── MAIN ── */
         main {
             flex: 1;
             display: flex;
@@ -76,6 +84,7 @@
             padding: 48px 24px;
         }
 
+        /* ── LOGIN CARD ── */
         .login-card {
             background: var(--card-bg);
             border-radius: var(--radius);
@@ -235,7 +244,6 @@
             transform: translateY(-1px);
         }
 
-        /* kuota habis — sembunyikan tombol register */
         .btn-register.disabled {
             display: none;
         }
@@ -244,13 +252,94 @@
             grid-column: 1 / -1;
         }
 
-        @media (max-width: 580px) {
-            .login-card { grid-template-columns: 1fr; }
-            .card-photo { min-height: 160px; }
-            header { padding: 14px 20px; }
+        /* ══════════════════════════════════════════
+           RESPONSIVE — TABLET (≤700px)
+        ══════════════════════════════════════════ */
+        @media (max-width: 700px) {
+            /* Header: logo + teks berjejer, teks tidak absolut lagi */
+            header {
+                padding: 14px 16px;
+                gap: 12px;
+            }
+
+            .brand-text {
+                position: static;
+                transform: none;
+                text-align: left;
+            }
+
+            .brand-text h1 {
+                font-size: 0.95rem;
+                white-space: normal;
+                line-height: 1.3;
+            }
+
+            .brand-text p {
+                font-size: 0.75rem;
+            }
+
+            .logo-wrap {
+                width: 38px;
+                height: 38px;
+            }
+
+            /* Main: kurangi padding vertikal */
+            main {
+                padding: 24px 16px;
+                align-items: flex-start;
+            }
+
+            /* Card: 1 kolom */
+            .login-card {
+                grid-template-columns: 1fr;
+                max-width: 420px;
+            }
+
+            /* Foto: lebih pendek di mobile, tampil di atas */
+            .card-photo {
+                min-height: 160px;
+                max-height: 200px;
+            }
+
+            /* Form: padding lebih rapat */
+            .card-form {
+                padding: 28px 24px 32px;
+                gap: 16px;
+            }
+
+            .card-form h2 {
+                font-size: 1.3rem;
+            }
+        }
+
+        /* ══════════════════════════════════════════
+           RESPONSIVE — SMALL MOBILE (≤400px)
+        ══════════════════════════════════════════ */
+        @media (max-width: 400px) {
+            .brand-text h1 {
+                font-size: 0.85rem;
+            }
+
+            .brand-text p {
+                font-size: 0.7rem;
+            }
+
+            .card-form {
+                padding: 24px 18px 28px;
+            }
+
+            /* Tombol Register & Login full width masing-masing */
+            .btn-group {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-login-full {
+                grid-column: auto;
+            }
         }
     </style>
 </head>
+
 <script>
     function togglePassword(inputId, eyeId) {
         const input = document.getElementById(inputId);
@@ -271,86 +360,90 @@
         }
     }
 </script>
+
 <body>
 
-   <header>
-    <div class="logo-wrap">
-        <img src="{{ asset('images/logo-poliban.jpg') }}" alt="Logo Poliban">
-    </div>
-
-    <div class="brand-text" style="position:absolute; left:50%; transform:translateX(-50%); text-align:center;">
-        <h1>Perpustakaan Politeknik Negeri Banjarmasin</h1>
-        <p>Penerimaan dan Pengelolaan Peserta Magang</p>
-    </div>
-</header>
+    <header>
+        <div class="logo-wrap">
+            <img src="{{ asset('images/logo-poliban.jpg') }}" alt="Logo Poliban">
+        </div>
+        <div class="brand-text">
+            <h1>Perpustakaan Politeknik Negeri Banjarmasin</h1>
+            <p>Penerimaan dan Pengelolaan Peserta Magang</p>
+        </div>
+    </header>
 
     <main>
         <div class="login-card">
 
-            {{-- FOTO KIRI --}}
+            {{-- FOTO KIRI / ATAS --}}
             <div class="card-photo">
-                {{-- Ganti path foto gedung perpustakaan sesuai yang ada di project --}}
                 <img src="{{ asset('images/perpustakaan.jpg') }}"
                      alt="Perpustakaan Poliban"
                      onerror="this.parentElement.innerHTML='<div class=\'card-photo-fallback\'><span>Perpustakaan<br>Politeknik Negeri<br>Banjarmasin</span></div>'">
             </div>
 
-            {{-- FORM KANAN --}}
-           <div class="card-form">
-    <h2>Login</h2>
+            {{-- FORM KANAN / BAWAH --}}
+            <div class="card-form">
+                <h2>Login</h2>
 
-    @if(session('error'))
-        <div class="alert-error">{{ session('error') }}</div>
-    @endif
+                @if(session('error'))
+                    <div class="alert-error">{{ session('error') }}</div>
+                @endif
 
-    <form action="{{ route('peserta.login') }}" method="POST" style="display:flex;flex-direction:column;gap:16px;">
-        @csrf
+                <form action="{{ route('peserta.login') }}" method="POST"
+                      style="display:flex; flex-direction:column; gap:16px;">
+                    @csrf
 
-        <div class="field">
-            <label>NISN/NIM</label>
-            <div class="input-wrap">
-                <input type="text" name="nisn_nim" value="{{ old('nisn_nim') }}" autocomplete="off">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                    <circle cx="12" cy="7" r="4"/>
-                </svg>
+                    <div class="field">
+                        <label>NISN/NIM</label>
+                        <div class="input-wrap">
+                            <input type="text" name="nisn_nim"
+                                   value="{{ old('nisn_nim') }}" autocomplete="off">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2"
+                                 stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>Password</label>
+                        <div class="input-wrap">
+                            <input type="password" name="password" id="passwordLogin">
+                            <svg id="eyeLogin"
+                                 onclick="togglePassword('passwordLogin', 'eyeLogin')"
+                                 width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2"
+                                 stroke-linecap="round" stroke-linejoin="round"
+                                 style="cursor:pointer; pointer-events:all;">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                        </div>
+                        <div style="text-align:right; margin-top:4px;">
+                            <a href="{{ route('password.request') }}"
+                               style="font-size:0.75rem; color:#C8873A; text-decoration:none;">
+                               Lupa password?
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        @php $kuota = \App\Models\KuotaMagang::find(1); @endphp
+                        @if($kuota && $kuota->kuota_peserta > 0)
+                            <a href="{{ route('peserta.register') }}" class="btn-register">Register</a>
+                        @endif
+                        <button type="submit"
+                            class="btn-login {{ (!$kuota || $kuota->kuota_peserta <= 0) ? 'btn-login-full' : '' }}">
+                            Login
+                        </button>
+                    </div>
+
+                </form>
             </div>
-        </div>
-
-        <div class="field">
-            <label>Password</label>
-            <div class="input-wrap">
-                <input type="password" name="password" id="passwordLogin">
-                <svg id="eyeLogin" onclick="togglePassword('passwordLogin', 'eyeLogin')"
-                     width="16" height="16" viewBox="0 0 24 24" fill="none"
-                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                     style="cursor:pointer; pointer-events:all;">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                    <circle cx="12" cy="12" r="3"/>
-                </svg>
-            </div>
-            <div style="text-align:right; margin-top:4px;">
-                <a href="{{ route('password.request') }}"
-                   style="font-size:0.75rem; color:#C8873A; text-decoration:none;">
-                   Lupa password?
-                </a>
-            </div>
-        </div>
-
-        <div class="btn-group">
-            @php $kuota = \App\Models\KuotaMagang::find(1); @endphp
-            @if($kuota && $kuota->kuota_peserta > 0)
-                <a href="{{ route('peserta.register') }}" class="btn-register">Register</a>
-            @endif
-            <button type="submit"
-                class="btn-login {{ (!$kuota || $kuota->kuota_peserta <= 0) ? 'btn-login-full' : '' }}">
-                Login
-            </button>
-        </div>
-
-    </form>
-</div>
 
         </div>
     </main>

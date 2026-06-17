@@ -22,7 +22,6 @@
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         html { scroll-behavior: smooth; }
 
         body {
@@ -49,6 +48,7 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            min-width: 0; /* allow text to shrink */
         }
 
         .nav-logo {
@@ -64,6 +64,9 @@
             font-weight: 700;
             color: var(--dark);
             line-height: 1.3;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .nav-brand-text span {
@@ -119,6 +122,8 @@
             cursor: pointer;
             transition: background 0.2s, transform 0.15s;
             box-shadow: 0 4px 12px rgba(200,135,58,0.3);
+            white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .btn-nav-login:hover { background: var(--gold-light); transform: translateY(-1px); }
@@ -155,6 +160,7 @@
             margin: 0 auto;
             padding: 0 48px;
             text-align: center;
+            width: 100%;
         }
 
         .hero-badge {
@@ -192,8 +198,6 @@
             margin-bottom: 32px;
             font-weight: 300;
         }
-
-        
 
         /* ── SECTIONS ── */
         section { padding: 72px 48px; }
@@ -257,6 +261,13 @@
         }
 
         .stat-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* Di mobile, stat-cards berjajar horizontal */
+        .stat-cards-row {
             display: flex;
             flex-direction: column;
             gap: 16px;
@@ -519,6 +530,176 @@
             font-weight: 300;
         }
 
+        /* ── HAMBURGER ── */
+        .btn-hamburger {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            width: 38px;
+            height: 38px;
+            background: transparent;
+            border: 1px solid rgba(200,135,58,0.25);
+            border-radius: 8px;
+            cursor: pointer;
+            padding: 0;
+            flex-shrink: 0;
+            transition: background 0.2s;
+        }
+
+        .btn-hamburger:hover {
+            background: var(--gold-pale);
+        }
+
+        .btn-hamburger span {
+            display: block;
+            width: 18px;
+            height: 2px;
+            background: var(--dark);
+            border-radius: 2px;
+            transition: transform 0.3s, opacity 0.3s;
+            transform-origin: center;
+        }
+
+        /* Animasi X saat menu terbuka */
+        .btn-hamburger.is-open span:nth-child(1) {
+            transform: translateY(7px) rotate(45deg);
+        }
+
+        .btn-hamburger.is-open span:nth-child(2) {
+            opacity: 0;
+            transform: scaleX(0);
+        }
+
+        .btn-hamburger.is-open span:nth-child(3) {
+            transform: translateY(-7px) rotate(-45deg);
+        }
+
+        /* ── MOBILE MENU DRAWER ── */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 199;
+        }
+
+        /* Overlay gelap di belakang drawer */
+        .mobile-menu-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(26,18,8,0.45);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        /* Panel drawer dari kanan */
+        .mobile-menu-panel {
+            position: absolute;
+            top: 0; right: 0;
+            width: 260px;
+            height: 100%;
+            background: var(--warm-white);
+            box-shadow: -8px 0 32px rgba(26,18,8,0.15);
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            padding: 24px 0 0;
+            overflow-y: auto;
+            z-index: 1;
+        }
+
+        .mobile-menu.is-open {
+            display: block;
+        }
+
+        .mobile-menu.is-open .mobile-menu-overlay {
+            opacity: 1;
+        }
+
+        .mobile-menu.is-open .mobile-menu-panel {
+            transform: translateX(0);
+        }
+
+        .mobile-menu-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px 20px;
+            border-bottom: 1px solid rgba(200,135,58,0.15);
+            margin-bottom: 8px;
+        }
+
+        .mobile-menu-header .nav-brand-text {
+            font-size: 0.85rem;
+        }
+
+        .btn-close-menu {
+            width: 32px;
+            height: 32px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--muted);
+            border-radius: 6px;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .btn-close-menu:hover {
+            background: var(--gold-pale);
+            color: var(--gold);
+        }
+
+        .mobile-nav-links {
+            list-style: none;
+            padding: 0 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            flex: 1;
+        }
+
+        .mobile-nav-links a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--dark);
+            text-decoration: none;
+            border-radius: 10px;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .mobile-nav-links a:hover {
+            background: var(--gold-pale);
+            color: var(--gold);
+        }
+
+        .mobile-nav-links a svg {
+            color: var(--gold);
+            flex-shrink: 0;
+        }
+
+        .mobile-menu-footer {
+            padding: 16px 20px 24px;
+            border-top: 1px solid rgba(200,135,58,0.15);
+            margin-top: auto;
+        }
+
+        .mobile-menu-footer .btn-nav-login {
+            width: 100%;
+            justify-content: center;
+            padding: 10px 20px;
+            font-size: 0.85rem;
+            display: inline-flex !important;
+        }
+
         /* ── FOOTER ── */
         footer {
             background: var(--dark);
@@ -538,21 +719,227 @@
         }
 
         .footer-address svg { color: var(--gold); flex-shrink: 0; }
-
         .footer-copy { color: rgba(255,255,255,0.45); }
 
+        /* ══════════════════════════════════════════
+           RESPONSIVE — TABLET (≤900px)
+        ══════════════════════════════════════════ */
+        @media (max-width: 900px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            /* Di tablet stat-cards bisa berjajar 2 kolom */
+            .stat-cards {
+                flex-direction: row;
+            }
+
+            .stat-card {
+                flex: 1;
+            }
+        }
+
+        /* ══════════════════════════════════════════
+           RESPONSIVE — MOBILE (≤768px)
+        ══════════════════════════════════════════ */
         @media (max-width: 768px) {
-            nav { padding: 12px 20px; }
-            .nav-links { display: none; }
-            section { padding: 48px 20px; }
-            .hero-content { padding: 0 20px; }
-            .hero-title { font-size: 1.9rem; }
-            .info-grid { grid-template-columns: 1fr; }
-            .alur-grid { grid-template-columns: 1fr; }
-            .alur-grid::before { display: none; }
-            .info-2col { grid-template-columns: 1fr; }
-            .kontak-grid { flex-direction: column; }
-            footer { flex-direction: column; text-align: center; gap: 8px; }
+
+            /* Navbar */
+            nav {
+                padding: 12px 16px;
+                gap: 10px;
+            }
+
+            .nav-brand-text {
+                font-size: 0.8rem;
+            }
+
+            .nav-brand-text span {
+                font-size: 0.65rem;
+            }
+
+            .nav-logo {
+                width: 36px;
+                height: 36px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .btn-hamburger {
+                display: flex;
+            }
+
+            /* Tombol login di navbar disembunyikan — pindah ke dalam drawer */
+            .btn-nav-login {
+                display: none;
+            }
+
+            /* Hero */
+            .hero {
+                height: auto;
+                min-height: 420px;
+                padding: 60px 0;
+            }
+
+            .hero-content {
+                padding: 0 20px;
+            }
+
+            .hero-badge {
+                font-size: 0.65rem;
+                padding: 4px 12px;
+                margin-bottom: 14px;
+            }
+
+            .hero-title {
+                font-size: 1.6rem;
+                margin-bottom: 12px;
+            }
+
+            .hero-sub {
+                font-size: 0.88rem;
+                margin-bottom: 24px;
+            }
+
+            /* Sections */
+            section {
+                padding: 48px 16px;
+            }
+
+            .section-title {
+                font-size: 1.45rem;
+            }
+
+            .section-divider {
+                margin-bottom: 32px;
+            }
+
+            /* Info Website */
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                padding: 24px 20px;
+            }
+
+            /* Stat cards — horizontal di mobile */
+            .stat-cards {
+                flex-direction: row;
+                gap: 12px;
+            }
+
+            .stat-card {
+                flex: 1;
+                padding: 16px 12px;
+            }
+
+            .stat-num {
+                font-size: 1.6rem;
+            }
+
+            /* Alur Pendaftaran */
+            .alur-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .alur-grid::before {
+                display: none;
+            }
+
+            .alur-card {
+                padding: 24px 20px;
+                /* layout horizontal untuk mobile: ikon kiri, teks kanan */
+                display: flex;
+                align-items: flex-start;
+                text-align: left;
+                gap: 16px;
+            }
+
+            .alur-num {
+                margin: 0;
+                flex-shrink: 0;
+                width: 48px;
+                height: 48px;
+            }
+
+            .alur-card-body {
+                flex: 1;
+            }
+
+            /* Info Section */
+            .info-main-card {
+                padding: 24px 20px;
+            }
+
+            .info-2col {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .jam-row {
+                font-size: 0.82rem;
+            }
+
+            /* Kontak */
+            .kontak-grid {
+                flex-direction: column;
+                max-width: 100%;
+                gap: 12px;
+            }
+
+            .kontak-item {
+                flex: none;
+                width: 100%;
+            }
+
+            /* Footer */
+            footer {
+                flex-direction: column;
+                text-align: center;
+                padding: 20px 16px;
+                gap: 8px;
+            }
+
+            .footer-address {
+                justify-content: center;
+                flex-wrap: wrap;
+                text-align: center;
+            }
+        }
+
+        /* ══════════════════════════════════════════
+           RESPONSIVE — SMALL MOBILE (≤400px)
+        ══════════════════════════════════════════ */
+        @media (max-width: 400px) {
+            .hero-title {
+                font-size: 1.35rem;
+            }
+
+            .nav-brand-text {
+                /* Sembunyikan subtitle di layar sangat kecil */
+                font-size: 0.75rem;
+            }
+
+            .nav-brand-text span {
+                display: none;
+            }
+
+            .stat-cards {
+                flex-direction: column;
+            }
+
+            .stat-card {
+                flex: none;
+                width: 100%;
+            }
+
+            .kontak-item {
+                padding: 12px 16px;
+            }
         }
     </style>
 </head>
@@ -584,7 +971,81 @@
                 <polyline points="9 18 15 12 9 6"/>
             </svg>
         </a>
+
+        <!-- Tombol hamburger (hanya muncul di mobile) -->
+        <button class="btn-hamburger" id="btnHamburger" aria-label="Buka menu navigasi">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
     </nav>
+
+    <!-- MOBILE MENU DRAWER -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-overlay" id="menuOverlay"></div>
+        <div class="mobile-menu-panel">
+            <div class="mobile-menu-header">
+                <div class="nav-brand-text">
+                    Perpustakaan Poliban
+                    <span>Penerimaan Peserta Magang</span>
+                </div>
+                <button class="btn-close-menu" id="btnCloseMenu" aria-label="Tutup menu">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+
+            <ul class="mobile-nav-links">
+                <li>
+                    <a href="#beranda" class="menu-link">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                            <polyline points="9 22 9 12 15 12 15 22"/>
+                        </svg>
+                        Beranda
+                    </a>
+                </li>
+                <li>
+                    <a href="#alur" class="menu-link">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                        </svg>
+                        Alur Magang
+                    </a>
+                </li>
+                <li>
+                    <a href="#informasi" class="menu-link">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="12" y1="8" x2="12" y2="12"/>
+                            <line x1="12" y1="16" x2="12.01" y2="16"/>
+                        </svg>
+                        Informasi
+                    </a>
+                </li>
+                <li>
+                    <a href="#kontak" class="menu-link">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.56 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 5.61 5.61l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+                        </svg>
+                        Kontak Kami
+                    </a>
+                </li>
+            </ul>
+
+            <div class="mobile-menu-footer">
+                <a href="{{ route('peserta.login') }}" class="btn-nav-login">
+                    Login
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </div>
 
     <!-- HERO -->
     <section id="beranda" style="padding:0;">
@@ -601,7 +1062,6 @@
                     Platform terpadu untuk pendaftaran, seleksi, dan pengelolaan kegiatan
                     magang di Perpustakaan Politeknik Negeri Banjarmasin.
                 </p>
-                
             </div>
         </div>
     </section>
@@ -657,8 +1117,10 @@
                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                     </svg>
                 </div>
-                <h4>Pendaftaran Online</h4>
-                <p>Lengkapi formulir pendaftaran dengan data diri dan unggah berkas persyaratan yang diperlukan.</p>
+                <div class="alur-card-body">
+                    <h4>Pendaftaran Online</h4>
+                    <p>Lengkapi formulir pendaftaran dengan data diri dan unggah berkas persyaratan yang diperlukan.</p>
+                </div>
             </div>
 
             <div class="alur-card">
@@ -670,8 +1132,10 @@
                         <line x1="16" y1="17" x2="8" y2="17"/>
                     </svg>
                 </div>
-                <h4>Seleksi Berkas</h4>
-                <p>Admin perpustakaan akan meninjau kelengkapan berkas dan menentukan kelulusan seleksi administrasi.</p>
+                <div class="alur-card-body">
+                    <h4>Seleksi Berkas</h4>
+                    <p>Admin perpustakaan akan meninjau kelengkapan berkas dan menentukan kelulusan seleksi administrasi.</p>
+                </div>
             </div>
 
             <div class="alur-card">
@@ -681,8 +1145,10 @@
                         <polyline points="22 4 12 14.01 9 11.01"/>
                     </svg>
                 </div>
-                <h4>Konfirmasi Penerimaan</h4>
-                <p>Peserta yang diterima akan mendapatkan notifikasi dan surat balasan melalui sistem.</p>
+                <div class="alur-card-body">
+                    <h4>Konfirmasi Penerimaan</h4>
+                    <p>Peserta yang diterima akan mendapatkan notifikasi dan surat balasan melalui sistem.</p>
+                </div>
             </div>
         </div>
     </section>
@@ -817,6 +1283,35 @@
             &copy; {{ date('Y') }} Perpustakaan Politeknik Negeri Banjarmasin
         </div>
     </footer>
+
+    <script>
+        const btnHamburger = document.getElementById('btnHamburger');
+        const btnCloseMenu = document.getElementById('btnCloseMenu');
+        const menuOverlay  = document.getElementById('menuOverlay');
+        const mobileMenu   = document.getElementById('mobileMenu');
+        const menuLinks    = document.querySelectorAll('.menu-link');
+
+        function openMenu() {
+            mobileMenu.classList.add('is-open');
+            btnHamburger.classList.add('is-open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenu() {
+            mobileMenu.classList.remove('is-open');
+            btnHamburger.classList.remove('is-open');
+            document.body.style.overflow = '';
+        }
+
+        btnHamburger.addEventListener('click', openMenu);
+        btnCloseMenu.addEventListener('click', closeMenu);
+        menuOverlay.addEventListener('click', closeMenu);
+
+        // Tutup menu otomatis saat link diklik
+        menuLinks.forEach(link => {
+            link.addEventListener('click', closeMenu);
+        });
+    </script>
 
 </body>
 </html>

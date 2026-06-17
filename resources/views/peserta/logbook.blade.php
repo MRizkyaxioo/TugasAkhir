@@ -29,7 +29,7 @@
             display: flex;
         }
 
-        /* SIDEBAR */
+        /* ── SIDEBAR ── */
         .sidebar {
             width: var(--sidebar-w);
             background: var(--warm-white);
@@ -39,8 +39,9 @@
             position: fixed;
             top: 0; left: 0;
             height: 100vh;
-            z-index: 200;
+            z-index: 300;
             box-shadow: 2px 0 12px rgba(26,18,8,0.06);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .sidebar-logo {
@@ -59,6 +60,7 @@
             display: flex;
             flex-direction: column;
             gap: 2px;
+            overflow-y: auto;
         }
 
         .nav-item {
@@ -102,7 +104,23 @@
 
         .btn-logout:hover { background: var(--gold); color: #fff; }
 
-        /* MAIN */
+        /* ── SIDEBAR OVERLAY ── */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(26,18,8,0.45);
+            z-index: 299;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .sidebar-overlay.is-open {
+            display: block;
+            opacity: 1;
+        }
+
+        /* ── MAIN CONTENT ── */
         .main-content {
             margin-left: var(--sidebar-w);
             flex: 1;
@@ -111,11 +129,40 @@
             min-height: 100vh;
         }
 
+        /* ── PAGE HEADER ── */
         .page-header {
-            padding: 28px 36px 0;
+            padding: 20px 36px 0;
             display: flex;
             align-items: center;
+            gap: 14px;
+        }
+
+        /* Hamburger — hanya tampil di mobile */
+        .btn-hamburger-sidebar {
+            display: none;
+            flex-direction: column;
             justify-content: center;
+            align-items: center;
+            gap: 5px;
+            width: 38px;
+            height: 38px;
+            background: transparent;
+            border: 1px solid rgba(200,135,58,0.25);
+            border-radius: 8px;
+            cursor: pointer;
+            padding: 0;
+            flex-shrink: 0;
+            transition: background 0.2s;
+        }
+
+        .btn-hamburger-sidebar:hover { background: rgba(200,135,58,0.1); }
+
+        .btn-hamburger-sidebar span {
+            display: block;
+            width: 18px;
+            height: 2px;
+            background: var(--dark);
+            border-radius: 2px;
         }
 
         .page-header-title {
@@ -128,11 +175,20 @@
             border-radius: 50px;
             background: var(--card-bg);
             box-shadow: var(--shadow);
+            flex: 1;
+            text-align: center;
         }
 
+        /* Spacer kiri agar title center di desktop */
+        .header-spacer {
+            width: 38px;
+            flex-shrink: 0;
+        }
+
+        /* ── PAGE BODY ── */
         .page-body { padding: 24px 36px 40px; }
 
-        /* CARD */
+        /* ── CARD ── */
         .card {
             background: var(--card-bg);
             border-radius: var(--radius);
@@ -141,13 +197,18 @@
             padding: 24px 28px;
         }
 
-        /* ALERT */
+        /* ── ALERTS ── */
         .alert-success {
             background: #F0FDF4; border: 1px solid #BBF7D0; color: #166534;
             font-size: 0.85rem; padding: 12px 16px; border-radius: 10px; margin-bottom: 16px;
         }
 
-        /* FORM AREA */
+        .alert-error {
+            background: #FEF2F2; border: 1px solid #FECACA; color: #C0392B;
+            font-size: 0.85rem; padding: 12px 16px; border-radius: 10px; margin-bottom: 16px;
+        }
+
+        /* ── FORM ── */
         .form-row {
             display: grid;
             grid-template-columns: auto 1fr auto auto;
@@ -186,7 +247,7 @@
             min-width: 200px;
         }
 
-        /* FILE INPUT */
+        /* ── FILE INPUT ── */
         .file-field { display: flex; flex-direction: column; gap: 5px; }
 
         .file-field label {
@@ -229,11 +290,12 @@
             transition: background 0.2s, transform 0.15s;
             box-shadow: 0 4px 12px rgba(200,135,58,0.3);
             align-self: flex-end;
+            white-space: nowrap;
         }
 
         .btn-kirim:hover { background: var(--gold-light); transform: translateY(-1px); }
 
-        /* TABLE */
+        /* ── TABLE ── */
         .table-wrap { overflow-x: auto; margin-top: 8px; }
 
         table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
@@ -246,6 +308,7 @@
             font-size: 0.82rem;
             color: var(--muted);
             border-bottom: 2px solid #E8D5B5;
+            white-space: nowrap;
         }
 
         tbody tr { border-bottom: 1px solid #F5E6D0; transition: background 0.15s; }
@@ -258,19 +321,13 @@
             padding: 28px;
         }
 
-        @media (max-width: 768px) {
-            .sidebar { transform: translateX(-100%); }
-            .main-content { margin-left: 0; }
-            .page-body { padding: 16px; }
-            .form-row { grid-template-columns: 1fr; }
-        }
-
         .bukti-img {
             max-width: 80px;
             max-height: 80px;
             border-radius: 6px;
             object-fit: cover;
         }
+
         .btn-edit {
             background: #C8873A;
             color: #fff;
@@ -281,11 +338,9 @@
             cursor: pointer;
             margin-left: 8px;
         }
+
         .btn-edit:hover { background: #E8A85A; }
-        .alert-error {
-            background: #FEF2F2; border: 1px solid #FECACA; color: #C0392B;
-            font-size: 0.85rem; padding: 12px 16px; border-radius: 10px; margin-bottom: 16px;
-        }
+
         .btn-cetak {
             display: inline-flex;
             align-items: center;
@@ -300,13 +355,124 @@
             box-shadow: 0 3px 10px rgba(200,135,58,0.3);
             margin-bottom: 16px;
         }
+
         .btn-cetak:hover { background: var(--gold-light); }
+
+        /* ══════════════════════════════════════════
+           RESPONSIVE — MOBILE (≤768px)
+        ══════════════════════════════════════════ */
+        @media (max-width: 768px) {
+
+            /* Sidebar jadi drawer */
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.is-open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            /* Page header */
+            .page-header {
+                padding: 16px 12px 0;
+                gap: 10px;
+            }
+
+            .btn-hamburger-sidebar {
+                display: flex;
+            }
+
+            /* Sembunyikan spacer — tidak perlu centering trick di mobile */
+            .header-spacer {
+                display: none;
+            }
+
+            .page-header-title {
+                font-size: 1rem;
+                padding: 10px 20px;
+                border-radius: 12px;
+                text-align: left;
+            }
+
+            /* Page body */
+            .page-body {
+                padding: 16px 12px 32px;
+            }
+
+            .card {
+                padding: 18px 16px;
+            }
+
+            /* Form: stack semua field jadi 1 kolom */
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .field textarea {
+                min-width: 0;
+                width: 100%;
+            }
+
+            .btn-kirim {
+                width: 100%;
+                text-align: center;
+                justify-content: center;
+            }
+
+            /* Tabel: kolom No & Tanggal lebih rapat */
+            thead th,
+            tbody td {
+                padding: 8px 10px;
+                font-size: 0.8rem;
+            }
+
+            /* Gambar bukti lebih kecil di mobile */
+            .bukti-img {
+                max-width: 56px;
+                max-height: 56px;
+            }
+
+            /* Tombol Cetak PDF full width */
+            .btn-cetak {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* ══════════════════════════════════════════
+           RESPONSIVE — SMALL MOBILE (≤400px)
+        ══════════════════════════════════════════ */
+        @media (max-width: 400px) {
+            .page-header-title {
+                font-size: 0.9rem;
+                padding: 8px 16px;
+            }
+
+            thead th,
+            tbody td {
+                font-size: 0.75rem;
+                padding: 7px 8px;
+            }
+
+            .bukti-img {
+                max-width: 44px;
+                max-height: 44px;
+            }
+        }
     </style>
 </head>
 <body>
 
+    <!-- SIDEBAR OVERLAY -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     <!-- SIDEBAR -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
         <div class="sidebar-logo">
             <img src="{{ asset('images/logo-poliban.jpg') }}" alt="Logo Poliban">
         </div>
@@ -345,8 +511,19 @@
 
     <!-- MAIN -->
     <div class="main-content">
+
         <div class="page-header">
+            <!-- Hamburger (mobile only) -->
+            <button class="btn-hamburger-sidebar" id="btnOpenSidebar" aria-label="Buka menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
             <div class="page-header-title">Logbook Harian</div>
+
+            <!-- Spacer agar title center di desktop -->
+            <div class="header-spacer"></div>
         </div>
 
         <div class="page-body">
@@ -362,16 +539,20 @@
 
                 {{-- Tombol Cetak PDF --}}
                 <a href="{{ route('peserta.logbook.export.pdf') }}" class="btn-cetak" target="_blank">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 6 2 18 2 18 9"/>
+                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+                        <rect x="6" y="14" width="12" height="8"/>
+                    </svg>
                     Cetak PDF
                 </a>
 
-                {{-- FORM CREATE (jika belum ada logbook hari ini, dan presensi sudah dilakukan) --}}
+                {{-- FORM CREATE --}}
                 @if(!$presensiHariIni)
-                    <div style="text-align:center; padding: 20px; color: var(--muted); font-size:0.9rem;">
+                    <div style="text-align:center; padding:20px; color:var(--muted); font-size:0.9rem;">
                         ⚠️ Anda belum melakukan presensi hari ini. Silakan presensi terlebih dahulu.
                     </div>
                 @elseif(!$logbookHariIni)
-                    {{-- Form input baru --}}
                     <form action="{{ route('peserta.logbook.store') }}" method="POST"
                           enctype="multipart/form-data" id="form-logbook">
                         @csrf
@@ -397,9 +578,8 @@
                         </div>
                     </form>
                 @else
-                    {{-- Sudah ada logbook hari ini --}}
                     <div style="margin-bottom:20px; padding:12px; background:#FFFDF9; border:1px solid #E8D5B5; border-radius:8px;">
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
                             <strong>Logbook Hari Ini ({{ \Carbon\Carbon::parse($logbookHariIni->tanggal)->format('d-m-Y') }})</strong>
                             @if($bisaEdit)
                                 <button class="btn-edit" onclick="editLogbook({{ $logbookHariIni->id_logbook }})">Edit</button>
@@ -414,7 +594,7 @@
                                 @if(in_array(strtolower($ext), ['jpg','jpeg','png','gif']))
                                     <img src="{{ asset('storage/'.$logbookHariIni->bukti_foto) }}" class="bukti-img" alt="Bukti">
                                 @else
-                                    <a href="{{ asset('storage/'.$logbookHariIni->bukti_foto) }}" target="_blank" class="bukti-link">Lihat Bukti (PDF)</a>
+                                    <a href="{{ asset('storage/'.$logbookHariIni->bukti_foto) }}" target="_blank">Lihat Bukti (PDF)</a>
                                 @endif
                             </div>
                         @endif
@@ -429,14 +609,14 @@
                                 <th>No</th>
                                 <th>Tanggal</th>
                                 <th>Kegiatan</th>
-                                <th>Bukti Kegiatan</th>
+                                <th>Bukti</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($data as $i => $d)
                             <tr>
                                 <td>{{ $i + 1 }}</td>
-                                <td>{{ \Carbon\Carbon::parse($d->tanggal)->format('d-m-Y') }}</td>
+                                <td style="white-space:nowrap;">{{ \Carbon\Carbon::parse($d->tanggal)->format('d-m-Y') }}</td>
                                 <td>{{ $d->kegiatan }}</td>
                                 <td>
                                     @if($d->bukti_foto)
@@ -444,7 +624,7 @@
                                         @if(in_array(strtolower($ext), ['jpg','jpeg','png','gif']))
                                             <img src="{{ asset('storage/'.$d->bukti_foto) }}" class="bukti-img" alt="Bukti">
                                         @else
-                                            <a href="{{ asset('storage/'.$d->bukti_foto) }}" target="_blank" class="bukti-link">Lihat Bukti (PDF)</a>
+                                            <a href="{{ asset('storage/'.$d->bukti_foto) }}" target="_blank" style="color:var(--gold); font-size:0.8rem;">PDF</a>
                                         @endif
                                     @else
                                         <span style="color:var(--muted); font-size:0.8rem;">-</span>
@@ -466,74 +646,91 @@
 
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    const updateUrlBase = "{{ route('peserta.logbook.update', ['id' => '__ID__']) }}";
+    <script>
+        // ── Sidebar drawer ──
+        const sidebar        = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const btnOpen        = document.getElementById('btnOpenSidebar');
 
-    function editLogbook(id) {
-        Swal.fire({
-            title: 'Edit Logbook',
-            html: `
-                <textarea id="swal-kegiatan" class="swal2-textarea" placeholder="Kegiatan" style="height:100px; width:100%;">${ "{{ $logbookHariIni ? addslashes($logbookHariIni->kegiatan) : '' }}" }</textarea>
-                <div style="margin-top:12px; text-align:left;">
-                    <label for="swal-bukti" style="display:inline-block; background:#C8873A; color:#fff; padding:8px 16px; border-radius:6px; cursor:pointer; font-size:0.85rem;">
-                        Ubah Gambar
-                    </label>
-                    <input type="file" id="swal-bukti" accept="image/*" style="display:none;">
-                    <span id="swal-file-name" style="margin-left:10px; font-size:0.8rem; color:var(--muted);"></span>
-                </div>
-            `,
-            showCancelButton: true,
-            confirmButtonText: 'Simpan',
-            didOpen: () => {
-                document.getElementById('swal-bukti').addEventListener('change', function() {
-                    const fileName = this.files[0]?.name || '';
-                    document.getElementById('swal-file-name').textContent = fileName;
-                });
-            },
-            preConfirm: () => {
-                const kegiatan = document.getElementById('swal-kegiatan').value;
-                if (!kegiatan) {
-                    Swal.showValidationMessage('Kegiatan wajib diisi');
-                    return false;
-                }
-                const fileInput = document.getElementById('swal-bukti');
-                const file = fileInput.files[0] || null;
-                return { kegiatan, file };
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                const formData = new FormData();
-                formData.append('_token', '{{ csrf_token() }}');
-                formData.append('_method', 'PUT');
-                formData.append('kegiatan', result.value.kegiatan);
-                if (result.value.file) {
-                    formData.append('bukti_foto', result.value.file);
-                }
+        function openSidebar() {
+            sidebar.classList.add('is-open');
+            sidebarOverlay.classList.add('is-open');
+            document.body.style.overflow = 'hidden';
+        }
 
-                fetch(updateUrlBase.replace('__ID__', id), {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                })
-                .then(response => response.json().then(data => ({ ok: response.ok, data })))
-                .then(({ ok, data }) => {
-                    if (ok) {
-                        Swal.fire('Berhasil', data.message || 'Logbook berhasil diperbarui', 'success')
-                            .then(() => location.reload());
-                    } else {
-                        Swal.fire('Gagal', data.message || 'Terjadi kesalahan', 'error');
-                    }
-                })
-                .catch(error => {
-                    Swal.fire('Gagal', 'Terjadi kesalahan jaringan', 'error');
-                });
-            }
+        function closeSidebar() {
+            sidebar.classList.remove('is-open');
+            sidebarOverlay.classList.remove('is-open');
+            document.body.style.overflow = '';
+        }
+
+        btnOpen.addEventListener('click', openSidebar);
+        sidebarOverlay.addEventListener('click', closeSidebar);
+
+        document.querySelectorAll('.nav-item').forEach(link => {
+            link.addEventListener('click', closeSidebar);
         });
-    }
-</script>
+
+        // ── Edit Logbook ──
+        const updateUrlBase = "{{ route('peserta.logbook.update', ['id' => '__ID__']) }}";
+
+        function editLogbook(id) {
+            Swal.fire({
+                title: 'Edit Logbook',
+                html: `
+                    <textarea id="swal-kegiatan" class="swal2-textarea" placeholder="Kegiatan"
+                              style="height:100px; width:100%;">${ "{{ $logbookHariIni ? addslashes($logbookHariIni->kegiatan) : '' }}" }</textarea>
+                    <div style="margin-top:12px; text-align:left;">
+                        <label for="swal-bukti" style="display:inline-block; background:#C8873A; color:#fff;
+                               padding:8px 16px; border-radius:6px; cursor:pointer; font-size:0.85rem;">
+                            Ubah Gambar
+                        </label>
+                        <input type="file" id="swal-bukti" accept="image/*" style="display:none;">
+                        <span id="swal-file-name" style="margin-left:10px; font-size:0.8rem; color:var(--muted);"></span>
+                    </div>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Simpan',
+                didOpen: () => {
+                    document.getElementById('swal-bukti').addEventListener('change', function() {
+                        document.getElementById('swal-file-name').textContent = this.files[0]?.name || '';
+                    });
+                },
+                preConfirm: () => {
+                    const kegiatan = document.getElementById('swal-kegiatan').value;
+                    if (!kegiatan) {
+                        Swal.showValidationMessage('Kegiatan wajib diisi');
+                        return false;
+                    }
+                    return { kegiatan, file: document.getElementById('swal-bukti').files[0] || null };
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const formData = new FormData();
+                    formData.append('_token', '{{ csrf_token() }}');
+                    formData.append('_method', 'PUT');
+                    formData.append('kegiatan', result.value.kegiatan);
+                    if (result.value.file) formData.append('bukti_foto', result.value.file);
+
+                    fetch(updateUrlBase.replace('__ID__', id), {
+                        method: 'POST',
+                        body: formData,
+                        headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                    .then(r => r.json().then(data => ({ ok: r.ok, data })))
+                    .then(({ ok, data }) => {
+                        if (ok) {
+                            Swal.fire('Berhasil', data.message || 'Logbook berhasil diperbarui', 'success')
+                                .then(() => location.reload());
+                        } else {
+                            Swal.fire('Gagal', data.message || 'Terjadi kesalahan', 'error');
+                        }
+                    })
+                    .catch(() => Swal.fire('Gagal', 'Terjadi kesalahan jaringan', 'error'));
+                }
+            });
+        }
+    </script>
 
 </body>
 </html>

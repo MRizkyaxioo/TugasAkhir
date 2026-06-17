@@ -29,7 +29,7 @@
             flex-direction: column;
         }
 
-        /* HEADER */
+        /* ── HEADER ── */
         header {
             background: var(--warm-white);
             border-bottom: 1px solid rgba(200,135,58,0.15);
@@ -37,14 +37,15 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 16px;
             box-shadow: 0 2px 12px rgba(26,18,8,0.05);
-            position: relative;
         }
 
         .header-left {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: 14px;
+            min-width: 0;
         }
 
         .logo-wrap {
@@ -56,17 +57,16 @@
 
         .brand-text h1 {
             font-family: 'Playfair Display', serif;
-            font-size: 1.5rem; font-weight: 700;
-            color: var(--dark); line-height: 1.2;
-        }
-        .brand-text p { font-size: 1rem; color: var(--muted); font-weight: 300; }
-
-        /* HEADER TITLE CENTER */
-        .header-title {
-            font-family: 'Playfair Display', serif;
             font-size: 1.1rem;
             font-weight: 700;
             color: var(--dark);
+            line-height: 1.2;
+        }
+
+        .brand-text p {
+            font-size: 0.82rem;
+            color: var(--muted);
+            font-weight: 300;
         }
 
         /* LOGOUT BTN */
@@ -85,6 +85,8 @@
             cursor: pointer;
             transition: background 0.2s, transform 0.15s;
             box-shadow: 0 4px 14px rgba(200,135,58,0.35);
+            white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .btn-logout:hover {
@@ -92,7 +94,7 @@
             transform: translateY(-1px);
         }
 
-        /* MAIN */
+        /* ── MAIN ── */
         main {
             flex: 1;
             display: flex;
@@ -109,7 +111,7 @@
             gap: 20px;
         }
 
-        /* INFO CARD */
+        /* ── INFO CARD ── */
         .info-card {
             background: var(--card-bg);
             border-radius: var(--radius);
@@ -144,16 +146,15 @@
         }
 
         .avatar-info p {
-            font-size: 0,78rem;
+            font-size: 0.78rem;
             color: var(--muted);
             margin-top: 2px;
         }
 
         .info-card-body {
-            padding: 24px 28px;
+            padding: 8px 28px 16px;
             display: flex;
             flex-direction: column;
-            gap: 0;
         }
 
         .info-row {
@@ -230,10 +231,88 @@
             color: var(--dark);
         }
 
-        @media (max-width: 580px) {
-            header { padding: 14px 20px; flex-wrap: wrap; gap: 10px; }
-            .header-title { display: none; }
-            .info-label { width: 100px; }
+        /* ══════════════════════════════════════════
+           RESPONSIVE — TABLET (≤700px)
+        ══════════════════════════════════════════ */
+        @media (max-width: 700px) {
+            /* Header: logo + teks kiri, logout kanan — tidak ada absolut */
+            header {
+                padding: 12px 16px;
+                gap: 10px;
+            }
+
+            .logo-wrap {
+                width: 36px;
+                height: 36px;
+            }
+
+            .brand-text h1 {
+                font-size: 0.9rem;
+            }
+
+            .brand-text p {
+                font-size: 0.72rem;
+            }
+
+            .btn-logout {
+                padding: 7px 14px;
+                font-size: 0.8rem;
+                gap: 6px;
+            }
+
+            /* Sembunyikan label teks Logout, hanya tampilkan ikon */
+            .btn-logout .logout-text {
+                display: none;
+            }
+
+            /* Main */
+            main {
+                padding: 20px 12px 40px;
+                align-items: flex-start;
+            }
+
+            /* Info card */
+            .info-card-header {
+                padding: 16px 20px;
+            }
+
+            .info-card-body {
+                padding: 4px 20px 12px;
+            }
+
+            /* Info row: stack label di atas value */
+            .info-row {
+                flex-direction: column;
+                gap: 3px;
+                padding: 10px 0;
+            }
+
+            .info-label {
+                width: auto;
+                font-size: 0.75rem;
+            }
+
+            .info-value {
+                font-size: 0.875rem;
+            }
+
+            .notice-card {
+                padding: 16px 20px;
+                font-size: 0.825rem;
+            }
+        }
+
+        /* ══════════════════════════════════════════
+           RESPONSIVE — SMALL MOBILE (≤400px)
+        ══════════════════════════════════════════ */
+        @media (max-width: 400px) {
+            .brand-text p {
+                display: none;
+            }
+
+            .brand-text h1 {
+                font-size: 0.82rem;
+            }
         }
     </style>
 </head>
@@ -244,8 +323,7 @@
             <div class="logo-wrap">
                 <img src="{{ asset('images/logo-poliban.jpg') }}" alt="Logo Poliban">
             </div>
-
-            <div class="brand-text" style="position:absolute; left:50%; transform:translateX(-50%); text-align:center;">
+            <div class="brand-text">
                 <h1>Selamat Datang Calon Peserta</h1>
                 <p>Perpustakaan Politeknik Negeri Banjarmasin</p>
             </div>
@@ -254,7 +332,7 @@
         <form action="{{ route('peserta.logout') }}" method="POST">
             @csrf
             <button type="submit" class="btn-logout">
-                Logout
+                <span class="logout-text">Logout</span>
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>

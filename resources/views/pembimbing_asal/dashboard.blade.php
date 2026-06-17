@@ -29,44 +29,43 @@
             flex-direction: column;
         }
 
-        /* HEADER */
+        /* ── HEADER ── */
         header {
             background: var(--warm-white);
             border-bottom: 1px solid rgba(200,135,58,0.15);
-            padding: 18px 48px;
+            padding: 16px 48px;
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 16px;
             box-shadow: 0 2px 12px rgba(26,18,8,0.05);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            position: relative;
         }
 
         .header-left {
             display: flex;
             align-items: center;
-            gap: 20px;
-        }
-
-        .logo-wrap {
-            width: 52px; height: 52px;
-            display: flex; align-items: center; justify-content: center;
+            gap: 14px;
             flex-shrink: 0;
         }
 
+        .logo-wrap {
+            width: 48px; height: 48px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
         .logo-wrap img { width: 100%; height: 100%; object-fit: contain; }
 
-        .header-info {
+        .header-center {
+            flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 2px;
+            align-items: center;
+            gap: 3px;
         }
 
         .header-title {
             font-family: 'Playfair Display', serif;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 700;
             color: var(--dark);
             border: 2px solid rgba(200,135,58,0.25);
@@ -74,13 +73,12 @@
             border-radius: 50px;
             background: var(--card-bg);
             box-shadow: var(--shadow);
+            white-space: nowrap;
         }
 
         .header-sub {
             font-size: 0.78rem;
             color: var(--muted);
-            text-align: center;
-            margin-top: 4px;
         }
 
         .btn-logout {
@@ -98,147 +96,74 @@
             cursor: pointer;
             transition: background 0.2s, transform 0.15s;
             box-shadow: 0 4px 14px rgba(200,135,58,0.35);
+            white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .btn-logout:hover { background: var(--gold-light); transform: translateY(-1px); }
 
-        /* MAIN */
-        main { flex: 1; padding: 32px 48px 48px; }
+        /* ── MAIN ── */
+        main { flex: 1; padding: 28px 48px 48px; }
 
-        /* CARD */
+        /* ── CARD — lebar penuh ── */
         .card {
             background: var(--card-bg);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
             border: 1px solid rgba(200,135,58,0.08);
             padding: 24px 28px;
-            max-width: 800px;
-            margin: 0 auto;
+            width: 100%;
         }
 
-        /* FILTER */
+        /* ── FILTER — 1 baris ── */
         .filter-bar {
             display: flex;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
             gap: 12px;
             align-items: flex-end;
             margin-bottom: 20px;
         }
 
-        .filter-group { display: flex; flex-direction: column; gap: 4px; }
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+            min-width: 0;
+        }
 
         .filter-group label {
             font-size: 0.78rem;
             font-weight: 500;
             color: var(--muted);
+            white-space: nowrap;
         }
 
-        .filter-group input {
-            padding: 8px 14px;
+        .filter-group input,
+        .filter-group select {
+            width: 100%;
+            padding: 8px 12px;
             border: 1.5px solid #E8D5B5;
             border-radius: 8px;
             font-family: 'DM Sans', sans-serif;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             color: var(--dark);
             background: var(--warm-white);
             outline: none;
-            min-width: 140px;
             transition: border-color 0.2s;
         }
 
-        .filter-group input:focus { border-color: var(--gold); }
+        .filter-group input:focus,
+        .filter-group select:focus { border-color: var(--gold); }
 
-        .filter-group select {
-    padding: 8px 14px;
-    border: 1.5px solid #E8D5B5;
-    border-radius: 8px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.85rem;
-    color: var(--dark);
-    background: var(--warm-white);
-    outline: none;
-    min-width: 180px;
-    transition: border-color 0.2s;
-}
+        .filter-actions {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            flex-shrink: 0;
+        }
 
-.filter-group select:focus {
-    border-color: var(--gold);
-}
-
-/* PAGINATION */
-.pagination-wrapper {
-    margin-top: 24px;
-    display: flex;
-    justify-content: center;
-}
-
-.pagination {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.pagination .page-item {
-    list-style: none;
-}
-
-.pagination .page-link {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 40px;
-    height: 40px;
-    padding: 0 14px;
-    border-radius: 12px;
-    border: 1.5px solid #E8D5B5;
-    background: var(--warm-white);
-    color: var(--muted);
-    font-size: 0.85rem;
-    font-weight: 500;
-    text-decoration: none;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(26,18,8,0.04);
-}
-
-.pagination .page-link:hover {
-    background: rgba(200,135,58,0.12);
-    border-color: var(--gold);
-    color: var(--gold);
-    transform: translateY(-1px);
-}
-
-.pagination .page-item.active .page-link {
-    background: var(--gold);
-    border-color: var(--gold);
-    color: #fff;
-    box-shadow: 0 4px 14px rgba(200,135,58,0.25);
-}
-
-.pagination .page-item.disabled .page-link {
-    background: #F9F5EE;
-    color: #B8ADA1;
-    border-color: #EFE3D1;
-    cursor: not-allowed;
-    box-shadow: none;
-}
-
-@media (max-width: 768px) {
-    .pagination {
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-
-    .pagination .page-link {
-        min-width: 36px;
-        height: 36px;
-        font-size: 0.8rem;
-        border-radius: 10px;
-    }
-}
-
+        /* ── BUTTONS ── */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -261,7 +186,7 @@
         .btn-outline:hover { background: var(--gold); color: #fff; }
         .btn-sm { padding: 5px 14px; font-size: 0.78rem; }
 
-        /* TABLE */
+        /* ── TABLE ── */
         .table-wrap { overflow-x: auto; }
 
         table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
@@ -274,6 +199,7 @@
             font-size: 0.82rem;
             color: var(--muted);
             border-bottom: 2px solid #E8D5B5;
+            white-space: nowrap;
         }
 
         tbody tr { border-bottom: 1px solid #F5E6D0; transition: background 0.15s; }
@@ -286,12 +212,13 @@
             border-radius: 50px;
             font-size: 0.75rem;
             font-weight: 500;
+            white-space: nowrap;
         }
 
         .badge-diterima { background: #DCFCE7; color: #166534; border: 1px solid #BBF7D0; }
         .badge-selesai  { background: #E0F2FE; color: #075985; border: 1px solid #BAE6FD; }
 
-        .aksi-cell { display: flex; gap: 8px; align-items: center; }
+        .aksi-cell { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
 
         .empty-row td {
             text-align: center;
@@ -299,9 +226,132 @@
             padding: 28px;
         }
 
-        @media (max-width: 768px) {
-            header { padding: 14px 20px; }
-            main { padding: 20px; }
+        /* ── PAGINATION ── */
+        .pagination-wrapper {
+            margin-top: 24px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .pagination {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            list-style: none;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .pagination .page-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 38px;
+            height: 38px;
+            padding: 0 12px;
+            border-radius: 10px;
+            border: 1.5px solid #E8D5B5;
+            background: var(--warm-white);
+            color: var(--muted);
+            font-size: 0.82rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .pagination .page-link:hover {
+            background: rgba(200,135,58,0.12);
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .pagination .page-item.active .page-link {
+            background: var(--gold);
+            border-color: var(--gold);
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(200,135,58,0.25);
+        }
+
+        .pagination .page-item.disabled .page-link {
+            background: #F9F5EE;
+            color: #B8ADA1;
+            border-color: #EFE3D1;
+            cursor: not-allowed;
+        }
+
+        /* ══════════════════════════════════════════
+           RESPONSIVE — TABLET (≤900px)
+        ══════════════════════════════════════════ */
+        @media (max-width: 900px) {
+            main { padding: 20px 20px 40px; }
+
+            .filter-bar { flex-wrap: wrap; }
+
+            .filter-group {
+                flex: 1 1 calc(50% - 6px);
+                min-width: 140px;
+            }
+
+            .filter-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+
+        /* ══════════════════════════════════════════
+           RESPONSIVE — MOBILE (≤700px)
+        ══════════════════════════════════════════ */
+        @media (max-width: 700px) {
+            header { padding: 12px 16px; gap: 10px; }
+
+            .logo-wrap { width: 36px; height: 36px; }
+
+            .header-title {
+                font-size: 0.88rem;
+                padding: 7px 14px;
+                border-radius: 10px;
+                white-space: normal;
+                text-align: center;
+            }
+
+            .header-sub { font-size: 0.7rem; }
+
+            .btn-logout .logout-text { display: none; }
+            .btn-logout { padding: 8px 12px; }
+
+            main { padding: 16px 12px 32px; }
+
+            .card { padding: 18px 14px; }
+
+            .filter-bar { flex-wrap: wrap; }
+
+            .filter-group { flex: 1 1 100%; }
+
+            .filter-actions {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .filter-actions .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            thead th,
+            tbody td {
+                padding: 8px 10px;
+                font-size: 0.78rem;
+            }
+
+            .btn-sm { padding: 4px 10px; font-size: 0.72rem; }
+        }
+
+        /* ══════════════════════════════════════════
+           RESPONSIVE — SMALL MOBILE (≤400px)
+        ══════════════════════════════════════════ */
+        @media (max-width: 400px) {
+            .header-title { font-size: 0.8rem; padding: 6px 12px; }
+            .header-sub { display: none; }
         }
     </style>
 </head>
@@ -309,28 +359,31 @@
 
     <!-- HEADER -->
     <header>
-    <div class="logo-wrap">
-        <img src="{{ asset('images/logo-poliban.jpg') }}" alt="Logo Poliban">
-    </div>
-
-    <div style="position:absolute; left:50%; transform:translateX(-50%); text-align:center;">
-        <div class="header-title">Dashboard Pembimbing</div>
-        <div class="header-sub">
-            Login sebagai : {{ auth()->guard('pembimbing_asal')->user()->nama }}
+        <div class="header-left">
+            <div class="logo-wrap">
+                <img src="{{ asset('images/logo-poliban.jpg') }}" alt="Logo Poliban">
+            </div>
         </div>
-    </div>
 
-    <form action="{{ route('admin.logout') }}" method="POST">
-        @csrf
-        <button type="submit" class="btn-logout">
-            Logout
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                <polyline points="16 17 21 12 16 7"/>
-                <line x1="21" y1="12" x2="9" y2="12"/>
-            </svg>
-        </button>
-    </form>
+        <div class="header-center">
+            <div class="header-title">Dashboard Pembimbing</div>
+            <div class="header-sub">
+                Login sebagai : {{ auth()->guard('pembimbing_asal')->user()->nama }}
+            </div>
+        </div>
+
+        <form action="{{ route('admin.logout') }}" method="POST">
+            @csrf
+            <button type="submit" class="btn-logout">
+                <span class="logout-text">Logout</span>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+            </button>
+        </form>
     </header>
 
     <!-- MAIN -->
@@ -340,66 +393,60 @@
             <!-- FILTER -->
             <form method="GET" action="{{ route('pembimbing_asal.dashboard') }}">
                 <div class="filter-bar">
+
                     <div class="filter-group">
                         <label>Nama Peserta</label>
-                        <input type="text" name="nama" placeholder="Nama Peserta" value="{{ request('nama') }}">
+                        <input type="text" name="nama"
+                               placeholder="Nama Peserta" value="{{ request('nama') }}">
                     </div>
+
                     <div class="filter-group">
-    <label>Jurusan</label>
-    <select name="jurusan">
-        <option value="">Semua Jurusan</option>
-        @foreach($jurusan as $j)
-            <option value="{{ $j->id_jurusan }}"
-                {{ request('jurusan') == $j->id_jurusan ? 'selected' : '' }}>
-                {{ $j->jurusan }}
-            </option>
-        @endforeach
-    </select>
-</div>
+                        <label>Jurusan</label>
+                        <select name="jurusan">
+                            <option value="">Semua Jurusan</option>
+                            @foreach($jurusan as $j)
+                                <option value="{{ $j->id_jurusan }}"
+                                    {{ request('jurusan') == $j->id_jurusan ? 'selected' : '' }}>
+                                    {{ $j->jurusan }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
 
-<div class="filter-group">
-    <label>Sekolah/Kampus</label>
-    <select name="sekolah_kampus">
-        <option value="">Semua Sekolah/Kampus</option>
-        @foreach($sekolah as $s)
-            <option value="{{ $s->id_sekolah_kampus }}"
-                {{ request('sekolah_kampus') == $s->id_sekolah_kampus ? 'selected' : '' }}>
-                {{ $s->nama_sekolah_kampus }}
-            </option>
-        @endforeach
-    </select>
-</div>
+                    <div class="filter-group">
+                        <label>Sekolah/Kampus</label>
+                        <select name="sekolah_kampus">
+                            <option value="">Semua Sekolah/Kampus</option>
+                            @foreach($sekolah as $s)
+                                <option value="{{ $s->id_sekolah_kampus }}"
+                                    {{ request('sekolah_kampus') == $s->id_sekolah_kampus ? 'selected' : '' }}>
+                                    {{ $s->nama_sekolah_kampus }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
 
-<div class="filter-group">
-    <label>Status</label>
-    <select name="status">
-        <option value="">Semua Status</option>
+                    <div class="filter-group">
+                        <label>Status</label>
+                        <select name="status">
+                            <option value="">Semua Status</option>
+                            <option value="diterima" {{ request('status') == 'diterima' ? 'selected' : '' }}>Diterima</option>
+                            <option value="selesai"  {{ request('status') == 'selesai'  ? 'selected' : '' }}>Selesai</option>
+                        </select>
+                    </div>
 
-        <option value="diterima"
-            {{ request('status') == 'diterima' ? 'selected' : '' }}>
-            Diterima
-        </option>
+                    <div class="filter-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2"
+                                 stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"/>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                            </svg>
+                            Cari
+                        </button>
+                    </div>
 
-        <option value="selesai"
-            {{ request('status') == 'selesai' ? 'selected' : '' }}>
-            Selesai
-        </option>
-    </select>
-</div>
-                    <div style="display:flex; align-items:flex-end; gap:10px;">
-
-    <button type="submit" class="btn btn-primary">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="11" cy="11" r="8"/>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-        </svg>
-        Cari
-    </button>
-
-
-</div>
                 </div>
             </form>
 
@@ -424,7 +471,7 @@
                             <td>{{ $d->nama }}</td>
                             <td>{{ $d->nisn_nim }}</td>
                             <td>{{ $d->sekolahKampus->nama_sekolah_kampus ?? '-' }}</td>
-<td>{{ $d->jurusan->jurusan ?? '-' }}</td>
+                            <td>{{ $d->jurusan->jurusan ?? '-' }}</td>
                             <td>
                                 @php $status = $d->hasilPendaftaran->status ?? '-'; @endphp
                                 @if($status == 'diterima')
@@ -437,12 +484,11 @@
                             </td>
                             <td>
                                 <div class="aksi-cell">
-    <a href="{{ route('pembimbing_asal.detail', $d->id_peserta) }}"
-       class="btn btn-outline btn-sm">Detail</a>
-
-    <a href="{{ route('pembimbing_asal.logbook', $d->id_peserta) }}"
-       class="btn btn-outline btn-sm">Lihat Logbook</a>
-</div>
+                                    <a href="{{ route('pembimbing_asal.detail', $d->id_peserta) }}"
+                                       class="btn btn-outline btn-sm">Detail</a>
+                                    <a href="{{ route('pembimbing_asal.logbook', $d->id_peserta) }}"
+                                       class="btn btn-outline btn-sm">Lihat Logbook</a>
+                                </div>
                             </td>
                         </tr>
                         @empty
@@ -453,22 +499,21 @@
                     </tbody>
                 </table>
             </div>
-<!-- PAGINATION -->
-@if ($data->hasPages())
-    <div class="pagination-wrapper">
-        <ul class="pagination">
 
-            @foreach ($data->getUrlRange(1, $data->lastPage()) as $page => $url)
-                <li class="page-item {{ $page == $data->currentPage() ? 'active' : '' }}">
-                    <a class="page-link" href="{{ $url }}">
-                        {{ $page }}
-                    </a>
-                </li>
-            @endforeach
+            <!-- PAGINATION -->
+            @if ($data->hasPages())
+                <div class="pagination-wrapper">
+                    <ul class="pagination">
+                        @foreach ($data->getUrlRange(1, $data->lastPage()) as $page => $url)
+                            <li class="page-item {{ $page == $data->currentPage() ? 'active' : '' }}">
+                                <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
-        </ul>
-    </div>
-@endif
+        </div>
     </main>
 
 </body>

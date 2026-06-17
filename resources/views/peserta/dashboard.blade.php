@@ -29,7 +29,7 @@
             display: flex;
         }
 
-        /* SIDEBAR */
+        /* ── SIDEBAR ── */
         .sidebar {
             width: var(--sidebar-w);
             background: var(--warm-white);
@@ -39,8 +39,9 @@
             position: fixed;
             top: 0; left: 0;
             height: 100vh;
-            z-index: 200;
+            z-index: 300;
             box-shadow: 2px 0 12px rgba(26,18,8,0.06);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .sidebar-logo {
@@ -59,6 +60,7 @@
             display: flex;
             flex-direction: column;
             gap: 2px;
+            overflow-y: auto;
         }
 
         .nav-item {
@@ -102,7 +104,23 @@
 
         .btn-logout:hover { background: var(--gold); color: #fff; }
 
-        /* MAIN */
+        /* ── SIDEBAR OVERLAY (mobile) ── */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(26,18,8,0.45);
+            z-index: 299;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .sidebar-overlay.is-open {
+            display: block;
+            opacity: 1;
+        }
+
+        /* ── MAIN CONTENT ── */
         .main-content {
             margin-left: var(--sidebar-w);
             flex: 1;
@@ -111,29 +129,80 @@
             min-height: 100vh;
         }
 
-        /* TOP BAR */
+        /* ── TOPBAR ── */
         .topbar {
             background: var(--warm-white);
             border-bottom: 1px solid rgba(200,135,58,0.15);
-            padding: 20px 36px;
+            padding: 16px 36px;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
+            gap: 16px;
             box-shadow: 0 2px 8px rgba(26,18,8,0.04);
+        }
+
+        /* Hamburger — hanya tampil di mobile */
+        .btn-hamburger-sidebar {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            width: 38px;
+            height: 38px;
+            background: transparent;
+            border: 1px solid rgba(200,135,58,0.25);
+            border-radius: 8px;
+            cursor: pointer;
+            padding: 0;
+            flex-shrink: 0;
+            transition: background 0.2s;
+        }
+
+        .btn-hamburger-sidebar:hover { background: rgba(200,135,58,0.1); }
+
+        .btn-hamburger-sidebar span {
+            display: block;
+            width: 18px;
+            height: 2px;
+            background: var(--dark);
+            border-radius: 2px;
+        }
+
+        .topbar-center {
+            flex: 1;
+            display: flex;
+            justify-content: center;
         }
 
         .topbar-title {
             font-family: 'Playfair Display', serif;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 700;
             color: var(--dark);
             border: 2px solid rgba(200,135,58,0.25);
-            padding: 10px 32px;
+            padding: 10px 28px;
             border-radius: 50px;
             background: var(--card-bg);
             box-shadow: var(--shadow);
+            text-align: center;
         }
 
+        .topbar-title .pembimbing-info {
+            margin-top: 5px;
+            font-size: 0.78rem;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 400;
+            color: var(--muted);
+        }
+
+        /* Spacer kanan agar title tetap center di desktop */
+        .topbar-spacer {
+            width: 38px;
+            flex-shrink: 0;
+        }
+
+        /* ── PAGE BODY ── */
         .page-body {
             padding: 28px 36px 40px;
             display: grid;
@@ -142,7 +211,7 @@
             align-items: start;
         }
 
-        /* CARD */
+        /* ── CARD ── */
         .card {
             background: var(--card-bg);
             border-radius: var(--radius);
@@ -162,7 +231,7 @@
             border-bottom: 1px solid #F5E6D0;
         }
 
-        /* ALERT */
+        /* ── ALERTS ── */
         .alert-success {
             background: #F0FDF4; border: 1px solid #BBF7D0; color: #166534;
             font-size: 0.82rem; padding: 10px 14px; border-radius: 8px; margin-bottom: 14px;
@@ -173,7 +242,7 @@
             font-size: 0.82rem; padding: 10px 14px; border-radius: 8px; margin-bottom: 14px;
         }
 
-        /* PRESENSI BUTTONS */
+        /* ── PRESENSI ── */
         .presensi-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -229,7 +298,7 @@
             text-align: center;
         }
 
-        /* FILE UPLOAD */
+        /* ── FILE UPLOAD ── */
         .upload-row {
             display: flex;
             gap: 10px;
@@ -246,6 +315,7 @@
             font-size: 0.8rem;
             background: var(--warm-white);
             outline: none;
+            min-width: 0;
         }
 
         .file-input::file-selector-button {
@@ -277,7 +347,7 @@
 
         .btn-kirim:hover { background: var(--gold-light); }
 
-        /* SURAT BALASAN */
+        /* ── SURAT BALASAN ── */
         .berkas-link {
             display: block;
             text-align: center;
@@ -301,17 +371,101 @@
             padding: 8px 0;
         }
 
+        /* ══════════════════════════════════════════
+           RESPONSIVE — MOBILE (≤768px)
+        ══════════════════════════════════════════ */
         @media (max-width: 768px) {
-            .sidebar { transform: translateX(-100%); }
-            .main-content { margin-left: 0; }
-            .page-body { grid-template-columns: 1fr; padding: 16px; }
+            /* Sidebar tersembunyi, jadi drawer */
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.is-open {
+                transform: translateX(0);
+            }
+
+            /* Main tidak perlu margin kiri */
+            .main-content {
+                margin-left: 0;
+            }
+
+            /* Topbar */
+            .topbar {
+                padding: 12px 16px;
+                gap: 10px;
+            }
+
+            /* Tampilkan hamburger */
+            .btn-hamburger-sidebar {
+                display: flex;
+            }
+
+            /* Sembunyikan spacer kanan di mobile (tidak perlu centering trick) */
+            .topbar-spacer {
+                display: none;
+            }
+
+            .topbar-center {
+                justify-content: flex-start;
+            }
+
+            .topbar-title {
+                font-size: 0.9rem;
+                padding: 8px 16px;
+                border-radius: 12px;
+                text-align: left;
+                width: 100%;
+            }
+
+            .topbar-title .pembimbing-info {
+                font-size: 0.72rem;
+            }
+
+            /* Page body */
+            .page-body {
+                grid-template-columns: 1fr;
+                padding: 16px 12px 32px;
+                gap: 16px;
+            }
+
+            /* Upload row: stack di mobile */
+            .upload-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .btn-kirim {
+                width: 100%;
+                text-align: center;
+            }
+        }
+
+        /* ══════════════════════════════════════════
+           RESPONSIVE — SMALL MOBILE (≤400px)
+        ══════════════════════════════════════════ */
+        @media (max-width: 400px) {
+            .presensi-col h4 {
+                font-size: 0.8rem;
+            }
+
+            .btn-presensi {
+                font-size: 0.76rem;
+                padding: 8px 0;
+            }
+
+            .topbar-title {
+                font-size: 0.82rem;
+            }
         }
     </style>
 </head>
 <body>
 
+    <!-- SIDEBAR OVERLAY -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     <!-- SIDEBAR -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
         <div class="sidebar-logo">
             <img src="{{ asset('images/logo-poliban.jpg') }}" alt="Logo Poliban">
         </div>
@@ -351,33 +505,32 @@
 
     <!-- MAIN -->
     <div class="main-content">
-@php
-    $pembimbing = $peserta->pembimbing->first();
-@endphp
+
+        @php $pembimbing = $peserta->pembimbing->first(); @endphp
+
         <div class="topbar">
-    <div class="topbar-title">
-        <div style="text-align:center;">
-            <div>
-                Selamat Datang {{ $peserta->nama }}
+            <!-- Hamburger (mobile only) -->
+            <button class="btn-hamburger-sidebar" id="btnOpenSidebar" aria-label="Buka menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <div class="topbar-center">
+                <div class="topbar-title">
+                    Selamat Datang {{ $peserta->nama }}
+                    @if($pembimbing)
+                        <div class="pembimbing-info">
+                            Pembimbing Lapangan: <strong>{{ $pembimbing->nama }}</strong>
+                            | NO HP: {{ $pembimbing->no_telp }}
+                        </div>
+                    @endif
+                </div>
             </div>
 
-            @if($pembimbing)
-                <div style="
-                    margin-top:6px;
-                    font-size:0.78rem;
-                    font-family:'DM Sans', sans-serif;
-                    font-weight:400;
-                    color: var(--muted);
-                ">
-                    Pembimbing Lapangan:
-                    <strong>{{ $pembimbing->nama }}</strong>
-                    |
-                   NO HP: {{ $pembimbing->no_telp }}
-                </div>
-            @endif
+            <!-- Spacer agar title center di desktop -->
+            <div class="topbar-spacer"></div>
         </div>
-    </div>
-</div>
 
         <div class="page-body">
 
@@ -398,12 +551,11 @@
                             ✔ Kamu sudah presensi hari ini
                         </div>
                     @else
-
                         {{-- COUNTDOWN --}}
-        <div style="text-align:center; margin-bottom:12px; font-size:0.85rem; color: var(--muted);">
-            Sisa waktu presensi:
-            <span id="countdown" style="font-weight:600; color: var(--gold);"></span>
-        </div>
+                        <div style="text-align:center; margin-bottom:12px; font-size:0.85rem; color: var(--muted);">
+                            Sisa waktu presensi:
+                            <span id="countdown" style="font-weight:600; color: var(--gold);"></span>
+                        </div>
 
                         {{-- TOMBOL HADIR / IZIN / SAKIT --}}
                         <div class="presensi-grid">
@@ -419,14 +571,14 @@
                             <div class="presensi-col">
                                 <h4>Izin</h4>
                                 <button type="button" class="btn-presensi"
-                                        onclick="document.getElementById('form-tidak-hadir').style.display='block'; document.querySelector('[name=status_tidak_hadir]').value='izin'">
+                                        onclick="document.getElementById('form-tidak-hadir').style.display='block'; document.getElementById('input-status-tidak-hadir').value='izin'">
                                     Izin
                                 </button>
                             </div>
                             <div class="presensi-col">
                                 <h4>Sakit</h4>
                                 <button type="button" class="btn-presensi"
-                                        onclick="document.getElementById('form-tidak-hadir').style.display='block'; document.querySelector('[name=status_tidak_hadir]').value='sakit'">
+                                        onclick="document.getElementById('form-tidak-hadir').style.display='block'; document.getElementById('input-status-tidak-hadir').value='sakit'">
                                     Sakit
                                 </button>
                             </div>
@@ -448,7 +600,6 @@
                                 <button type="submit" class="btn-kirim">Kirim</button>
                             </div>
                         </form>
-
                     @endif
                 @else
                     <p style="text-align:center; color:var(--muted); font-size:0.85rem; padding:12px 0;">
@@ -472,7 +623,32 @@
     </div>
 
     <script>
-        // Sinkron nilai status ke input hidden
+        // ── Sidebar drawer (mobile) ──
+        const sidebar        = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const btnOpen        = document.getElementById('btnOpenSidebar');
+
+        function openSidebar() {
+            sidebar.classList.add('is-open');
+            sidebarOverlay.classList.add('is-open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSidebar() {
+            sidebar.classList.remove('is-open');
+            sidebarOverlay.classList.remove('is-open');
+            document.body.style.overflow = '';
+        }
+
+        btnOpen.addEventListener('click', openSidebar);
+        sidebarOverlay.addEventListener('click', closeSidebar);
+
+        // Tutup sidebar saat link nav diklik di mobile
+        document.querySelectorAll('.nav-item').forEach(link => {
+            link.addEventListener('click', closeSidebar);
+        });
+
+        // ── Presensi status sync ──
         document.querySelectorAll('.presensi-col button[type=button]').forEach(btn => {
             btn.addEventListener('click', function() {
                 const status = this.closest('.presensi-col').querySelector('h4').textContent.toLowerCase();
@@ -480,27 +656,28 @@
             });
         });
 
+        // ── Countdown ──
         @if(isset($closeTime) && $closeTime)
-    const closeTime = "{{ $closeTime }}";
-    const [hours, minutes] = closeTime.split(':').map(Number);
+            const closeTime = "{{ $closeTime }}";
+            const [hours, minutes] = closeTime.split(':').map(Number);
 
-    function updateCountdown() {
-        const now = new Date();
-        const target = new Date();
-        target.setHours(hours, minutes, 0, 0);
-        const diff = target - now;
-        if (diff <= 0) {
-            document.getElementById('countdown').textContent = 'Presensi telah ditutup';
-            return;
-        }
-        const h = Math.floor(diff / 3600000);
-        const m = Math.floor((diff % 3600000) / 60000);
-        const s = Math.floor((diff % 60000) / 1000);
-        document.getElementById('countdown').textContent = `${h}j ${m}m ${s}d`;
-    }
-    updateCountdown();
-    setInterval(updateCountdown, 1000);
-@endif
+            function updateCountdown() {
+                const now    = new Date();
+                const target = new Date();
+                target.setHours(hours, minutes, 0, 0);
+                const diff = target - now;
+                if (diff <= 0) {
+                    document.getElementById('countdown').textContent = 'Presensi telah ditutup';
+                    return;
+                }
+                const h = Math.floor(diff / 3600000);
+                const m = Math.floor((diff % 3600000) / 60000);
+                const s = Math.floor((diff % 60000) / 1000);
+                document.getElementById('countdown').textContent = `${h}j ${m}m ${s}d`;
+            }
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+        @endif
     </script>
 
 </body>

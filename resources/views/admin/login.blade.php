@@ -30,6 +30,7 @@
             flex-direction: column;
         }
 
+        /* ── HEADER ── */
         header {
             background: var(--warm-white);
             border-bottom: 1px solid rgba(200,135,58,0.15);
@@ -38,7 +39,6 @@
             align-items: center;
             gap: 16px;
             box-shadow: 0 2px 12px rgba(26,18,8,0.05);
-            position: relative;
         }
 
         .logo-wrap {
@@ -48,13 +48,29 @@
         }
         .logo-wrap img { width: 100%; height: 100%; object-fit: contain; }
 
+        .brand-text {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+        }
+
         .brand-text h1 {
             font-family: 'Playfair Display', serif;
-            font-size: 1.5rem; font-weight: 700;
-            color: var(--dark); line-height: 1.2;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--dark);
+            line-height: 1.2;
+            white-space: nowrap;
         }
-        .brand-text p { font-size: 1rem; color: var(--muted); font-weight: 300; }
 
+        .brand-text p {
+            font-size: 1rem;
+            color: var(--muted);
+            font-weight: 300;
+        }
+
+        /* ── MAIN ── */
         main {
             flex: 1;
             display: flex;
@@ -63,6 +79,7 @@
             padding: 48px 24px;
         }
 
+        /* ── LOGIN CARD ── */
         .login-card {
             background: var(--card-bg);
             border-radius: var(--radius);
@@ -165,10 +182,81 @@
             transform: translateY(-1px);
         }
 
-        @media (max-width: 580px) {
-            .login-card { grid-template-columns: 1fr; }
-            .card-photo { min-height: 160px; }
-            header { padding: 14px 20px; }
+        /* ══════════════════════════════════════════
+           RESPONSIVE — TABLET (≤700px)
+        ══════════════════════════════════════════ */
+        @media (max-width: 700px) {
+            /* Header: lepas dari absolute, ikut flow normal */
+            header {
+                padding: 14px 16px;
+                gap: 12px;
+            }
+
+            .brand-text {
+                position: static;
+                transform: none;
+                text-align: left;
+            }
+
+            .brand-text h1 {
+                font-size: 0.95rem;
+                white-space: normal;
+                line-height: 1.3;
+            }
+
+            .brand-text p {
+                font-size: 0.75rem;
+            }
+
+            .logo-wrap {
+                width: 38px;
+                height: 38px;
+            }
+
+            /* Main */
+            main {
+                padding: 24px 16px;
+                align-items: flex-start;
+            }
+
+            /* Card: 1 kolom */
+            .login-card {
+                grid-template-columns: 1fr;
+                max-width: 420px;
+            }
+
+            /* Foto lebih pendek */
+            .card-photo {
+                min-height: 160px;
+                max-height: 200px;
+            }
+
+            /* Form */
+            .card-form {
+                padding: 28px 24px 32px;
+                gap: 16px;
+            }
+
+            .card-form h2 {
+                font-size: 1.3rem;
+            }
+        }
+
+        /* ══════════════════════════════════════════
+           RESPONSIVE — SMALL MOBILE (≤400px)
+        ══════════════════════════════════════════ */
+        @media (max-width: 400px) {
+            .brand-text h1 {
+                font-size: 0.85rem;
+            }
+
+            .brand-text p {
+                font-size: 0.7rem;
+            }
+
+            .card-form {
+                padding: 24px 18px 28px;
+            }
         }
     </style>
 </head>
@@ -178,8 +266,7 @@
         <div class="logo-wrap">
             <img src="{{ asset('images/logo-poliban.jpg') }}" alt="Logo Poliban">
         </div>
-
-        <div class="brand-text" style="position:absolute; left:50%; transform:translateX(-50%); text-align:center;">
+        <div class="brand-text">
             <h1>Perpustakaan Politeknik Negeri Banjarmasin</h1>
             <p>Penerimaan dan Pengelolaan Peserta Magang</p>
         </div>
@@ -210,7 +297,7 @@
                 @endif
 
                 <form action="{{ route('admin.login') }}" method="POST"
-                      style="display:flex;flex-direction:column;gap:16px;">
+                      style="display:flex; flex-direction:column; gap:16px;">
                     @csrf
 
                     <div class="field">

@@ -30,7 +30,7 @@
             flex-direction: column;
         }
 
-        /* HEADER */
+        /* ── HEADER ── */
         header {
             background: var(--warm-white);
             border-bottom: 1px solid rgba(200,135,58,0.15);
@@ -49,14 +49,29 @@
         }
         .logo-wrap img { width: 100%; height: 100%; object-fit: contain; }
 
+        .brand-text {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+        }
+
         .brand-text h1 {
             font-family: 'Playfair Display', serif;
-            font-size: 1.5rem; font-weight: 700;
-            color: var(--dark); line-height: 1.2;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--dark);
+            line-height: 1.2;
+            white-space: nowrap;
         }
-        .brand-text p { font-size: 1rem; color: var(--muted); font-weight: 300; }
 
-        /* MAIN */
+        .brand-text p {
+            font-size: 1rem;
+            color: var(--muted);
+            font-weight: 300;
+        }
+
+        /* ── MAIN ── */
         main {
             flex: 1;
             display: flex;
@@ -65,6 +80,7 @@
             padding: 40px 24px 60px;
         }
 
+        /* ── REGISTER CARD ── */
         .register-card {
             background: var(--card-bg);
             border-radius: var(--radius);
@@ -91,7 +107,7 @@
             margin: 0 auto 28px;
         }
 
-        /* ERRORS */
+        /* ── ERRORS ── */
         .alert-error {
             background: #FEF2F2;
             border: 1px solid #FECACA;
@@ -105,7 +121,7 @@
         .alert-error ul { padding-left: 16px; }
         .alert-error li { margin-bottom: 2px; }
 
-        /* GRID FORM */
+        /* ── GRID FORM ── */
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -167,7 +183,7 @@
             color: var(--error);
         }
 
-        /* FILE INPUT */
+        /* ── FILE INPUT ── */
         .file-wrap {
             position: relative;
         }
@@ -194,7 +210,38 @@
             background: #E8D5B5;
         }
 
-        /* SUBMIT */
+        /* ── PASSWORD FIELD ── */
+        .password-wrap {
+            position: relative;
+        }
+
+        .password-wrap input {
+            width: 100%;
+            padding: 9px 38px 9px 14px;
+            border: 1.5px solid #E8D5B5;
+            border-radius: 8px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.875rem;
+            color: var(--dark);
+            background: var(--warm-white);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .password-wrap input:focus {
+            border-color: var(--gold);
+        }
+
+        .password-wrap svg {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--muted);
+            cursor: pointer;
+        }
+
+        /* ── SUBMIT ── */
         .form-footer {
             margin-top: 28px;
             display: flex;
@@ -223,13 +270,87 @@
             transform: translateY(-1px);
         }
 
-        @media (max-width: 600px) {
-            .register-card { padding: 28px 20px; }
-            .form-grid { grid-template-columns: 1fr; }
-            header { padding: 14px 20px; }
+        /* ══════════════════════════════════════════
+           RESPONSIVE — TABLET (≤700px)
+        ══════════════════════════════════════════ */
+        @media (max-width: 700px) {
+            /* Header */
+            header {
+                padding: 14px 16px;
+                gap: 12px;
+            }
+
+            .brand-text {
+                position: static;
+                transform: none;
+                text-align: left;
+            }
+
+            .brand-text h1 {
+                font-size: 0.95rem;
+                white-space: normal;
+                line-height: 1.3;
+            }
+
+            .brand-text p {
+                font-size: 0.75rem;
+            }
+
+            .logo-wrap {
+                width: 38px;
+                height: 38px;
+            }
+
+            /* Main */
+            main {
+                padding: 20px 12px 40px;
+            }
+
+            /* Card */
+            .register-card {
+                padding: 24px 16px 32px;
+            }
+
+            .register-card h2 {
+                font-size: 1.1rem;
+            }
+
+            /* Form grid jadi 1 kolom */
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 14px;
+            }
+
+            /* Tombol Daftar full width */
+            .form-footer {
+                justify-content: stretch;
+            }
+
+            .btn-submit {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* ══════════════════════════════════════════
+           RESPONSIVE — SMALL MOBILE (≤400px)
+        ══════════════════════════════════════════ */
+        @media (max-width: 400px) {
+            .brand-text h1 {
+                font-size: 0.85rem;
+            }
+
+            .brand-text p {
+                font-size: 0.7rem;
+            }
+
+            .register-card {
+                padding: 20px 14px 28px;
+            }
         }
     </style>
 </head>
+
 <script>
     function togglePassword(inputId, eyeId) {
         const input = document.getElementById(inputId);
@@ -250,18 +371,18 @@
         }
     }
 </script>
+
 <body>
 
     <header>
-    <div class="logo-wrap">
-        <img src="{{ asset('images/logo-poliban.jpg') }}" alt="Logo Poliban">
-    </div>
-
-    <div class="brand-text" style="position:absolute; left:50%; transform:translateX(-50%); text-align:center;">
-        <h1>Perpustakaan Politeknik Negeri Banjarmasin</h1>
-        <p>Penerimaan dan Pengelolaan Peserta Magang</p>
-    </div>
-</header>
+        <div class="logo-wrap">
+            <img src="{{ asset('images/logo-poliban.jpg') }}" alt="Logo Poliban">
+        </div>
+        <div class="brand-text">
+            <h1>Perpustakaan Politeknik Negeri Banjarmasin</h1>
+            <p>Penerimaan dan Pengelolaan Peserta Magang</p>
+        </div>
+    </header>
 
     <main>
         <div class="register-card">
@@ -299,22 +420,17 @@
                     </div>
 
                     <div class="field">
-    <label>Jurusan</label>
-
-    <select name="id_jurusan">
-        <option value="">Pilih Jurusan</option>
-
-        @foreach($jurusan as $j)
-            <option value="{{ $j->id_jurusan }}">
-                {{ $j->jurusan }}
-            </option>
-        @endforeach
-    </select>
-
-    @error('id_jurusan')
-        <span class="field-error">{{ $message }}</span>
-    @enderror
-</div>
+                        <label>Jurusan</label>
+                        <select name="id_jurusan">
+                            <option value="">Pilih Jurusan</option>
+                            @foreach($jurusan as $j)
+                                <option value="{{ $j->id_jurusan }}" {{ old('id_jurusan') == $j->id_jurusan ? 'selected' : '' }}>
+                                    {{ $j->jurusan }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('id_jurusan')<span class="field-error">{{ $message }}</span>@enderror
+                    </div>
 
                     <div class="field">
                         <label>Kelas</label>
@@ -329,22 +445,17 @@
                     </div>
 
                     <div class="field">
-    <label>Sekolah/Kampus</label>
-
-    <select name="id_sekolah_kampus">
-        <option value="">Pilih Sekolah/Kampus</option>
-
-        @foreach($sekolah as $s)
-            <option value="{{ $s->id_sekolah_kampus }}">
-                {{ $s->nama_sekolah_kampus }}
-            </option>
-        @endforeach
-    </select>
-
-    @error('id_sekolah_kampus')
-        <span class="field-error">{{ $message }}</span>
-    @enderror
-</div>
+                        <label>Sekolah/Kampus</label>
+                        <select name="id_sekolah_kampus">
+                            <option value="">Pilih Sekolah/Kampus</option>
+                            @foreach($sekolah as $s)
+                                <option value="{{ $s->id_sekolah_kampus }}" {{ old('id_sekolah_kampus') == $s->id_sekolah_kampus ? 'selected' : '' }}>
+                                    {{ $s->nama_sekolah_kampus }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('id_sekolah_kampus')<span class="field-error">{{ $message }}</span>@enderror
+                    </div>
 
                     <div class="field">
                         <label>No. Telpon</label>
@@ -395,28 +506,32 @@
                     </div>
 
                     <div class="field full">
-    <label>Password</label>
-    <div style="position:relative;">
-        <input type="password" name="password" id="passwordRegister"
-               style="width:100%; padding:9px 38px 9px 14px; border:1.5px solid #E8D5B5;
-                      border-radius:8px; font-family:'DM Sans',sans-serif; font-size:0.875rem;
-                      color:#1A1208; background:#FDF4E7; outline:none;">
-        <svg id="eyeRegister" onclick="togglePassword('passwordRegister', 'eyeRegister')"
-             width="16" height="16" viewBox="0 0 24 24" fill="none"
-             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-             style="position:absolute; right:12px; top:50%; transform:translateY(-50%);
-                    color:#7A6E62; cursor:pointer;">
-            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-            <circle cx="12" cy="12" r="3"/>
-        </svg>
-    </div>
-    @error('password')<span class="field-error">{{ $message }}</span>@enderror
-</div>
+                        <label>Password</label>
+                        <div class="password-wrap">
+                            <input type="password" name="password" id="passwordRegister">
+                            <svg id="eyeRegister"
+                                 onclick="togglePassword('passwordRegister', 'eyeRegister')"
+                                 width="16" height="16" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2"
+                                 stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                        </div>
+                        @error('password')<span class="field-error">{{ $message }}</span>@enderror
+                    </div>
 
                 </div>
 
                 <div class="form-footer">
-                    <button type="submit" class="btn-submit">Daftar</button>
+                    <button type="submit" class="btn-submit">
+                        Daftar
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="2"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="9 18 15 12 9 6"/>
+                        </svg>
+                    </button>
                 </div>
             </form>
         </div>
