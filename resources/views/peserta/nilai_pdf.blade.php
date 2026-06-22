@@ -371,8 +371,8 @@
                 </div>
 
                 <div class="nama">
-                    ....................................
-                </div>
+    {{ $peserta->pembimbing->first()->nama ?? 'Belum ada pembimbing' }}
+</div>
             </td>
 
             <td>

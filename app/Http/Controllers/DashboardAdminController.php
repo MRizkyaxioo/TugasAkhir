@@ -368,7 +368,7 @@ public function exportLogbookAdmin($id)
         ->orderBy('tanggal', 'asc')
         ->get();
 
-    $pdf = Pdf::loadView('admin.logbook_pdf', compact('peserta', 'data'))
+    $pdf = Pdf::loadView('peserta.logbook_pdf', compact('peserta', 'data'))
         ->setPaper('A4', 'portrait');
 
     return $pdf->download('logbook_'.$peserta->nama.'.pdf');

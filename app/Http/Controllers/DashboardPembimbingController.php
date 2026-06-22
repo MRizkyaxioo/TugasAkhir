@@ -96,8 +96,10 @@ if ($request->status) {
         ->orderBy('tanggal', 'asc')
         ->get();
 
-    $pdf = Pdf::loadView('pembimbing.logbook_pdf', compact('peserta', 'data'))
-        ->setPaper('A4', 'portrait');
+    $pdf = Pdf::loadView(
+    'peserta.logbook_pdf',
+    compact('peserta', 'data', 'pembimbing')
+)->setPaper('A4', 'portrait');
 
     return $pdf->download('logbook_'.$peserta->nama.'.pdf');
 }

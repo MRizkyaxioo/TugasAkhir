@@ -23,7 +23,7 @@
 
 .logo-cell{
     width:120px;
-    
+
 }
 
 .logo-cell img{
@@ -242,7 +242,7 @@ th{
         </div>
 
         <div class="ttd-nama">
-            ....................................
+            {{ $peserta->pembimbing->first()->nama ?? 'Belum ada pembimbing' }}
         </div>
 
     </div>

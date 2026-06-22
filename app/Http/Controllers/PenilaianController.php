@@ -108,7 +108,10 @@ public function hapusNilai($id_peserta, $id_kriteria)
         abort(403);
     }
 
-    $peserta = Peserta::with('penilaian.kriteria')->findOrFail($id);
+    $peserta = Peserta::with([
+    'penilaian.kriteria',
+    'pembimbing'
+])->findOrFail($id);
 
     $pdf = Pdf::loadView('peserta.nilai_pdf', compact('peserta'));
 
