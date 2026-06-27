@@ -222,13 +222,17 @@ public function pesertaMagang(Request $request)
 
 // 🔹 Detail riwayat
     public function detailPesertaSelesai($id)
-    {
-        $peserta = Peserta::with('hasilPendaftaran.berkas', 'jurusan',
-        'sekolahKampus')
-            ->findOrFail($id);
+{
+    $peserta = Peserta::with([
+        'hasilPendaftaran.berkas',
+        'jurusan',
+        'sekolahKampus',
+        'pembimbing',
+        'penilaian.kriteria'
+    ])->findOrFail($id);
 
-        return view('admin.detailriwayat', compact('peserta'));
-    }
+    return view('admin.detailriwayat', compact('peserta'));
+}
 
     // 🔹 Terima peserta
     public function terima($id)

@@ -528,12 +528,7 @@
 
         <div class="page-body">
 
-            @if(session('success'))
-                <div class="alert-success">{{ session('success') }}</div>
-            @endif
-            @if(session('error'))
-                <div class="alert-error">{{ session('error') }}</div>
-            @endif
+
 
             <div class="card">
 
@@ -646,6 +641,39 @@
 
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @if(session('success'))
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    Swal.fire({
+        icon: 'success',
+        title: 'Berhasil',
+        text: "{{ session('success') }}",
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#C8873A'
+    });
+});
+</script>
+@endif
+
+@if($errors->any())
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    Swal.fire({
+        icon: 'error',
+        title: 'Validasi Gagal',
+        html: `
+            <ul style="text-align:left; margin:0; padding-left:20px;">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        `,
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#C8873A'
+    });
+});
+</script>
+@endif
     <script>
         // ── Sidebar drawer ──
         const sidebar        = document.getElementById('sidebar');

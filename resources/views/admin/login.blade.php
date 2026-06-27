@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Admin - Magang Poliban</title>
+    <title>Login Petugas - Magang Perpustakaan Poliban</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -282,7 +282,7 @@
             </div>
 
             <div class="card-form">
-                <h2>Login Admin</h2>
+                <h2>Login Pentugas Magang Perpustakaan Poliban</h2>
 
                 @if(session('error'))
                     <div class="alert-error">{{ session('error') }}</div>

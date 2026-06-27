@@ -11,16 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('presensi', function (Blueprint $table) {
-    $table->id('id_presensi');
+        Schema::create('hari_libur', function (Blueprint $table) {
+    $table->id('id_hari_libur');
     $table->date('tanggal')->unique();
-    $table->time('jam_buka');
-    $table->time('jam_tutup');
-    $table->enum('status', [
-        'belum_dibuka',
-        'dibuka',
-        'ditutup'
-    ])->default('belum_dibuka');
+    $table->string('nama_libur', 100);
     $table->timestamps();
 });
     }
@@ -30,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('presensi');
+        Schema::dropIfExists('hari_libur');
     }
 };

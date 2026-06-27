@@ -71,9 +71,15 @@ class LogbookController extends Controller
         }
 
         $request->validate([
-            'kegiatan' => 'required',
-            'bukti_foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048'
-        ]);
+    'kegiatan' => 'required',
+    'bukti_foto' => 'required|image|mimes:jpeg,png,jpg|max:5120',
+], [
+    'kegiatan.required' => 'Kegiatan wajib diisi.',
+    'bukti_foto.required' => 'Bukti kegiatan wajib diunggah.',
+    'bukti_foto.image' => 'Bukti kegiatan harus berupa gambar.',
+    'bukti_foto.mimes' => 'Format gambar harus JPG, JPEG, atau PNG.',
+    'bukti_foto.max' => 'Ukuran gambar maksimal 5 MB.',
+]);
 
         $path = null;
         if ($request->hasFile('bukti_foto')) {

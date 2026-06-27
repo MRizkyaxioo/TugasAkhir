@@ -373,6 +373,18 @@
         </button>
     </div>
 
+    <div class="action-group">
+    <span class="action-label">Hari Libur</span>
+
+    <button
+        type="button"
+        class="btn btn-outline btn-sm"
+        id="btn-libur">
+
+        Atur Hari Libur
+    </button>
+</div>
+
     {{-- Simpan Perubahan Status --}}
     <div class="action-group">
         <span class="action-label">Simpan Perubahan Kehadiran</span>
@@ -397,19 +409,102 @@
                     ⏰ Presensi dibuka: <strong>{{ \Carbon\Carbon::parse($presensi->jam_buka)->format('H:i') }} WITA</strong>
                     &nbsp;|&nbsp;
                     Ditutup: <strong>{{ \Carbon\Carbon::parse($presensi->jam_tutup)->format('H:i') }} WITA</strong>
-                    @if($presensi->is_open)
-                        <span style="color: var(--gold); font-weight:500;"> (Sedang dibuka)</span>
-                    @elseif($presensi->closed_at)
-                        <span style="color: #C0392B;"> (Sudah ditutup)</span>
-                    @else
-                        <span style="color: var(--muted);"> (Belum dibuka)</span>
-                    @endif
+                    @if($presensi->status == 'dibuka')
+    <span style="color:#16A34A;font-weight:600;">
+        (Sedang dibuka)
+    </span>
+
+@elseif($presensi->status == 'ditutup')
+    <span style="color:#DC2626;font-weight:600;">
+        (Sudah ditutup)
+    </span>
+
+@else
+    <span style="color:var(--muted);">
+        (Belum dibuka)
+    </span>
+@endif
                 </div>
             @else
                 <div style="margin-bottom:16px; padding:10px 14px; background:#FEF2F2; border:1px solid #FECACA; border-radius:8px; font-size:0.85rem; color:#C0392B;">
                     ⚠️ Belum ada jadwal presensi hari ini.
                 </div>
             @endif
+
+            @if($hariLibur->count())
+
+<div
+style="
+margin-bottom:18px;
+padding:15px;
+background:#FFFDF9;
+border:1px solid #E8D5B5;
+border-radius:10px;">
+
+<h4 style="margin-bottom:10px;">
+Daftar Hari Libur
+</h4>
+
+<table style="width:100%;">
+
+<thead>
+
+<tr>
+
+<th>Tanggal</th>
+
+<th>Nama</th>
+
+<th>Aksi</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+@foreach($hariLibur as $libur)
+
+<tr>
+
+<td>
+{{ $libur->tanggal->format('d-m-Y') }}
+</td>
+
+<td>
+{{ $libur->nama_libur }}
+</td>
+
+<td>
+
+<form
+method="POST"
+action="{{ route('admin.hari-libur.delete',$libur->id_hari_libur) }}">
+
+@csrf
+@method('DELETE')
+
+<button class="btn btn-outline btn-sm">
+
+Hapus
+
+</button>
+
+</form>
+
+</td>
+
+</tr>
+
+@endforeach
+
+</tbody>
+
+</table>
+
+</div>
+
+@endif
 
                 <!-- TABLE -->
                 <form id="form-presensi" method="POST" action="{{ route('admin.presensi.simpanStatus') }}">
@@ -515,6 +610,62 @@ document.getElementById('btn-simpan-status').addEventListener('click', function(
             document.getElementById('form-presensi').submit();
         }
     });
+});
+
+document.getElementById('btn-libur').addEventListener('click', function(){
+
+Swal.fire({
+
+title:'Tambah Hari Libur',
+
+html:
+'<input id="tanggal-libur" type="date" class="swal2-input">'+
+'<input id="nama-libur" class="swal2-input" placeholder="Nama Hari Libur">',
+
+showCancelButton:true,
+
+confirmButtonText:'Simpan',
+
+preConfirm:()=>{
+
+return{
+
+tanggal:document.getElementById('tanggal-libur').value,
+
+nama:document.getElementById('nama-libur').value
+
+}
+
+}
+
+}).then((result)=>{
+
+if(result.isConfirmed){
+
+const form=document.createElement('form');
+
+form.method='POST';
+
+form.action='{{ route("admin.hari-libur.store") }}';
+
+form.innerHTML=`
+
+@csrf
+
+<input name="tanggal" value="${result.value.tanggal}">
+
+<input name="nama_libur" value="${result.value.nama}">
+
+`;
+
+document.body.appendChild(form);
+
+form.submit();
+
+}
+
+});
+
 });
 
 </script>

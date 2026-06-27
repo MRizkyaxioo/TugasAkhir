@@ -13,9 +13,11 @@ class Presensi extends Model
         'tanggal',
         'jam_buka',
         'jam_tutup',
-        'is_open',
-        'opened_at',
-        'closed_at'
+        'status',
+    ];
+
+    protected $casts = [
+        'tanggal' => 'date',
     ];
 
     public function presensiPeserta()

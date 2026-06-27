@@ -425,11 +425,11 @@
 
                 <div class="stat-grid">
                     <div class="stat-block">
-                        <h4>Siswa PKL</h4>
+                        <h4>Mahasiswa/Siswa Aktif</h4>
                         <div class="stat-num">{{ $siswa }}</div>
                     </div>
                     <div class="stat-block">
-                        <h4>Siswi PKL</h4>
+                        <h4>Mahasiswi/Siswi Aktif</h4>
                         <div class="stat-num">{{ $siswi }}</div>
                     </div>
                     <div class="stat-block">

@@ -219,6 +219,79 @@
 
         .btn-back:hover { background: #E8D5B5; color: var(--dark); }
 
+        .nilai-section{
+    margin-top:28px;
+    padding-top:20px;
+    border-top:2px solid #F5E6D0;
+}
+
+.nilai-title{
+    font-family:'Playfair Display', serif;
+    font-size:1rem;
+    margin-bottom:15px;
+    text-align:center;
+    color:var(--dark);
+}
+
+.nilai-table{
+    width:100%;
+    border-collapse:collapse;
+    margin-bottom:20px;
+}
+
+.nilai-table th,
+.nilai-table td{
+    border:1px solid #E8D5B5;
+    padding:10px;
+    font-size:.85rem;
+}
+
+.nilai-table th{
+    background:#F9F4ED;
+    text-align:center;
+}
+
+.nilai-table td:first-child{
+    width:50px;
+    text-align:center;
+}
+
+.nilai-table td:last-child{
+    width:90px;
+    text-align:center;
+    font-weight:600;
+}
+
+.nilai-kosong{
+    text-align:center;
+    color:#777;
+    padding:15px;
+}
+
+.nilai-footer{
+    display:flex;
+    justify-content:center;
+    margin-top:18px;
+}
+
+.btn-cetak{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:10px 22px;
+    border-radius:50px;
+    background:#C8873A;
+    color:#fff;
+    text-decoration:none;
+    font-size:.875rem;
+    font-weight:500;
+    transition:.2s;
+}
+
+.btn-cetak:hover{
+    background:#B5762D;
+}
+
         @media (max-width: 768px) {
             .sidebar { transform: translateX(-100%); }
             .main-content { margin-left: 0; }
@@ -377,11 +450,64 @@
                     </span>
                 </div>
                 <div class="info-row">
-                    <span class="info-label">Pembimbing</span>
+                    <span class="info-label">Pembimbing Lapangan</span>
                     <span class="info-value">
                         {{ $peserta->pembimbing->first()->nama ?? 'Belum ada' }}
                     </span>
                 </div>
+                <div class="nilai-section">
+
+    <div class="nilai-title">
+        Hasil Penilaian Peserta
+    </div>
+
+    @if($peserta->penilaian->count())
+
+    <table class="nilai-table">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Kriteria</th>
+                <th>Nilai</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach($peserta->penilaian as $i => $nilai)
+            <tr>
+                <td>{{ $i+1 }}</td>
+                <td>{{ $nilai->kriteria->kriteria_nilai }}</td>
+                <td>{{ $nilai->nilai }}</td>
+            </tr>
+        @endforeach
+        </tbody>
+    </table>
+
+    @else
+
+        <div class="nilai-kosong">
+            Belum ada penilaian.
+        </div>
+
+    @endif
+
+    <div class="nilai-footer">
+        <a href="{{ route('peserta.nilai.pdf', $peserta->id_peserta) }}"
+           class="btn-cetak">
+
+            <svg width="16" height="16" fill="none"
+                 stroke="currentColor"
+                 stroke-width="2"
+                 viewBox="0 0 24 24">
+                <path d="M6 9V2h12v7"/>
+                <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+                <rect x="6" y="14" width="12" height="8"/>
+            </svg>
+
+            Cetak Nilai
+        </a>
+    </div>
+
+</div>
             </div>
         </div>
 

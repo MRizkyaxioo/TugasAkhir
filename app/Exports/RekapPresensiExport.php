@@ -136,7 +136,7 @@ class RekapPresensiExport implements
 
                 // Judul laporan
 $event->sheet->mergeCells('A1:F1');
-$event->sheet->setCellValue('A1', 'REKAP PRESENSI');
+$event->sheet->setCellValue('A1', 'REKAP PRESENSI KESELURUHAN');
 
 $event->sheet->getStyle('A1')->applyFromArray([
     'font' => [

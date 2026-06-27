@@ -505,17 +505,6 @@
                                     <div class="aksi-cell">
                                         <a href="{{ route('admin.detail.riwayat', $d->id_peserta) }}"
                                            class="btn btn-outline btn-sm">Detail</a>
-                                        <a href="{{ route('peserta.nilai.pdf', $d->id_peserta) }}"
-                                           target="_blank"
-                                           class="btn btn-primary btn-sm">
-                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                                <polyline points="14 2 14 8 20 8"/>
-                                                <line x1="12" y1="18" x2="12" y2="12"/>
-                                                <line x1="9" y1="15" x2="15" y2="15"/>
-                                            </svg>
-                                            Cetak Nilai
-                                        </a>
                                     </div>
                                 </td>
                             </tr>

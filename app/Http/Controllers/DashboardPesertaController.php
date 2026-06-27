@@ -21,39 +21,54 @@ class DashboardPesertaController extends Controller
 public function peserta()
 {
     $peserta = Auth::guard('peserta')
-    ->user()
-    ->load('pembimbing');
+        ->user()
+        ->load('pembimbing');
+
     $status = $peserta->hasilPendaftaran->status;
 
     if ($status == 'selesai') {
         return redirect()->route('peserta.selesai');
     }
+
     if ($status == 'pending') {
         return redirect()->route('dashboard-calon');
     }
 
-    $today = Carbon::now()->toDateString();
-    $presensi = Presensi::where('tanggal', $today)
-                ->where('is_open', 1)
-                ->first();
+    $today = Carbon::today()->toDateString();
+
+    // Ambil jadwal hari ini TANPA filter status
+    $presensi = Presensi::whereDate('tanggal', $today)->first();
 
     $sudahPresensi = false;
     $closeTime = null;
 
     if ($presensi) {
-        // Cek apakah peserta sudah benar-benar melakukan presensi (tanggal_presensi terisi)
-        $record = PresensiPeserta::where('id_peserta', $peserta->id_peserta)
-                    ->where('id_presensi', $presensi->id_presensi)
-                    ->first();
 
-        if ($record && $record->tanggal_presensi !== null) {
+        $record = PresensiPeserta::where('id_peserta', $peserta->id_peserta)
+            ->where('id_presensi', $presensi->id_presensi)
+            ->first();
+
+        if ($record && $record->tanggal_presensi != null) {
             $sudahPresensi = true;
         }
 
         $closeTime = $presensi->jam_tutup;
+
+        // Jika status bukan dibuka, anggap presensi belum bisa dilakukan
+        if ($presensi->status != 'dibuka') {
+            $presensi = null;
+        }
     }
 
-    return view('peserta.dashboard', compact('peserta', 'presensi', 'sudahPresensi', 'closeTime'));
+    return view(
+        'peserta.dashboard',
+        compact(
+            'peserta',
+            'presensi',
+            'sudahPresensi',
+            'closeTime'
+        )
+    );
 }
 
 public function kirimPresensi(Request $request)
@@ -66,13 +81,15 @@ public function kirimPresensi(Request $request)
     ]);
 
     // Cek apakah presensi memang sedang dibuka
-    $presensi = Presensi::where('id_presensi', $request->id_presensi)
-                ->where('is_open', 1)
-                ->first();
+    $presensi = Presensi::find($request->id_presensi);
 
-    if (!$presensi) {
-        return back()->with('error', 'Presensi tidak tersedia atau sudah ditutup.');
-    }
+if (!$presensi) {
+    return back()->with('error', 'Jadwal presensi tidak ditemukan.');
+}
+
+if ($presensi->status != 'dibuka') {
+    return back()->with('error', 'Presensi belum dibuka atau sudah ditutup.');
+}
 
     // Ambil record default (jika ada) atau fallback
     $record = PresensiPeserta::where('id_peserta', $peserta->id_peserta)

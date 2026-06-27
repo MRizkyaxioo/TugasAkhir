@@ -2,33 +2,61 @@
 
 namespace App\Console\Commands;
 
+use App\Models\HariLibur;
+use App\Models\Peserta;
 use App\Models\Presensi;
 use App\Models\PresensiPeserta;
-use App\Models\Peserta;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 
 class PresensiScheduler extends Command
 {
     protected $signature = 'presensi:jadwal';
-    protected $description = 'Buka/tutup presensi otomatis sesuai jadwal, dan buat jadwal besok jika belum ada';
+
+    protected $description = 'Scheduler buka, tutup, dan membuat jadwal presensi otomatis';
 
     public function handle()
     {
-        $now = Carbon::now();
-        $today = $now->toDateString();
-        $timeNow = $now->format('H:i');
+        $this->bukaPresensi();
 
-        // --- BUKA OTOMATIS ---
-        $presensiBuka = Presensi::where('tanggal', $today)
-            ->where('is_open', 0)
+        $this->tutupPresensi();
+
+        $this->buatJadwalBesok();
+
+        return Command::SUCCESS;
+    }
+
+    /**
+     * ===============================
+     * BUKA PRESENSI OTOMATIS
+     * ===============================
+     */
+    private function bukaPresensi()
+    {
+        $today = Carbon::today()->toDateString();
+
+        // Hari libur tidak membuka presensi
+        if (HariLibur::where('tanggal', $today)->exists()) {
+            $this->info("Hari ini ({$today}) hari libur. Presensi tidak dibuka.");
+            return;
+        }
+
+        $timeNow = Carbon::now()->format('H:i');
+
+        $presensi = Presensi::whereDate('tanggal', $today)
+            ->where('status', 'belum_dibuka')
             ->where('jam_buka', '<=', $timeNow)
             ->first();
 
-        if ($presensiBuka) {
-            $presensiBuka->update([
-                'is_open' => 1,
-                'opened_at' => $now,
+        if (!$presensi) {
+            return;
+        }
+
+        DB::transaction(function () use ($presensi) {
+
+            $presensi->update([
+                'status' => 'dibuka'
             ]);
 
             $pesertaAktif = Peserta::whereHas('hasilPendaftaran', function ($q) {
@@ -36,54 +64,103 @@ class PresensiScheduler extends Command
             })->pluck('id_peserta');
 
             foreach ($pesertaAktif as $idPeserta) {
+
                 PresensiPeserta::firstOrCreate(
                     [
-                        'id_presensi' => $presensiBuka->id_presensi,
-                        'id_peserta'   => $idPeserta,
+                        'id_presensi' => $presensi->id_presensi,
+                        'id_peserta' => $idPeserta,
                     ],
                     [
                         'status_kehadiran' => 'alpa',
                         'tanggal_presensi' => null,
-                        'is_final'         => 0,
+                        'is_final' => false,
                     ]
                 );
             }
+        });
 
-            $this->info("Presensi {$today} dibuka otomatis.");
+        $this->info("Presensi {$today} berhasil dibuka.");
+    }
+
+    /**
+     * ===============================
+     * TUTUP PRESENSI OTOMATIS
+     * ===============================
+     */
+    private function tutupPresensi()
+    {
+        $today = Carbon::today()->toDateString();
+
+        // Hari libur tidak ada proses
+        if (HariLibur::where('tanggal', $today)->exists()) {
+            return;
         }
 
-        // --- TUTUP OTOMATIS ---
-        $presensiTutup = Presensi::where('tanggal', $today)
-            ->where('is_open', 1)
+        $timeNow = Carbon::now()->format('H:i');
+
+        $presensi = Presensi::whereDate('tanggal', $today)
+            ->where('status', 'dibuka')
             ->where('jam_tutup', '<=', $timeNow)
             ->first();
 
-        if ($presensiTutup) {
-            $presensiTutup->update([
-                'is_open' => 0,
-                'closed_at' => $now,
+        if (!$presensi) {
+            return;
+        }
+
+        DB::transaction(function () use ($presensi) {
+
+            $presensi->update([
+                'status' => 'ditutup'
             ]);
 
-            PresensiPeserta::where('id_presensi', $presensiTutup->id_presensi)
-                ->where('is_final', 0)
-                ->update(['is_final' => 1]);
-
-            $this->info("Presensi {$today} ditutup otomatis & data difinalisasi.");
-        }
-
-        // --- OTOMATIS BUAT JADWAL UNTUK BESOK JIKA BELUM ADA ---
-        $tomorrow = Carbon::tomorrow()->toDateString();
-        if (!Presensi::where('tanggal', $tomorrow)->exists()) {
-            $lastPresensi = Presensi::orderBy('tanggal', 'desc')->first();
-            if ($lastPresensi) {
-                Presensi::create([
-                    'tanggal'   => $tomorrow,
-                    'jam_buka'  => $lastPresensi->jam_buka,
-                    'jam_tutup' => $lastPresensi->jam_tutup,
-                    'is_open'   => 0,
+            PresensiPeserta::where('id_presensi', $presensi->id_presensi)
+                ->where('is_final', false)
+                ->update([
+                    'is_final' => true
                 ]);
-                $this->info("Jadwal presensi untuk besok ({$tomorrow}) dibuat otomatis.");
-            }
+        });
+
+        $this->info("Presensi {$today} ditutup.");
+    }
+
+    /**
+     * ===============================
+     * MEMBUAT JADWAL BESOK
+     * ===============================
+     */
+    private function buatJadwalBesok()
+    {
+        $tomorrow = Carbon::tomorrow()->toDateString();
+
+        // Besok hari libur
+        if (HariLibur::where('tanggal', $tomorrow)->exists()) {
+
+            $this->info("Besok ({$tomorrow}) hari libur. Jadwal tidak dibuat.");
+
+            return;
         }
+
+        // Sudah ada jadwal
+        if (Presensi::whereDate('tanggal', $tomorrow)->exists()) {
+            return;
+        }
+
+        // Ambil jadwal terakhir
+        $lastPresensi = Presensi::whereDate('tanggal', '<', $tomorrow)
+            ->latest('tanggal')
+            ->first();
+
+        if (!$lastPresensi) {
+            return;
+        }
+
+        Presensi::create([
+            'tanggal' => $tomorrow,
+            'jam_buka' => $lastPresensi->jam_buka,
+            'jam_tutup' => $lastPresensi->jam_tutup,
+            'status' => 'belum_dibuka',
+        ]);
+
+        $this->info("Jadwal presensi {$tomorrow} berhasil dibuat.");
     }
 }

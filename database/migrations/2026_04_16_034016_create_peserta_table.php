@@ -26,7 +26,7 @@ return new class extends Migration
             $table->date('akhir_magang');
             $table->string('no_telp', 20);
             $table->text('alamat');
-            $table->smallInteger('kelas');
+            $table->smallInteger('kelas')->nullable();
             $table->string('password', 60);
             $table->string('email', 60);
             $table->enum('jenis_kelamin', ['L', 'P']);

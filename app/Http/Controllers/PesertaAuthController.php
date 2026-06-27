@@ -49,7 +49,7 @@ class PesertaAuthController extends Controller
         $request->validate([
     'nama' => 'required|string|max:255',
 
-    'nisn_nim' => 'required|digits_between:1,11|unique:peserta,nisn_nim',
+    'nisn_nim' => 'required|alpha_num|max:11|unique:peserta,nisn_nim',
 
     'password' => 'required|min:6',
 
@@ -59,7 +59,7 @@ class PesertaAuthController extends Controller
 
     'semester' => 'required|integer|min:1|max:14',
 
-    'kelas' => 'required|string|max:50',
+    'kelas' => 'nullable|string|max:4',
 
     'no_telp' => 'required|digits_between:10,15',
 
@@ -83,7 +83,7 @@ class PesertaAuthController extends Controller
 
     // NISN / NIM
     'nisn_nim.required' => 'NISN/NIM wajib diisi',
-    'nisn_nim.digits_between' => 'NISN/NIM maksimal 11 digit',
+    'nisn_nim.max' => 'NISN/NIM maksimal 11 karakter',
     'nisn_nim.unique' => 'NISN/NIM sudah digunakan',
 
     // PASSWORD
@@ -106,7 +106,7 @@ class PesertaAuthController extends Controller
 
     // KELAS
     'kelas.required' => 'Kelas wajib diisi',
-    'kelas.max' => 'Kelas terlalu panjang',
+    'kelas.max' => 'Kelas terlalu panjang (contoh yang benar 12A, 9B)',
 
     // NO TELP
     'no_telp.required' => 'Nomor telepon wajib diisi',

@@ -18,6 +18,11 @@ class PresensiPeserta extends Model
         'is_final'
     ];
 
+    protected $casts = [
+        'tanggal_presensi' => 'datetime',
+        'is_final' => 'boolean',
+    ];
+
     public function peserta()
     {
         return $this->belongsTo(Peserta::class, 'id_peserta');

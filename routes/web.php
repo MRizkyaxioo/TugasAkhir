@@ -24,8 +24,8 @@ use Illuminate\Support\Facades\Auth;
 Route::get('/', [DashboardController::class, 'index']);
 
 // login admin
-Route::get('/login-admin', [AdminAuthController::class, 'showLogin'])->name('admin.login');
-Route::post('/login-admin', [AdminAuthController::class, 'login']);
+Route::get('/login-petugas', [AdminAuthController::class, 'showLogin'])->name('admin.login');
+Route::post('/login-petugas', [AdminAuthController::class, 'login']);
 
 // login peserta
 Route::get('/login-peserta', [PesertaAuthController::class, 'showLogin'])->name('peserta.login');
@@ -103,6 +103,15 @@ Route::get('/admin/detail-presensi/export/{id}', [PresensiController::class, 'ex
 
 
 
+Route::post(
+    '/admin/hari-libur',
+    [PresensiController::class, 'simpanHariLibur']
+)->name('admin.hari-libur.store');
+
+Route::delete(
+    '/admin/hari-libur/{id}',
+    [PresensiController::class, 'hapusHariLibur']
+)->name('admin.hari-libur.delete');
 
     Route::put('/admin/pembimbing/update/{id}',
     [DashboardAdminController::class, 'updatePembimbing'])

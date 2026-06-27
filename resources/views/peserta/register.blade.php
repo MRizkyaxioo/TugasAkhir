@@ -433,7 +433,7 @@
                     </div>
 
                     <div class="field">
-                        <label>Kelas</label>
+                        <label>Kelas (Bagi mahasiswa bisa abaikan bagian ini)</label>
                         <input type="text" name="kelas" value="{{ old('kelas') }}">
                         @error('kelas')<span class="field-error">{{ $message }}</span>@enderror
                     </div>
@@ -506,7 +506,7 @@
                     </div>
 
                     <div class="field full">
-                        <label>Password</label>
+                        <label>Password (minimal 6 karakter)</label>
                         <div class="password-wrap">
                             <input type="password" name="password" id="passwordRegister">
                             <svg id="eyeRegister"
