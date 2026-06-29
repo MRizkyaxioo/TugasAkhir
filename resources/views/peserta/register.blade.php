@@ -403,7 +403,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('peserta.register') }}" method="POST" enctype="multipart/form-data">
+            <form id="formRegister" action="{{ route('peserta.register') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="form-grid">
 
@@ -433,7 +433,7 @@
                     </div>
 
                     <div class="field">
-                        <label>Kelas (Bagi mahasiswa bisa abaikan bagian ini)</label>
+                        <label>Kelas (Contoh 10, 11, 12. Untuk mahasiswa abaikan bagian ini)</label>
                         <input type="text" name="kelas" value="{{ old('kelas') }}">
                         @error('kelas')<span class="field-error">{{ $message }}</span>@enderror
                     </div>
@@ -464,7 +464,7 @@
                     </div>
 
                     <div class="field">
-                        <label>Email</label>
+                        <label>Email Aktif</label>
                         <input type="email" name="email" value="{{ old('email') }}">
                         @error('email')<span class="field-error">{{ $message }}</span>@enderror
                     </div>
@@ -487,13 +487,18 @@
 
                     <div class="field">
                         <label>Awal Magang</label>
-                        <input type="date" name="awal_magang" value="{{ old('awal_magang') }}">
+                        <input type="date" id="awal_magang" name="awal_magang" value="{{ old('awal_magang') }}">
                         @error('awal_magang')<span class="field-error">{{ $message }}</span>@enderror
                     </div>
 
                     <div class="field">
                         <label>Akhir Magang</label>
-                        <input type="date" name="akhir_magang" value="{{ old('akhir_magang') }}">
+                        <input
+    type="date"
+    id="akhir_magang"
+    name="akhir_magang"
+    value="{{ old('akhir_magang') }}"
+    disabled>
                         @error('akhir_magang')<span class="field-error">{{ $message }}</span>@enderror
                     </div>
 
@@ -536,6 +541,147 @@
             </form>
         </div>
     </main>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<script>
+const awal = document.getElementById('awal_magang');
+const akhir = document.getElementById('akhir_magang');
+const form = document.getElementById('formRegister');
+
+/**
+ * Menambahkan 1 bulan tanpa terkena bug timezone.
+ */
+function tambahSatuBulan(tanggalString) {
+    const [tahun, bulan, hari] = tanggalString.split('-').map(Number);
+
+    const tanggal = new Date(tahun, bulan - 1, hari);
+    tanggal.setMonth(tanggal.getMonth() + 1);
+
+    return tanggal;
+}
+
+/**
+ * Format Date menjadi YYYY-MM-DD
+ */
+function formatTanggal(date) {
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+
+    return `${yyyy}-${mm}-${dd}`;
+}
+
+/**
+ * Saat halaman pertama dibuka
+ */
+if (!awal.value) {
+    akhir.disabled = true;
+} else {
+    akhir.disabled = false;
+    akhir.min = formatTanggal(tambahSatuBulan(awal.value));
+}
+
+/**
+ * Ketika Awal Magang berubah
+ */
+awal.addEventListener('change', function () {
+
+    akhir.value = '';
+
+    if (!this.value) {
+        akhir.disabled = true;
+        akhir.removeAttribute('min');
+        return;
+    }
+
+    akhir.disabled = false;
+
+    const minimal = tambahSatuBulan(this.value);
+
+    akhir.min = formatTanggal(minimal);
+});
+
+/**
+ * Validasi ketika tanggal akhir dipilih
+ */
+akhir.addEventListener('change', function () {
+
+    if (!awal.value || !akhir.value) return;
+
+    const minimal = tambahSatuBulan(awal.value);
+
+    const [tahun, bulan, hari] = akhir.value.split('-').map(Number);
+    const tanggalAkhir = new Date(tahun, bulan - 1, hari);
+
+    if (tanggalAkhir < minimal) {
+
+        Swal.fire({
+            icon: 'warning',
+            title: 'Tanggal tidak valid',
+            text: `Tanggal akhir magang minimal ${formatTanggal(minimal)}.`
+        });
+
+        this.value = '';
+    }
+});
+
+/**
+ * Konfirmasi sebelum submit
+ */
+form.addEventListener('submit', function(e) {
+
+    e.preventDefault();
+
+    // Validasi lagi sebelum submit
+    if (awal.value && akhir.value) {
+
+        const minimal = tambahSatuBulan(awal.value);
+
+        const [tahun, bulan, hari] = akhir.value.split('-').map(Number);
+        const tanggalAkhir = new Date(tahun, bulan - 1, hari);
+
+        if (tanggalAkhir < minimal) {
+
+            Swal.fire({
+                icon: 'warning',
+                title: 'Tanggal tidak valid',
+                text: `Tanggal akhir magang minimal ${formatTanggal(minimal)}.`
+            });
+
+            return;
+        }
+    }
+
+    Swal.fire({
+        title: 'Kirim Pendaftaran?',
+        text: 'Pastikan seluruh data yang dimasukkan sudah benar.',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#C8873A',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Ya, Daftar',
+        cancelButtonText: 'Batal',
+        reverseButtons: true
+    }).then((result) => {
+
+        if (result.isConfirmed) {
+
+            Swal.fire({
+                title: 'Mengirim...',
+                text: 'Mohon tunggu sebentar.',
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            form.submit();
+        }
+
+    });
+
+});
+</script>
 </body>
 </html>

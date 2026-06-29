@@ -154,6 +154,15 @@
             border-radius: 8px;
         }
 
+        .alert-success {
+    background: #F0FDF4;
+    border: 1px solid #BBF7D0;
+    color: #166534;
+    font-size: 0.8rem;
+    padding: 10px 14px;
+    border-radius: 8px;
+}
+
         .field {
             display: flex;
             flex-direction: column;
@@ -389,6 +398,10 @@
 
                 @if(session('error'))
                     <div class="alert-error">{{ session('error') }}</div>
+                @endif
+
+                @if(session('success'))
+                    <div class="alert-success">{{ session('success') }}</div>
                 @endif
 
                 <form action="{{ route('peserta.login') }}" method="POST"

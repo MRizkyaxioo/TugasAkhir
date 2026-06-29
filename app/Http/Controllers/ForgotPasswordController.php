@@ -25,7 +25,7 @@ public function sendResetLink(Request $request)
     $peserta = Peserta::where('email', $request->email)->first();
 
     if (!$peserta) {
-        return back()->with('error', 'Email tidak ditemukan');
+        return back()->with('error', 'Email Anda belum terdaftar');
     }
 
     $token = Str::random(64);
@@ -45,6 +45,9 @@ public function sendResetLink(Request $request)
             ->subject('Reset Password');
     });
 
-    return back()->with('success', 'Link reset password dikirim ke email');
+    return back()->with(
+    'success',
+    'Link reset password berhasil dikirim. Silakan cek email Anda.'
+);
 }
 }

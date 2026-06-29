@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Presensi;
 use App\Models\PresensiPeserta;
 use App\Models\Peserta;
-use App\Models\HariLibur;
 use Carbon\Carbon;
 use App\Exports\RekapPresensiExport;
 use App\Exports\DetailPresensiExport;
@@ -18,6 +17,21 @@ class PresensiController extends Controller
     // Halaman utama presensi admin
     public function halamanPresensi()
 {
+    // Auto close presensi yang kemarin lupa ditutup
+Presensi::where('status', 'dibuka')
+    ->whereDate('tanggal', '<', Carbon::today())
+    ->update([
+        'status' => 'ditutup'
+    ]);
+
+PresensiPeserta::whereHas('presensi', function ($q) {
+    $q->where('status', 'ditutup');
+})
+->where('is_final', 0)
+->update([
+    'is_final' => 1
+]);
+
     $today = Carbon::today()->toDateString();
 
     $presensi = Presensi::whereDate('tanggal', $today)->first();
@@ -30,21 +44,16 @@ class PresensiController extends Controller
             ->get();
     }
 
-    // daftar hari libur
-    $hariLibur = HariLibur::orderBy('tanggal', 'desc')->get();
-
     return view(
         'admin.presensi',
         compact(
             'presensi',
-            'data',
-            'hariLibur'
+            'data'
         )
     );
 }
 
-    // Simpan jadwal (pengganti buka presensi)
-    public function aturWaktu(Request $request)
+public function bukaPresensi(Request $request)
 {
     $request->validate([
         'tanggal'   => 'required|date|after_or_equal:today',
@@ -52,100 +61,93 @@ class PresensiController extends Controller
         'jam_tutup' => 'required|date_format:H:i|after:jam_buka',
     ]);
 
-    $tanggal = $request->tanggal;
+    $presensi = Presensi::whereDate('tanggal', $request->tanggal)->first();
 
-    // Tidak boleh membuat jadwal pada hari libur
-    if (HariLibur::whereDate('tanggal', $tanggal)->exists()) {
-        return back()->with(
-            'error',
-            'Tanggal tersebut merupakan hari libur.'
-        );
-    }
-
-    $presensi = Presensi::whereDate('tanggal', $tanggal)->first();
-
-    // Jika jadwal sudah ada
     if ($presensi) {
 
-        if ($presensi->status === 'belum_dibuka') {
-
-            $presensi->update([
-                'jam_buka'  => $request->jam_buka,
-                'jam_tutup' => $request->jam_tutup,
-            ]);
-
+        if ($presensi->status != 'belum_dibuka') {
             return back()->with(
-                'success',
-                'Jam presensi berhasil diperbarui.'
+                'error',
+                'Presensi sudah dibuka atau sudah ditutup.'
             );
         }
 
-        return back()->with(
-            'error',
-            'Jam presensi tidak dapat diubah karena presensi sudah dibuka atau sudah ditutup.'
+        $presensi->update([
+            'jam_buka'  => $request->jam_buka,
+            'jam_tutup' => $request->jam_tutup,
+            'status'    => 'dibuka',
+        ]);
+
+    } else {
+
+        $presensi = Presensi::create([
+            'tanggal'   => $request->tanggal,
+            'jam_buka'  => $request->jam_buka,
+            'jam_tutup' => $request->jam_tutup,
+            'status'    => 'dibuka',
+        ]);
+
+    }
+
+    $peserta = Peserta::whereHas('hasilPendaftaran', function ($q) {
+        $q->where('status', 'diterima');
+    })->get();
+
+    foreach ($peserta as $p) {
+
+        PresensiPeserta::firstOrCreate(
+            [
+                'id_presensi' => $presensi->id_presensi,
+                'id_peserta'  => $p->id_peserta,
+            ],
+            [
+                'status_kehadiran' => 'alpa',
+                'tanggal_presensi' => $presensi->tanggal,
+                'is_final'         => 0,
+            ]
         );
     }
 
-    // Buat jadwal baru
-    Presensi::create([
-        'tanggal'   => $tanggal,
-        'jam_buka'  => $request->jam_buka,
-        'jam_tutup' => $request->jam_tutup,
-        'status'    => 'belum_dibuka',
-    ]);
+    return back()->with('success', 'Presensi berhasil dibuka.');
+}
+
+
+public function tutupPresensi($id)
+{
+    $presensi = Presensi::findOrFail($id);
+
+    DB::transaction(function() use($presensi){
+
+        $presensi->update([
+            'status'=>'ditutup'
+        ]);
+
+        PresensiPeserta::where('id_presensi',$presensi->id_presensi)
+            ->update([
+                'is_final'=>1
+            ]);
+
+    });
+
+    return back()->with('success','Presensi berhasil ditutup.');
+}
+
+public function simpanStatus(Request $request)
+{
+    foreach ($request->status as $id => $status) {
+
+        PresensiPeserta::where(
+            'id_presensi_peserta',
+            $id
+        )->update([
+            'status_kehadiran' => $status
+        ]);
+    }
 
     return back()->with(
         'success',
-        'Jadwal presensi berhasil dibuat.'
+        'Status kehadiran berhasil diperbarui.'
     );
-}
-
-public function simpanHariLibur(Request $request)
-{
-    $request->validate([
-        'tanggal' => 'required|date|unique:hari_libur,tanggal',
-        'nama_libur' => 'required|string|max:255',
-    ]);
-
-    HariLibur::create([
-        'tanggal' => $request->tanggal,
-        'nama_libur' => $request->nama_libur,
-    ]);
-
-    return back()->with('success', 'Hari libur berhasil ditambahkan.');
-}
-
-public function hapusHariLibur($id)
-{
-    HariLibur::findOrFail($id)->delete();
-
-    return back()->with('success', 'Hari libur berhasil dihapus.');
-}
-
-    // Simpan perubahan status saja (tanpa menutup)
-    public function simpanStatus(Request $request)
-{
-    $today = Carbon::today()->toDateString();
-
-    $presensi = Presensi::whereDate('tanggal', $today)->first();
-
-    if (!$presensi) {
-        return back()->with('error', 'Presensi hari ini belum dibuat.');
-    }
-
-    if ($presensi->status == 'ditutup') {
-        return back()->with('error', 'Presensi sudah ditutup.');
-    }
-
-    foreach ($request->status ?? [] as $id => $status) {
-
-        PresensiPeserta::where('id_presensi_peserta', $id)
-            ->update([
-                'status_kehadiran' => $status
-            ]);
-    }
-
-    return back()->with('success', 'Status berhasil diperbarui.');
 }
 
     public function rekapPresensi(Request $request)

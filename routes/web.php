@@ -88,9 +88,12 @@ Route::middleware(AdminMiddleware::class)->group(function () {
     Route::post('/admin/upload-balasan/{id}',[DashboardAdminController::class, 'uploadBalasan'])->name('admin.upload.balasan');
     Route::get('/admin/pembimbing',[DashboardAdminController::class, 'pembimbing'])->name('admin.pembimbing');
     Route::post('/admin/pembimbing/store',[DashboardAdminController::class, 'storePembimbing'])->name('admin.pembimbing.store');
-Route::post('/admin/presensi/atur-waktu', [PresensiController::class, 'aturWaktu'])->name('admin.presensi.aturWaktu');
+Route::post('/admin/presensi/buka',
+    [PresensiController::class, 'bukaPresensi'])
+    ->name('admin.presensi.buka');
 Route::post('/admin/presensi/simpan-status', [PresensiController::class, 'simpanStatus'])->name('admin.presensi.simpanStatus');
-Route::post('/admin/presensi/tutup-manual', [PresensiController::class, 'tutupPresensiManual'])->name('admin.presensi.tutupManual');
+Route::post('/admin/presensi/{id}/tutup', [PresensiController::class, 'tutupPresensi'])
+    ->name('admin.presensi.tutup');
     Route::get('/admin/presensi', [PresensiController::class, 'halamanPresensi'])->name('admin.presensi');
     Route::get('/admin/rekap-presensi', [PresensiController::class, 'rekapPresensi'])->name('admin.rekap.presensi');
     Route::get('/admin/rekap-surat', [PresensiController::class, 'rekapSurat'])->name('admin.rekap.surat');
@@ -100,18 +103,6 @@ Route::get('/admin/detail-presensi/{id}', [PresensiController::class, 'detailPre
 ->name('admin.detail.presensi');
 Route::get('/admin/detail-presensi/export/{id}', [PresensiController::class, 'exportDetailPresensi'])
 ->name('admin.detail.presensi.export');
-
-
-
-Route::post(
-    '/admin/hari-libur',
-    [PresensiController::class, 'simpanHariLibur']
-)->name('admin.hari-libur.store');
-
-Route::delete(
-    '/admin/hari-libur/{id}',
-    [PresensiController::class, 'hapusHariLibur']
-)->name('admin.hari-libur.delete');
 
     Route::put('/admin/pembimbing/update/{id}',
     [DashboardAdminController::class, 'updatePembimbing'])

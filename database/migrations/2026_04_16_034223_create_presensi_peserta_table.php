@@ -14,18 +14,19 @@ return new class extends Migration
         Schema::create('presensi_peserta', function (Blueprint $table) {
             $table->id('id_presensi_peserta');
 
-            $table->foreignId('id_peserta')
-                ->constrained('peserta', 'id_peserta')
-                ->cascadeOnDelete();
-
             $table->foreignId('id_presensi')
                 ->constrained('presensi', 'id_presensi')
+                ->cascadeOnDelete();
+
+            $table->foreignId('id_peserta')
+                ->constrained('peserta', 'id_peserta')
                 ->cascadeOnDelete();
 
             $table->string('surat_pendukung_izin', 255)->nullable();
             $table->timestamp('tanggal_presensi')->nullable();
             $table->enum('status_kehadiran', ['hadir', 'izin', 'sakit', 'alpa']);
             $table->boolean('is_final')->default(false);
+            $table->unique(['id_presensi', 'id_peserta']);
             $table->timestamps();
         });
     }

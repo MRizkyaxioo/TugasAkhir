@@ -10,9 +10,35 @@ use App\Models\Peserta;
 
 class ResetPasswordController extends Controller
 {
-    public function showResetForm($token)
+   public function showResetForm($token)
 {
-    return view('auth.reset_password', compact('token'));
+    $data = DB::table('password_reset_tokens')
+        ->where('token', $token)
+        ->first();
+
+    // token sudah pernah dipakai
+    if (!$data) {
+        return redirect()
+            ->route('peserta.login')
+            ->with('error', 'Link reset password sudah tidak berlaku atau telah digunakan.');
+    }
+
+    // token sudah kadaluarsa
+    if (Carbon::parse($data->created_at)->addMinutes(60)->isPast()) {
+
+        DB::table('password_reset_tokens')
+            ->where('token', $token)
+            ->delete();
+
+        return redirect()
+            ->route('peserta.login')
+            ->with('error', 'Link reset password telah kadaluarsa.');
+    }
+
+    return view('auth.reset_password', [
+        'token' => $token,
+        'email' => $data->email,
+    ]);
 }
 
 public function reset(Request $request)
@@ -28,12 +54,21 @@ public function reset(Request $request)
         ->first();
 
     if (!$data) {
-        return back()->with('error', 'Token tidak valid');
+    return redirect()
+        ->route('peserta.login')
+        ->with('error', 'Link reset password sudah tidak berlaku atau telah digunakan.');
     }
 
     if (Carbon::parse($data->created_at)->addMinutes(60)->isPast()) {
-        return back()->with('error', 'Token sudah kadaluarsa');
-    }
+
+    DB::table('password_reset_tokens')
+        ->where('token', $request->token)
+        ->delete();
+
+    return redirect()
+        ->route('peserta.login')
+        ->with('error', 'Link reset password telah kadaluarsa.');
+}
 
     Peserta::where('email', $request->email)
         ->update([
@@ -41,7 +76,7 @@ public function reset(Request $request)
         ]);
 
     DB::table('password_reset_tokens')
-        ->where('email', $request->email)
+        ->where('token', $request->token)
         ->delete();
 
     return redirect()->route('peserta.login')

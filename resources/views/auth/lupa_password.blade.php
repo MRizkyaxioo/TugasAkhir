@@ -251,17 +251,25 @@
                 <h2>Lupa Password</h2>
                 <p>Masukkan email yang terdaftar, kami akan mengirimkan link untuk mereset password kamu.</p>
 
-                @if(session('status'))
-                    <div class="alert-success">{{ session('status') }}</div>
-                @endif
+                @if(session('success'))
+    <div class="alert-success">
+        {{ session('success') }}
+    </div>
+@endif
 
-                @if($errors->any())
-                    <div class="alert-error">
-                        @foreach($errors->all() as $error)
-                            <div>{{ $error }}</div>
-                        @endforeach
-                    </div>
-                @endif
+@if(session('error'))
+    <div class="alert-error">
+        {{ session('error') }}
+    </div>
+@endif
+
+@if($errors->any())
+    <div class="alert-error">
+        @foreach($errors->all() as $error)
+            <div>{{ $error }}</div>
+        @endforeach
+    </div>
+@endif
 
                 <form method="POST" action="{{ route('password.email') }}"
                       style="display:flex; flex-direction:column; gap:16px;">

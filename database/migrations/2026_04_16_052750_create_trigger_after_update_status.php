@@ -23,13 +23,6 @@ return new class extends Migration
             SET kuota_peserta = GREATEST(kuota_peserta - 1, 0)
             WHERE id_kuota = 1;
         END IF;
-
-        -- Kembalikan kuota
-        IF OLD.status = 'diterima' AND NEW.status != 'diterima' THEN
-            UPDATE kuota_magang
-            SET kuota_peserta = kuota_peserta + 1
-            WHERE id_kuota = 1;
-        END IF;
     END
 ");
     }

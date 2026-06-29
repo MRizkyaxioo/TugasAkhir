@@ -11,6 +11,7 @@ use App\Models\Jurusan;
 use App\Models\SekolahKampus;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -47,7 +48,7 @@ class PesertaAuthController extends Controller
     }
 
         $request->validate([
-    'nama' => 'required|string|max:255',
+    'nama' => 'required|string|max:60',
 
     'nisn_nim' => 'required|alpha_num|max:11|unique:peserta,nisn_nim',
 
@@ -59,7 +60,7 @@ class PesertaAuthController extends Controller
 
     'semester' => 'required|integer|min:1|max:14',
 
-    'kelas' => 'nullable|string|max:4',
+    'kelas' => 'nullable|integer|in:10,11,12',
 
     'no_telp' => 'required|digits_between:10,15',
 
@@ -71,7 +72,7 @@ class PesertaAuthController extends Controller
 
     'awal_magang' => 'required|date',
 
-    'akhir_magang' => 'required|date|after_or_equal:awal_magang',
+    'akhir_magang' => 'required|date',
 
     'file_berkas' => 'required|file|mimes:pdf|max:5120',
 
@@ -79,7 +80,7 @@ class PesertaAuthController extends Controller
 
     // NAMA
     'nama.required' => 'Nama lengkap wajib diisi',
-    'nama.max' => 'Nama maksimal 255 karakter',
+    'nama.max' => 'Nama maksimal 60 karakter',
 
     // NISN / NIM
     'nisn_nim.required' => 'NISN/NIM wajib diisi',
@@ -105,8 +106,8 @@ class PesertaAuthController extends Controller
     'semester.max' => 'Semester maksimal 14',
 
     // KELAS
-    'kelas.required' => 'Kelas wajib diisi',
-    'kelas.max' => 'Kelas terlalu panjang (contoh yang benar 12A, 9B)',
+    'kelas.integer' => 'Kelas harus berupa angka',
+    'kelas.in' => 'Kelas hanya boleh diisi 10, 11, atau 12',
 
     // NO TELP
     'no_telp.required' => 'Nomor telepon wajib diisi',
@@ -131,7 +132,6 @@ class PesertaAuthController extends Controller
 
     'akhir_magang.required' => 'Tanggal akhir magang wajib diisi',
     'akhir_magang.date' => 'Format tanggal akhir tidak valid',
-    'akhir_magang.after_or_equal' => 'Tanggal akhir harus setelah atau sama dengan tanggal awal',
 
     // FILE
     'file_berkas.required' => 'File wajib diupload',
@@ -139,6 +139,17 @@ class PesertaAuthController extends Controller
     'file_berkas.mimes' => 'File harus berupa PDF',
     'file_berkas.max' => 'Ukuran maksimal file 5MB',
 ]);
+
+        $awal = Carbon::parse($request->awal_magang);
+        $akhir = Carbon::parse($request->akhir_magang);
+
+if ($akhir->lt($awal->copy()->addMonth())) {
+    return back()
+        ->withErrors([
+            'akhir_magang' => 'Tanggal akhir magang minimal 1 bulan setelah tanggal awal magang.'
+        ])
+        ->withInput();
+}
 
         DB::beginTransaction();
 

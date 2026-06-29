@@ -17,10 +17,9 @@ return new class extends Migration
     $table->time('jam_buka');
     $table->time('jam_tutup');
     $table->enum('status', [
-        'belum_dibuka',
         'dibuka',
         'ditutup'
-    ])->default('belum_dibuka');
+    ]);
     $table->timestamps();
 });
     }

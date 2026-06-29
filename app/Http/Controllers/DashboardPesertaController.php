@@ -36,7 +36,6 @@ public function peserta()
 
     $today = Carbon::today()->toDateString();
 
-    // Ambil jadwal hari ini TANPA filter status
     $presensi = Presensi::whereDate('tanggal', $today)->first();
 
     $sudahPresensi = false;
@@ -48,16 +47,28 @@ public function peserta()
             ->where('id_presensi', $presensi->id_presensi)
             ->first();
 
-        if ($record && $record->tanggal_presensi != null) {
-            $sudahPresensi = true;
-        }
-
+        if ($record && $record->status_kehadiran != 'alpa') {
+    $sudahPresensi = true;
+}
         $closeTime = $presensi->jam_tutup;
 
-        // Jika status bukan dibuka, anggap presensi belum bisa dilakukan
-        if ($presensi->status != 'dibuka') {
-            $presensi = null;
-        }
+        $now = Carbon::now();
+
+        $tanggal = Carbon::parse($presensi->tanggal)->toDateString();
+
+$jamBuka = Carbon::parse($presensi->tanggal)
+    ->setTimeFromTimeString($presensi->jam_buka);
+
+$jamTutup = Carbon::parse($presensi->tanggal)
+    ->setTimeFromTimeString($presensi->jam_tutup);
+
+if (
+    $presensi->status != 'dibuka' ||
+    $now->lt($jamBuka) ||
+    $now->gt($jamTutup)
+) {
+    $presensi = null;
+}
     }
 
     return view(
@@ -80,30 +91,41 @@ public function kirimPresensi(Request $request)
         'id_presensi' => 'required'
     ]);
 
-    // Cek apakah presensi memang sedang dibuka
     $presensi = Presensi::find($request->id_presensi);
 
-if (!$presensi) {
-    return back()->with('error', 'Jadwal presensi tidak ditemukan.');
-}
-
-if ($presensi->status != 'dibuka') {
-    return back()->with('error', 'Presensi belum dibuka atau sudah ditutup.');
-}
-
-    // Ambil record default (jika ada) atau fallback
-    $record = PresensiPeserta::where('id_peserta', $peserta->id_peserta)
-                ->where('id_presensi', $request->id_presensi)
-                ->first();
-
-    // Cek apakah sudah benar-benar presensi (sudah ada tanggal)
-    if ($record && $record->tanggal_presensi !== null) {
-        return back()->with('error', 'Kamu sudah presensi hari ini');
+    if (!$presensi) {
+        return back()->with('error', 'Jadwal presensi tidak ditemukan.');
     }
 
-    $path = $record->surat_pendukung_izin ?? null; // ambil surat lama jika ada
+    if ($presensi->status != 'dibuka') {
+        return back()->with('error', 'Presensi belum dibuka.');
+    }
 
-    // Jika izin/sakit, wajib upload surat baru
+    $now = Carbon::now();
+
+    $jamBuka = Carbon::parse($presensi->tanggal)
+    ->setTimeFromTimeString($presensi->jam_buka);
+
+$jamTutup = Carbon::parse($presensi->tanggal)
+    ->setTimeFromTimeString($presensi->jam_tutup);
+
+if (
+    $now->lt($jamBuka) ||
+    $now->gt($jamTutup)
+) {
+    return back()->with('error', 'Waktu presensi sudah berakhir.');
+}
+
+    $record = PresensiPeserta::where('id_peserta', $peserta->id_peserta)
+        ->where('id_presensi', $request->id_presensi)
+        ->first();
+
+    if ($record && $record->status_kehadiran != 'alpa') {
+    return back()->with('error', 'Kamu sudah presensi hari ini.');
+}
+
+    $path = $record->surat_pendukung_izin ?? null;
+
     if (in_array($request->status, ['izin', 'sakit'])) {
         $request->validate([
             'surat' => 'required|mimes:pdf|max:5120'
@@ -123,7 +145,6 @@ if ($presensi->status != 'dibuka') {
     if ($record) {
         $record->update($dataUpdate);
     } else {
-        // fallback jika record default belum dibuat (seharusnya sudah ada)
         PresensiPeserta::create(array_merge($dataUpdate, [
             'id_peserta' => $peserta->id_peserta,
             'id_presensi' => $request->id_presensi,

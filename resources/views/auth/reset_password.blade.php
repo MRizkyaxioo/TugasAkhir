@@ -275,9 +275,15 @@
                     <div class="field">
                         <label>Email</label>
                         <div class="input-wrap">
-                            <input type="email" name="email"
-                                   value="{{ old('email') }}"
-                                   placeholder="email@contoh.com" required>
+                            <input
+    type="email"
+    value="{{ $email }}"
+    readonly>
+
+<input
+    type="hidden"
+    name="email"
+    value="{{ $email }}">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
                                  stroke="currentColor" stroke-width="2"
                                  stroke-linecap="round" stroke-linejoin="round"

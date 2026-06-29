@@ -367,29 +367,26 @@
                 <div class="action-bar">
     {{-- Tombol Atur Waktu --}}
     <div class="action-group">
-        <span class="action-label">Atur Waktu Presensi</span>
-        <button type="button" id="btn-atur-waktu" class="btn btn-primary btn-sm">
-            Atur Waktu
-        </button>
-    </div>
-
-    <div class="action-group">
-    <span class="action-label">Hari Libur</span>
-
-    <button
-        type="button"
-        class="btn btn-outline btn-sm"
-        id="btn-libur">
-
-        Atur Hari Libur
+    <span class="action-label">Buka Presensi</span>
+    <button type="button" id="btn-buka-presensi" class="btn btn-primary btn-sm">
+        Buka Presensi
     </button>
 </div>
+
+@if($presensi)
+<div class="action-group">
+    <span class="action-label">Tutup Presensi</span>
+    <button type="button" id="btn-tutup-presensi" class="btn btn-outline btn-sm">
+        Tutup Presensi
+    </button>
+</div>
+@endif
 
     {{-- Simpan Perubahan Status --}}
     <div class="action-group">
         <span class="action-label">Simpan Perubahan Kehadiran</span>
         <button type="button" id="btn-simpan-status" class="btn btn-outline btn-sm">
-            Simpan Perubahan
+            Ubah Kehadiran
         </button>
     </div>
 
@@ -431,80 +428,6 @@
                 </div>
             @endif
 
-            @if($hariLibur->count())
-
-<div
-style="
-margin-bottom:18px;
-padding:15px;
-background:#FFFDF9;
-border:1px solid #E8D5B5;
-border-radius:10px;">
-
-<h4 style="margin-bottom:10px;">
-Daftar Hari Libur
-</h4>
-
-<table style="width:100%;">
-
-<thead>
-
-<tr>
-
-<th>Tanggal</th>
-
-<th>Nama</th>
-
-<th>Aksi</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-@foreach($hariLibur as $libur)
-
-<tr>
-
-<td>
-{{ $libur->tanggal->format('d-m-Y') }}
-</td>
-
-<td>
-{{ $libur->nama_libur }}
-</td>
-
-<td>
-
-<form
-method="POST"
-action="{{ route('admin.hari-libur.delete',$libur->id_hari_libur) }}">
-
-@csrf
-@method('DELETE')
-
-<button class="btn btn-outline btn-sm">
-
-Hapus
-
-</button>
-
-</form>
-
-</td>
-
-</tr>
-
-@endforeach
-
-</tbody>
-
-</table>
-
-</div>
-
-@endif
 
                 <!-- TABLE -->
                 <form id="form-presensi" method="POST" action="{{ route('admin.presensi.simpanStatus') }}">
@@ -561,41 +484,51 @@ Hapus
     </div>
 <script>
 
-    document.getElementById('btn-atur-waktu').addEventListener('click', function() {
+    document.getElementById('btn-buka-presensi').addEventListener('click', function () {
+
     Swal.fire({
-        title: 'Atur Waktu Presensi',
+        title: 'Buka Presensi',
         html:
             '<input id="swal-tanggal" type="date" class="swal2-input" value="{{ date("Y-m-d") }}">' +
-            '<input id="swal-buka" type="time" class="swal2-input" placeholder="Jam Buka" value="08:00">' +
-            '<input id="swal-tutup" type="time" class="swal2-input" placeholder="Jam Tutup" value="16:00">',
-        focusConfirm: false,
+            '<input id="swal-buka" type="time" class="swal2-input" value="08:00">' +
+            '<input id="swal-tutup" type="time" class="swal2-input" value="16:00">',
         showCancelButton: true,
-        confirmButtonText: 'Simpan',
+        confirmButtonText: 'Buka',
         preConfirm: () => {
-            const tanggal = document.getElementById('swal-tanggal').value;
-            const buka = document.getElementById('swal-buka').value;
-            const tutup = document.getElementById('swal-tutup').value;
-            if (!tanggal || !buka || !tutup) {
-                Swal.showValidationMessage('Lengkapi semua field');
-                return false;
-            }
-            return { tanggal, buka, tutup };
+
+            return {
+                tanggal: document.getElementById('swal-tanggal').value,
+                buka: document.getElementById('swal-buka').value,
+                tutup: document.getElementById('swal-tutup').value
+            };
+
         }
-    }).then((result) => {
-        if (result.isConfirmed) {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = '{{ route("admin.presensi.aturWaktu") }}';
-            form.innerHTML = `
+
+    }).then((result)=>{
+
+        if(result.isConfirmed){
+
+            const form=document.createElement('form');
+
+            form.method='POST';
+
+            form.action='{{ route("admin.presensi.buka") }}';
+
+            form.innerHTML=`
                 @csrf
                 <input name="tanggal" value="${result.value.tanggal}">
                 <input name="jam_buka" value="${result.value.buka}">
                 <input name="jam_tutup" value="${result.value.tutup}">
             `;
+
             document.body.appendChild(form);
+
             form.submit();
+
         }
+
     });
+
 });
 
 document.getElementById('btn-simpan-status').addEventListener('click', function() {
@@ -612,59 +545,39 @@ document.getElementById('btn-simpan-status').addEventListener('click', function(
     });
 });
 
-document.getElementById('btn-libur').addEventListener('click', function(){
+document.getElementById('btn-tutup-presensi').addEventListener('click', function(){
 
-Swal.fire({
+    Swal.fire({
 
-title:'Tambah Hari Libur',
+        title:'Tutup Presensi?',
 
-html:
-'<input id="tanggal-libur" type="date" class="swal2-input">'+
-'<input id="nama-libur" class="swal2-input" placeholder="Nama Hari Libur">',
+        text:'Peserta tidak dapat melakukan presensi lagi.',
 
-showCancelButton:true,
+        icon:'warning',
 
-confirmButtonText:'Simpan',
+        showCancelButton:true,
 
-preConfirm:()=>{
+        confirmButtonText:'Ya, Tutup'
 
-return{
+    }).then((result)=>{
 
-tanggal:document.getElementById('tanggal-libur').value,
+        if(result.isConfirmed){
 
-nama:document.getElementById('nama-libur').value
+            const form=document.createElement('form');
 
-}
+            form.method='POST';
 
-}
+            form.action='{{ $presensi ? route("admin.presensi.tutup", $presensi->id_presensi) : "#" }}';
 
-}).then((result)=>{
+            form.innerHTML='@csrf';
 
-if(result.isConfirmed){
+            document.body.appendChild(form);
 
-const form=document.createElement('form');
+            form.submit();
 
-form.method='POST';
+        }
 
-form.action='{{ route("admin.hari-libur.store") }}';
-
-form.innerHTML=`
-
-@csrf
-
-<input name="tanggal" value="${result.value.tanggal}">
-
-<input name="nama_libur" value="${result.value.nama}">
-
-`;
-
-document.body.appendChild(form);
-
-form.submit();
-
-}
-
-});
+    });
 
 });
 

@@ -439,14 +439,14 @@
                 </div>
 
                 <div class="kuota-section">
-                    <h3>Tambah Kuota Magang</h3>
+                    <h3>Atur Kuota Magang</h3>
                     <form action="{{ route('admin.update.kuota') }}" method="POST">
                         @csrf
                         @method('PUT')
                         <div class="kuota-form">
                             <input type="number" name="kuota" min="0"
-                                   placeholder="Tambah disini" required>
-                            <button type="submit" class="btn-tambah">Tambah</button>
+                                   placeholder="Atur disini" required>
+                            <button type="submit" class="btn-tambah">Terapkan</button>
                         </div>
                     </form>
                 </div>
