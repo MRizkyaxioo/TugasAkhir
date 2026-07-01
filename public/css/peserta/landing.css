@@ -1030,64 +1030,79 @@ footer {
 
 }
 
-/* ===== MODAL ALUMNI ===== */
+/* ===== ALUMNI DROPDOWN (ganti modal) ===== */
 
-.modal-alumni{
-    position:fixed;
-    inset:0;
-    display:none;
-    align-items:center;
-    justify-content:center;
-    z-index:9999;
+/* Hapus/override style modal lama */
+.modal-alumni {
+    display: none !important;
 }
 
-.modal-alumni.show{
-    display:flex;
+/* Tombol lihat semua */
+.btn-lihat-semua {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--gold);
+    color: #fff;
+    padding: 10px 26px;
+    border-radius: 30px;
+    border: none;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 500;
+    transition: background 0.2s, transform 0.15s;
+    box-shadow: 0 4px 14px rgba(200,135,58,0.3);
 }
 
-.modal-backdrop{
-    position:absolute;
-    inset:0;
-    background:rgba(0,0,0,.45);
+.btn-lihat-semua:hover {
+    background: var(--gold-light);
+    transform: translateY(-1px);
 }
 
-.modal-content{
-    position:relative;
-    width:90%;
-    max-width:700px;
-    max-height:80vh;
-    background:#fff;
-    border-radius:18px;
-    overflow:hidden;
-    box-shadow:0 20px 40px rgba(0,0,0,.2);
-    z-index:2;
+/* Ikon panah pada tombol */
+.btn-lihat-semua .arrow-icon {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.3s;
+    flex-shrink: 0;
 }
 
-.modal-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:20px 24px;
-    border-bottom:1px solid #eee;
+.btn-lihat-semua.is-open .arrow-icon {
+    transform: rotate(180deg);
 }
 
-.modal-header h3{
-    margin:0;
-    font-family:'Playfair Display',serif;
+/* Dropdown container */
+.alumni-dropdown {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, opacity 0.3s ease;
+    opacity: 0;
 }
 
-.modal-header button{
-    border:none;
-    background:none;
-    font-size:30px;
-    cursor:pointer;
+.alumni-dropdown.is-open {
+    max-height: 2000px; /* cukup besar untuk menampung semua data */
+    opacity: 1;
 }
 
-.modal-body{
-    max-height:65vh;
-    overflow-y:auto;
+/* Item alumni dalam dropdown */
+.alumni-dropdown .alumni-item {
+    border-top: 1px solid #f2f2f2;
 }
 
-.modal-body .alumni-item:last-child{
-    border-bottom:none;
+.alumni-dropdown .alumni-item:first-child {
+    border-top: none;
+}
+
+/* Divider antara preview dan dropdown */
+.alumni-dropdown-divider {
+    height: 1px;
+    background: rgba(200,135,58,0.15);
+    margin: 0;
+    display: none;
+}
+
+.alumni-dropdown.is-open + .alumni-dropdown-divider,
+.alumni-dropdown-divider.is-open {
+    display: block;
 }

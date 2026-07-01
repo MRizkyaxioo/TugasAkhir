@@ -9,6 +9,14 @@
 </head>
 <body>
 
+    <!-- HAMBURGER TOGGLE (mobile) -->
+    <button class="sidebar-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open'); document.querySelector('.sidebar-overlay').classList.toggle('active');">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+    </button>
+    <div class="sidebar-overlay" onclick="document.querySelector('.sidebar').classList.remove('open'); this.classList.remove('active');"></div>
+
     <!-- SIDEBAR -->
     <aside class="sidebar">
         <div class="sidebar-logo">
@@ -139,7 +147,7 @@
         @endforeach
     </select>
 </div>
-                        <div style="display:flex; align-items:flex-end;">
+                        <div class="filter-group filter-submit">
                             <button type="submit" class="btn btn-primary">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
@@ -167,13 +175,13 @@
                         <tbody>
                             @forelse($data as $i => $d)
                             <tr>
-                                <td>{{ $data->firstItem() + $i }}</td>
-                                <td>{{ $d->nama }}</td>
-                                <td>{{ $d->nisn_nim }}</td>
-                                <td>{{ $d->sekolahKampus->nama_sekolah_kampus ?? '-' }}</td>
-                                <td>{{ $d->jurusan->jurusan ?? '-' }}</td>
-                                <td><span class="badge badge-selesai">Selesai</span></td>
-                                <td>
+                                <td data-label="No">{{ $data->firstItem() + $i }}</td>
+                                <td data-label="Nama">{{ $d->nama }}</td>
+                                <td data-label="Nisn/NIM">{{ $d->nisn_nim }}</td>
+                                <td data-label="Sekolah/Kampus">{{ $d->sekolahKampus->nama_sekolah_kampus ?? '-' }}</td>
+                                <td data-label="Jurusan">{{ $d->jurusan->jurusan ?? '-' }}</td>
+                                <td data-label="Status"><span class="badge badge-selesai">Selesai</span></td>
+                                <td data-label="Aksi">
                                     <div class="aksi-cell">
                                         <a href="{{ route('admin.detail.riwayat', $d->id_peserta) }}"
                                            class="btn btn-outline btn-sm">Detail</a>

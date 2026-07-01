@@ -26,36 +26,33 @@ menuLinks.forEach(link => {
 });
 
 
-// ===== MODAL ALUMNI =====
+// ===== ALUMNI DROPDOWN (ganti modal) =====
+// Ganti seluruh blok "MODAL ALUMNI" di landing.js dengan kode ini
 
-const btnAlumni = document.getElementById('btnAlumni');
-const modalAlumni = document.getElementById('modalAlumni');
-const btnCloseAlumni = document.getElementById('btnCloseAlumni');
-const modalBackdrop = document.getElementById('modalBackdrop');
+const btnAlumni     = document.getElementById('btnAlumni');
+const alumniDropdown = document.getElementById('alumniDropdown');
 
-if(btnAlumni){
+if (btnAlumni && alumniDropdown) {
 
-    btnAlumni.addEventListener('click', () => {
+    btnAlumni.addEventListener('click', function () {
 
-        modalAlumni.classList.add('show');
-        document.body.style.overflow = 'hidden';
+        const isOpen = alumniDropdown.classList.contains('is-open');
 
-    });
+        if (isOpen) {
+            // Tutup
+            alumniDropdown.classList.remove('is-open');
+            btnAlumni.classList.remove('is-open');
+            btnAlumni.querySelector('.btn-text').textContent = 'Lihat Semua Alumni';
+        } else {
+            // Buka
+            alumniDropdown.classList.add('is-open');
+            btnAlumni.classList.add('is-open');
+            btnAlumni.querySelector('.btn-text').textContent = 'Sembunyikan Alumni';
 
-    function closeAlumni(){
-
-        modalAlumni.classList.remove('show');
-        document.body.style.overflow = '';
-
-    }
-
-    btnCloseAlumni.addEventListener('click', closeAlumni);
-    modalBackdrop.addEventListener('click', closeAlumni);
-
-    document.addEventListener('keydown', function(e){
-
-        if(e.key === 'Escape'){
-            closeAlumni();
+            // Scroll smooth ke dropdown setelah animasi sedikit berjalan
+            setTimeout(() => {
+                alumniDropdown.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
         }
 
     });

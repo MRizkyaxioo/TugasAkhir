@@ -9,6 +9,14 @@
 </head>
 <body>
 
+    <!-- HAMBURGER TOGGLE (mobile) -->
+    <button class="sidebar-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open'); document.querySelector('.sidebar-overlay').classList.toggle('active');">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+    </button>
+    <div class="sidebar-overlay" onclick="document.querySelector('.sidebar').classList.remove('open'); this.classList.remove('active');"></div>
+
     <aside class="sidebar">
         <div class="sidebar-logo">
             <img src="{{ asset('images/logo-poliban.jpg') }}" alt="Logo Poliban">
@@ -117,22 +125,22 @@
                         <tbody>
                             @forelse($data as $i => $d)
                             <tr>
-                                <td>{{ $d->peserta->nisn_nim }}</td>
-                                <td>{{ $d->peserta->nama }}</td>
-                                <td>
+                                <td data-label="NISN/NIM">{{ $d->peserta->nisn_nim }}</td>
+                                <td data-label="Nama">{{ $d->peserta->nama }}</td>
+                                <td data-label="Status">
                                     <span class="badge badge-{{ $d->status_kehadiran }}">
                                         {{ ucfirst($d->status_kehadiran) }}
                                     </span>
                                 </td>
-                                <td>{{ \Carbon\Carbon::parse($d->tanggal_presensi)->format('d-m-Y') }}</td>
-                                <td>
+                                <td data-label="Tanggal">{{ \Carbon\Carbon::parse($d->tanggal_presensi)->format('d-m-Y') }}</td>
+                                <td data-label="Surat">
                                     <a href="{{ asset('storage/'.$d->surat_pendukung_izin) }}"
                                        target="_blank" class="surat-link">Lihat Surat</a>
                                 </td>
                             </tr>
                             @empty
-                            <tr>
-                                <td colspan="5" style="text-align:center; color:var(--muted); padding:28px;">
+                            <tr class="empty-row">
+                                <td colspan="5">
                                     Belum ada data surat
                                 </td>
                             </tr>

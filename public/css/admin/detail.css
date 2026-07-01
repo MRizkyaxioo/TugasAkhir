@@ -21,7 +21,7 @@ body {
     display: flex;
 }
 
-/* SIDEBAR — sama persis */
+/* SIDEBAR */
 .sidebar {
     width: var(--sidebar-w);
     background: var(--warm-white);
@@ -33,6 +33,7 @@ body {
     height: 100vh;
     z-index: 200;
     box-shadow: 2px 0 12px rgba(26,18,8,0.06);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sidebar-logo {
@@ -41,6 +42,7 @@ body {
     align-items: center;
     justify-content: center;
     border-bottom: 1px solid rgba(200,135,58,0.12);
+    flex-shrink: 0;
 }
 
 .sidebar-logo img { width: 64px; height: 64px; object-fit: contain; }
@@ -52,6 +54,48 @@ body {
     flex-direction: column;
     gap: 2px;
     overflow-y: auto;
+    min-height: 0;
+}
+
+/* OVERLAY (mobile) */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26,18,8,0.45);
+    z-index: 199;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.sidebar-overlay.is-open { display: block; opacity: 1; }
+
+/* HAMBURGER BUTTON */
+.btn-hamburger-admin {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    width: 38px;
+    height: 38px;
+    background: transparent;
+    border: 1px solid rgba(200,135,58,0.25);
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 0;
+    flex-shrink: 0;
+    transition: background 0.2s;
+}
+
+.btn-hamburger-admin:hover { background: rgba(200,135,58,0.1); }
+
+.btn-hamburger-admin span {
+    display: block;
+    width: 18px;
+    height: 2px;
+    background: var(--dark);
+    border-radius: 2px;
 }
 
 .nav-item {
@@ -79,6 +123,7 @@ body {
 .sidebar-footer {
     padding: 16px 20px;
     border-top: 1px solid rgba(200,135,58,0.12);
+    flex-shrink: 0;
 }
 
 .btn-logout {
@@ -107,6 +152,8 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    min-width: 0;
+    transition: margin-left 0.3s ease;
 }
 
 .page-header {
@@ -114,6 +161,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 12px;
 }
 
 .page-header-title {
@@ -126,6 +174,7 @@ body {
     border-radius: 50px;
     background: var(--card-bg);
     box-shadow: var(--shadow);
+    text-align: center;
 }
 
 .page-body { padding: 24px 36px 40px; }
@@ -165,6 +214,7 @@ body {
     padding: 9px 0;
     border-bottom: 1px solid #F5E6D0;
     gap: 10px;
+    flex-wrap: wrap;
 }
 
 .info-row:last-child { border-bottom: none; }
@@ -178,7 +228,7 @@ body {
 }
 
 .info-label::after { content: ' :'; }
-.info-value { font-size: 0.875rem; color: var(--dark); }
+.info-value { font-size: 0.875rem; color: var(--dark); word-break: break-word; }
 
 /* BADGE */
 .badge {
@@ -274,9 +324,43 @@ body {
     padding: 0 36px 40px;
 }
 
+/* ── RESPONSIVE ── */
+@media (max-width: 992px) {
+    .detail-grid { grid-template-columns: 1fr; }
+    .page-body { padding: 20px; }
+}
+
 @media (max-width: 768px) {
     .sidebar { transform: translateX(-100%); }
+    .sidebar.is-open { transform: translateX(0); }
     .main-content { margin-left: 0; }
-    .detail-grid { grid-template-columns: 1fr; }
+
+    .btn-hamburger-admin { display: flex; }
+
+    .page-header {
+        padding: 16px 16px 0;
+        justify-content: flex-start;
+    }
+
+    .page-header-title {
+        font-size: 1rem;
+        padding: 10px 20px;
+        flex: 1;
+    }
+
     .page-body { padding: 16px; }
+    .page-footer { padding: 0 16px 32px; }
+
+    .card { padding: 18px 16px; }
+
+    .info-label { width: 95px; font-size: 0.78rem; }
+    .info-value { font-size: 0.85rem; }
+
+    .aksi-group { flex-direction: column; }
+}
+
+@media (max-width: 420px) {
+    .page-header-title { font-size: 0.9rem; padding: 9px 16px; }
+    .info-row { flex-direction: column; gap: 2px; }
+    .info-label { width: auto; }
 }

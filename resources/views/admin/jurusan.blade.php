@@ -10,7 +10,7 @@
 <body>
 
     <!-- SIDEBAR -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebarAdmin">
         <div class="sidebar-logo">
             <img src="{{ asset('images/logo-poliban.jpg') }}" alt="Logo Poliban">
         </div>
@@ -93,9 +93,19 @@
         </div>
     </aside>
 
+    <!-- OVERLAY UNTUK MOBILE -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     <!-- MAIN -->
     <div class="main-content">
         <div class="page-header">
+            <button class="btn-hamburger" id="btnHamburger" aria-label="Buka menu" type="button">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="6" x2="21" y2="6"/>
+                    <line x1="3" y1="12" x2="21" y2="12"/>
+                    <line x1="3" y1="18" x2="21" y2="18"/>
+                </svg>
+            </button>
             <div class="page-header-title">Data Jurusan</div>
         </div>
 
@@ -122,9 +132,9 @@
                             <tbody>
                                 @forelse($data as $i => $d)
                                 <tr>
-                                    <td>{{ $i + 1 }}</td>
-                                    <td>{{ $d->jurusan }}</td>
-                                    <td>
+                                    <td data-label="No">{{ $i + 1 }}</td>
+                                    <td data-label="Jurusan">{{ $d->jurusan }}</td>
+                                    <td data-label="Aksi">
                                         <button class="btn-edit"
                                                 onclick="openModal({{ $d->id_jurusan }}, '{{ addslashes($d->jurusan) }}')">
                                             Edit
@@ -181,25 +191,26 @@
                     </div>
                 </div>
                 <div class="form-footer" style="justify-content:space-between;">
-    <button type="button" id="btnHapusJurusan"
-            style="padding:10px 20px; background:#FEE2E2; border:1px solid #FECACA;
-                   border-radius:50px; color:#991B1B; font-family:'DM Sans',sans-serif;
-                   font-size:0.875rem; font-weight:500; cursor:pointer;">
-        Hapus
-    </button>
-    <button type="submit" class="btn-submit">Update</button>
-</div>
+                    <button type="button" id="btnHapusJurusan"
+                            style="padding:10px 20px; background:#FEE2E2; border:1px solid #FECACA;
+                                   border-radius:50px; color:#991B1B; font-family:'DM Sans',sans-serif;
+                                   font-size:0.875rem; font-weight:500; cursor:pointer;">
+                        Hapus
+                    </button>
+                    <button type="submit" class="btn-submit">Update</button>
+                </div>
             </form>
         </div>
     </div>
 
-
     <form id="formHapusJurusan" method="POST" style="display:none;">
-    @csrf
-    @method('DELETE')
-</form>
+        @csrf
+        @method('DELETE')
+    </form>
+
 
     <script src="{{ asset('js/admin/jurusan.js') }}"></script>
+    <script src="{{ asset('js/admin/sidebar.js') }}"></script>
 
 </body>
 </html>

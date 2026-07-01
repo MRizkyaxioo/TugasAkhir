@@ -9,6 +9,14 @@
 </head>
 <body>
 
+    <!-- HAMBURGER TOGGLE (mobile) -->
+    <button class="sidebar-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open'); document.querySelector('.sidebar-overlay').classList.toggle('active');">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+    </button>
+    <div class="sidebar-overlay" onclick="document.querySelector('.sidebar').classList.remove('open'); this.classList.remove('active');"></div>
+
     <!-- SIDEBAR -->
     <aside class="sidebar">
         <div class="sidebar-logo">
@@ -144,7 +152,7 @@
 
 {{-- INFORMASI JADWAL PRESENSI --}}
             @if($presensi)
-                <div style="margin-bottom:16px; padding:10px 14px; background:#F0FDF4; border:1px solid #BBF7D0; border-radius:8px; font-size:0.85rem; color:#166534;">
+                <div class="info-jadwal info-jadwal-ok">
                     ⏰ Presensi dibuka: <strong>{{ \Carbon\Carbon::parse($presensi->jam_buka)->format('H:i') }} WITA</strong>
                     &nbsp;|&nbsp;
                     Ditutup: <strong>{{ \Carbon\Carbon::parse($presensi->jam_tutup)->format('H:i') }} WITA</strong>
@@ -165,7 +173,7 @@
 @endif
                 </div>
             @else
-                <div style="margin-bottom:16px; padding:10px 14px; background:#FEF2F2; border:1px solid #FECACA; border-radius:8px; font-size:0.85rem; color:#C0392B;">
+                <div class="info-jadwal info-jadwal-kosong">
                     ⚠️ Belum ada jadwal presensi hari ini.
                 </div>
             @endif
@@ -188,10 +196,10 @@
                             <tbody>
                                 @forelse($data as $i => $d)
                                 <tr>
-                                    <td>{{ $d->peserta->nisn_nim }}</td>
-                                    <td>{{ $d->peserta->nama }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($d->tanggal_presensi)->timezone('Asia/Makassar')->format('d-m-Y H:i') }} WITA</td>
-                                    <td>
+                                    <td data-label="NISN/NIM">{{ $d->peserta->nisn_nim }}</td>
+                                    <td data-label="Nama">{{ $d->peserta->nama }}</td>
+                                    <td data-label="Waktu Presensi">{{ \Carbon\Carbon::parse($d->tanggal_presensi)->timezone('Asia/Makassar')->format('d-m-Y H:i') }} WITA</td>
+                                    <td data-label="Status">
                                         <select
     class="status-select"
     data-id="{{ $d->id_presensi_peserta }}"
@@ -213,7 +221,7 @@
     </option>
 </select>
                                     </td>
-                                    <td>
+                                    <td data-label="Surat">
                                         @if($d->surat_pendukung_izin)
                                             <a href="{{ asset('storage/'.$d->surat_pendukung_izin) }}"
                                                target="_blank" class="surat-link">Lihat Surat</a>
@@ -223,8 +231,8 @@
                                     </td>
                                 </tr>
                                 @empty
-                                <tr>
-                                    <td colspan="4" style="text-align:center; color:var(--muted); padding:28px;">
+                                <tr class="empty-row">
+                                    <td colspan="5">
                                         Belum ada data presensi hari ini
                                     </td>
                                 </tr>
@@ -288,7 +296,7 @@
 
         });
 
-        document.getElementById('btn-tutup-presensi').addEventListener('click', function(){
+        document.getElementById('btn-tutup-presensi') && document.getElementById('btn-tutup-presensi').addEventListener('click', function(){
 
             Swal.fire({
 

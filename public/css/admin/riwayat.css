@@ -100,6 +100,34 @@ body {
 
 .btn-logout:hover { background: var(--gold); color: #fff; }
 
+/* HAMBURGER TOGGLE + OVERLAY (mobile only) */
+.sidebar-toggle {
+    display: none;
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 300;
+    width: 42px;
+    height: 42px;
+    align-items: center;
+    justify-content: center;
+    background: var(--warm-white);
+    border: 1px solid rgba(200,135,58,0.2);
+    border-radius: 10px;
+    color: var(--gold);
+    box-shadow: var(--shadow);
+    cursor: pointer;
+}
+
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26,18,8,0.45);
+    z-index: 150;
+}
+.sidebar-overlay.active { display: block; }
+
 /* MAIN */
 .main-content {
     margin-left: var(--sidebar-w);
@@ -107,6 +135,7 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    min-width: 0; /* penting supaya konten di dalamnya bisa menyusut/scroll, tidak mendorong body melebar */
 }
 
 .page-header {
@@ -144,6 +173,7 @@ body {
     list-style: none;
     padding: 0;
     margin: 0;
+    flex-wrap: wrap;
 }
 
 .pagination .page-item {
@@ -188,20 +218,6 @@ body {
     border-color: #EFE3D1;
     cursor: not-allowed;
     box-shadow: none;
-}
-
-@media (max-width: 768px) {
-    .pagination {
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-
-    .pagination .page-link {
-        min-width: 36px;
-        height: 36px;
-        font-size: 0.8rem;
-        border-radius: 10px;
-    }
 }
 
 .card {
@@ -260,6 +276,8 @@ body {
     padding-right: 28px;
 }
 
+.filter-submit { justify-content: flex-end; }
+
 .btn {
     display: inline-flex;
     align-items: center;
@@ -283,7 +301,7 @@ body {
 .btn-sm { padding: 5px 14px; font-size: 0.78rem; }
 
 /* TABLE */
-.table-wrap { overflow-x: auto; }
+.table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 
 table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
 
@@ -295,6 +313,7 @@ thead th {
     font-size: 0.82rem;
     color: var(--muted);
     border-bottom: 2px solid #E8D5B5;
+    white-space: nowrap;
 }
 
 tbody tr { border-bottom: 1px solid #F5E6D0; transition: background 0.15s; }
@@ -320,8 +339,83 @@ tbody td { padding: 11px 14px; color: var(--dark); vertical-align: middle; }
     font-size: 0.875rem;
 }
 
+/* ====== RESPONSIVE ====== */
+
+/* Tablet & HP: sidebar jadi drawer */
 @media (max-width: 768px) {
-    .sidebar { transform: translateX(-100%); }
+    .sidebar-toggle { display: flex; }
+
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.25s ease;
+        z-index: 250;
+    }
+    .sidebar.open { transform: translateX(0); }
+
     .main-content { margin-left: 0; }
+
+    .page-header {
+        padding: 72px 16px 0;
+        justify-content: flex-start;
+    }
+    .page-header-title {
+        font-size: 1.05rem;
+        padding: 10px 20px;
+        width: 100%;
+        text-align: center;
+    }
+
     .page-body { padding: 16px; }
+    .card { padding: 16px 18px; }
+
+    .filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+    .filter-group,
+    .filter-group input,
+    .filter-group select { min-width: 0; width: 100%; }
+    .filter-submit { width: 100%; }
+    .filter-submit .btn { width: 100%; justify-content: center; }
+}
+
+/* HP kecil: tabel jadi kartu supaya tidak kepotong horizontal */
+@media (max-width: 576px) {
+    table, thead, tbody, tr, th, td { display: block; width: 100%; }
+    thead { display: none; }
+
+    tbody tr {
+        margin-bottom: 12px;
+        border: 1px solid #E8D5B5;
+        border-radius: 12px;
+        padding: 10px 14px;
+        background: var(--warm-white);
+    }
+    tbody tr:hover { background: var(--warm-white); }
+
+    tbody td {
+        border: none;
+        padding: 6px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        text-align: right;
+    }
+    tbody td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--muted);
+        text-align: left;
+        flex-shrink: 0;
+    }
+
+    .aksi-cell { justify-content: flex-end; width: 100%; }
+
+    .empty-row { border: none !important; background: none !important; }
+    .empty-row td { display: block; text-align: center; }
+    .empty-row td::before { content: ''; }
+
+    .page-header-title { font-size: 0.95rem; padding: 9px 16px; }
 }

@@ -10,7 +10,7 @@
 <body>
 
     <!-- SIDEBAR -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebarAdmin">
         <div class="sidebar-logo">
             <img src="{{ asset('images/logo-poliban.jpg') }}" alt="Logo Poliban">
         </div>
@@ -97,16 +97,26 @@
         </div>
     </aside>
 
+    <!-- OVERLAY UNTUK MOBILE -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     <!-- MAIN CONTENT -->
     <div class="main-content">
         <div class="page-header">
+            <button class="btn-hamburger" id="btnHamburger" aria-label="Buka menu" type="button">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="6" x2="21" y2="6"/>
+                    <line x1="3" y1="12" x2="21" y2="12"/>
+                    <line x1="3" y1="18" x2="21" y2="18"/>
+                </svg>
+            </button>
             <div class="page-header-title">Logbook {{ $peserta->nama }}</div>
         </div>
 
         <div class="page-body">
             <!-- Info Peserta -->
             <div class="card" style="margin-bottom:20px;">
-                <div style="display:flex; flex-wrap:wrap; gap:16px; font-size:0.85rem;">
+                <div class="info-flex">
                     <div><strong>Nama:</strong> {{ $peserta->nama }}</div>
                     <div><strong>NISN/NIM:</strong> {{ $peserta->nisn_nim }}</div>
                     <div><strong>Sekolah:</strong> {{ $peserta->sekolahKampus->nama_sekolah_kampus ?? '-' }}</div>
@@ -129,10 +139,10 @@
                         <tbody>
                             @forelse($data as $i => $d)
                             <tr>
-                                <td>{{ $i + 1 }}</td>
-                                <td>{{ \Carbon\Carbon::parse($d->tanggal)->format('d-m-Y') }}</td>
-                                <td>{{ $d->kegiatan }}</td>
-                                <td>
+                                <td data-label="No">{{ $i + 1 }}</td>
+                                <td data-label="Tanggal">{{ \Carbon\Carbon::parse($d->tanggal)->format('d-m-Y') }}</td>
+                                <td data-label="Kegiatan">{{ $d->kegiatan }}</td>
+                                <td data-label="Bukti Kegiatan">
                                     @if($d->bukti_foto)
                                         @php $ext = pathinfo($d->bukti_foto, PATHINFO_EXTENSION); @endphp
                                         @if(in_array(strtolower($ext), ['jpg','jpeg','png','gif']))
@@ -155,7 +165,7 @@
                 </div>
             </div>
 
-            <div style="margin-top:20px;">
+            <div class="action-row">
                 <a href="{{ route('admin.logbook.pdf', $peserta->id_peserta) }}"
        class="btn btn-primary">
         Cetak PDF
@@ -167,6 +177,9 @@
             </div>
         </div>
     </div>
+
+    <script src="{{ asset('js/admin/sidebar.js') }}"></script>
+    <script src="{{ asset('js/admin/admin.js') }}"></script>
 
 </body>
 </html>

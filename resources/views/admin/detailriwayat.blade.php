@@ -9,6 +9,14 @@
 </head>
 <body>
 
+    <!-- HAMBURGER TOGGLE (mobile) -->
+    <button class="sidebar-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open'); document.querySelector('.sidebar-overlay').classList.toggle('active');">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+    </button>
+    <div class="sidebar-overlay" onclick="document.querySelector('.sidebar').classList.remove('open'); this.classList.remove('active');"></div>
+
     <!-- SIDEBAR -->
     <aside class="sidebar">
         <div class="sidebar-logo">
@@ -171,6 +179,7 @@
 
     @if($peserta->penilaian->count())
 
+    <div class="nilai-table-wrap">
     <table class="nilai-table">
         <thead>
             <tr>
@@ -182,13 +191,14 @@
         <tbody>
         @foreach($peserta->penilaian as $i => $nilai)
             <tr>
-                <td>{{ $i+1 }}</td>
-                <td>{{ $nilai->kriteria->kriteria_nilai }}</td>
-                <td>{{ $nilai->nilai }}</td>
+                <td data-label="No">{{ $i+1 }}</td>
+                <td data-label="Kriteria">{{ $nilai->kriteria->kriteria_nilai }}</td>
+                <td data-label="Nilai">{{ $nilai->nilai }}</td>
             </tr>
         @endforeach
         </tbody>
     </table>
+    </div>
 
     @else
 

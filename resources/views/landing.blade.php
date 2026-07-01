@@ -21,8 +21,10 @@
             </div>
         </div>
 
+        {{-- Desktop nav links — Alumni ditambahkan di antara Alur Magang dan Informasi --}}
         <ul class="nav-links">
             <li><a href="#beranda">Beranda</a></li>
+            <li><a href="#alumni">Alumni</a></li>
             <li><a href="#alur">Alur Magang</a></li>
             <li><a href="#informasi">Informasi</a></li>
             <li><a href="#kontak">Kontak Kami</a></li>
@@ -69,6 +71,17 @@
                             <polyline points="9 22 9 12 15 12 15 22"/>
                         </svg>
                         Beranda
+                    </a>
+                </li>
+                <li>
+                    <a href="#alumni" class="menu-link">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                        Alumni
                     </a>
                 </li>
                 <li>
@@ -169,57 +182,61 @@
     </section>
 
     <!-- DATA ALUMNI -->
-<section id="alumni" class="alumni-section">
+    <section id="alumni" class="alumni-section">
 
-    <h2 class="section-title">
-        Alumni Peserta Magang
-    </h2>
+        <h2 class="section-title">Alumni Peserta Magang</h2>
+        <div class="section-divider"></div>
 
-    <div class="section-divider"></div>
+        <div class="alumni-card">
 
-    <div class="alumni-card">
-
-        @forelse($alumni as $item)
-
-            <div class="alumni-item">
-
-                <div class="alumni-avatar">
-                    {{ strtoupper(substr($item->nama,0,1)) }}
+            @forelse($alumni as $item)
+                <div class="alumni-item">
+                    <div class="alumni-avatar">
+                        {{ strtoupper(substr($item->nama, 0, 1)) }}
+                    </div>
+                    <div class="alumni-info">
+                        <h4>{{ $item->nama }}</h4>
+                        <p>{{ $item->sekolahKampus->nama_sekolah_kampus }}</p>
+                        <span>{{ $item->jurusan->jurusan }}</span>
+                    </div>
                 </div>
-
-                <div class="alumni-info">
-
-                    <h4>{{ $item->nama }}</h4>
-
-                    <p>
-                        {{ $item->sekolahKampus->nama_sekolah_kampus }}
-                    </p>
-
-                    <span>
-                        {{ $item->jurusan->jurusan }}
-                    </span>
-
+            @empty
+                <div class="empty-alumni">
+                    Belum ada alumni peserta magang.
                 </div>
+            @endforelse
 
+            <div class="lihat-semua">
+                <button type="button" id="btnAlumni" class="btn-lihat-semua">
+                    <span class="btn-text">Lihat Semua Alumni</span>
+                    <svg class="arrow-icon" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6 9 12 15 18 9"/>
+                    </svg>
+                </button>
             </div>
 
-        @empty
-
-            <div class="empty-alumni">
-                Belum ada alumni peserta magang.
+            {{-- Dropdown semua alumni (expand di tempat, tanpa popup) --}}
+            <div class="alumni-dropdown" id="alumniDropdown">
+                @forelse($allAlumni as $item)
+                    <div class="alumni-item">
+                        <div class="alumni-avatar">
+                            {{ strtoupper(substr($item->nama, 0, 1)) }}
+                        </div>
+                        <div class="alumni-info">
+                            <h4>{{ $item->nama }}</h4>
+                            <p>{{ $item->sekolahKampus->nama_sekolah_kampus }}</p>
+                            <span>{{ $item->jurusan->jurusan }}</span>
+                        </div>
+                    </div>
+                @empty
+                    <p style="padding:20px; text-align:center; color:#999;">Belum ada alumni lain.</p>
+                @endforelse
             </div>
 
-        @endforelse
-
-        <div class="lihat-semua">
-            <button type="button" id="btnAlumni" class="btn-lihat-semua">
-    Lihat Semua Alumni
-</button>
         </div>
 
-    </div>
-
-</section>
+    </section>
 
     <!-- ALUR PENDAFTARAN -->
     <section id="alur" class="alur-section">
@@ -277,7 +294,6 @@
 
         <div class="info-cards">
 
-            <!-- Visi Misi -->
             <div class="info-main-card">
                 <h3>
                     <span class="info-dot"></span>
@@ -302,7 +318,6 @@
             </div>
 
             <div class="info-2col">
-                <!-- Layanan -->
                 <div class="info-main-card">
                     <h3>
                         <span class="info-dot"></span>
@@ -333,7 +348,6 @@
                     </div>
                 </div>
 
-                <!-- Jam Layanan -->
                 <div class="info-main-card">
                     <h3>
                         <span class="info-dot"></span>
@@ -400,52 +414,6 @@
             &copy; {{ date('Y') }} Perpustakaan Politeknik Negeri Banjarmasin
         </div>
     </footer>
-
-    <div class="modal-alumni" id="modalAlumni">
-
-    <div class="modal-backdrop" id="modalBackdrop"></div>
-
-    <div class="modal-content">
-
-        <div class="modal-header">
-
-            <h3>Alumni Peserta Magang</h3>
-
-            <button id="btnCloseAlumni">&times;</button>
-
-        </div>
-
-        <div class="modal-body">
-
-            @forelse($allAlumni as $item)
-
-                <div class="alumni-item">
-
-                    <div class="alumni-avatar">
-                        {{ strtoupper(substr($item->nama,0,1)) }}
-                    </div>
-
-                    <div class="alumni-info">
-                        <h4>{{ $item->nama }}</h4>
-
-                        <p>{{ $item->sekolahKampus->nama_sekolah_kampus }}</p>
-
-                        <span>{{ $item->jurusan->jurusan }}</span>
-                    </div>
-
-                </div>
-
-            @empty
-
-                <p>Belum ada alumni.</p>
-
-            @endforelse
-
-        </div>
-
-    </div>
-
-</div>
 
     <script src="{{ asset('js/peserta/landing.js') }}"></script>
 </body>

@@ -9,6 +9,14 @@
 </head>
 <body>
 
+    <!-- HAMBURGER TOGGLE (mobile) -->
+    <button class="sidebar-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open'); document.querySelector('.sidebar-overlay').classList.toggle('active');">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+    </button>
+    <div class="sidebar-overlay" onclick="document.querySelector('.sidebar').classList.remove('open'); this.classList.remove('active');"></div>
+
     <aside class="sidebar">
         <div class="sidebar-logo">
             <img src="{{ asset('images/logo-poliban.jpg') }}" alt="Logo Poliban">
@@ -149,13 +157,13 @@ class="btn-export">
                         <tbody>
                             @forelse($data as $i => $d)
                             <tr>
-                                <td>{{ $d->peserta->nisn_nim }}</td>
-                                <td>{{ $d->peserta->nama }}</td>
-                                <td class="count-cell count-hadir">{{ $d->hadir }}</td>
-                                <td class="count-cell count-izin">{{ $d->izin }}</td>
-                                <td class="count-cell count-sakit">{{ $d->sakit }}</td>
-                                <td class="count-cell count-alpha">{{ $d->alpa }}</td>
-                                <td style="text-align:center;">
+                                <td data-label="NISN/NIM">{{ $d->peserta->nisn_nim }}</td>
+                                <td data-label="Nama">{{ $d->peserta->nama }}</td>
+                                <td data-label="Hadir" class="count-cell count-hadir">{{ $d->hadir }}</td>
+                                <td data-label="Izin" class="count-cell count-izin">{{ $d->izin }}</td>
+                                <td data-label="Sakit" class="count-cell count-sakit">{{ $d->sakit }}</td>
+                                <td data-label="Alpa" class="count-cell count-alpha">{{ $d->alpa }}</td>
+                                <td data-label="Aksi" style="text-align:center;">
                                     <a href="{{ route('admin.detail.presensi', $d->id_peserta) }}" class="btn-detail">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
@@ -165,8 +173,8 @@ class="btn-export">
                                 </td>
                             </tr>
                             @empty
-                            <tr>
-                                <td colspan="7" style="text-align:center; color:var(--muted); padding:28px;">
+                            <tr class="empty-row">
+                                <td colspan="7">
                                     Belum ada data rekap presensi
                                 </td>
                             </tr>

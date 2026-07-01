@@ -9,8 +9,11 @@
 </head>
 <body>
 
+    <!-- OVERLAY (mobile) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     <!-- SIDEBAR -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebarAdmin">
         <div class="sidebar-logo">
             <img src="{{ asset('images/logo-poliban.jpg') }}" alt="Logo Poliban">
         </div>
@@ -99,6 +102,9 @@
     <!-- MAIN -->
     <div class="main-content">
         <div class="page-header">
+            <button type="button" class="btn-hamburger-admin" id="btnHamburger" aria-label="Buka menu">
+                <span></span><span></span><span></span>
+            </button>
             <div class="page-header-title">Daftar Peserta Magang</div>
         </div>
 
@@ -244,6 +250,7 @@
     </div>
     @endforeach
 
+    <script src="{{ asset('js/admin/sidebar.js') }}"></script>
     <script src="{{ asset('js/admin/peserta.js') }}"></script>
 </body>
 </html>

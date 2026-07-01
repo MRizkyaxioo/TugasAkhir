@@ -9,6 +9,14 @@
 </head>
 <body>
 
+    <!-- HAMBURGER TOGGLE (mobile) -->
+    <button class="sidebar-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open'); document.querySelector('.sidebar-overlay').classList.toggle('active');">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+    </button>
+    <div class="sidebar-overlay" onclick="document.querySelector('.sidebar').classList.remove('open'); this.classList.remove('active');"></div>
+
     <aside class="sidebar">
         <div class="sidebar-logo">
             <img src="{{ asset('images/logo-poliban.jpg') }}" alt="Logo Poliban">
@@ -131,7 +139,7 @@
                         <tbody>
                             @forelse($presensiData as $p)
                             <tr>
-                                <td>
+                                <td data-label="Hari">
                                     @if($p->tanggal_presensi)
                                         @php
                                             $hari = date('l', strtotime($p->tanggal_presensi));
@@ -150,21 +158,21 @@
                                         -
                                     @endif
                                 </td>
-                                <td>
+                                <td data-label="Tanggal">
                                     @if($p->tanggal_presensi)
                                         {{ date('d-m-Y', strtotime($p->tanggal_presensi)) }}
                                     @else
                                         -
                                     @endif
                                 </td>
-                                <td>
+                                <td data-label="Keterangan">
                                     @if($p->surat_pendukung_izin)
                                         <a href="{{ asset('storage/' . $p->surat_pendukung_izin) }}" target="_blank" style="color: var(--gold); text-decoration: none;">Lihat Surat</a>
                                     @else
                                         -
                                     @endif
                                 </td>
-                                <td>
+                                <td data-label="Status">
                                     <span class="status-{{ strtolower($p->status_kehadiran) }}">
                                         @switch($p->status_kehadiran)
                                             @case('hadir')
@@ -198,14 +206,9 @@
             </div>
         </div>
 
-        <div class="page-footer" style="display:flex; gap:12px; align-items:center;">
+        <div class="page-footer detail-footer">
     <a href="{{ route('admin.detail.presensi.export', $peserta->id_peserta) }}"
-       style="display:inline-flex; align-items:center; gap:6px; padding:9px 22px;
-              background:#1D6F42; border:none; border-radius:50px; color:#fff;
-              font-family:'DM Sans',sans-serif; font-size:0.875rem; font-weight:500;
-              text-decoration:none; transition:opacity 0.2s;"
-       onmouseover="this.style.opacity='0.85'"
-       onmouseout="this.style.opacity='1'">
+       class="btn-export-excel">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
             <polyline points="7 10 12 15 17 10"/>

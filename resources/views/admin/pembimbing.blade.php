@@ -9,6 +9,14 @@
 </head>
 <body>
 
+    <!-- HAMBURGER TOGGLE (mobile) -->
+    <button class="sidebar-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open'); document.querySelector('.sidebar-overlay').classList.toggle('active');">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+    </button>
+    <div class="sidebar-overlay" onclick="document.querySelector('.sidebar').classList.remove('open'); this.classList.remove('active');"></div>
+
     <!-- SIDEBAR -->
     <aside class="sidebar">
         <div class="sidebar-logo">
@@ -145,7 +153,7 @@
             <div class="content-grid">
 
                 <!-- KIRI -->
-<div style="display:flex; flex-direction:column; gap:20px;">
+<div class="col-stack">
 
     <!-- LIST PEMBIMBING LAPANGAN -->
     <div class="card">
@@ -171,13 +179,13 @@
                 @forelse($data as $i => $d)
 
                     <tr>
-                        <td>{{ $i + 1 }}</td>
-                        <td>{{ $d->nama }}</td>
-                        <td>{{ $d->no_telp }}</td>
-                        <td>{{ $d->nip_nidn }}</td>
-                        <td>{{ $d->username }}</td>
+                        <td data-label="No">{{ $i + 1 }}</td>
+                        <td data-label="Nama">{{ $d->nama }}</td>
+                        <td data-label="No HP">{{ $d->no_telp }}</td>
+                        <td data-label="NIP/NIDN">{{ $d->nip_nidn }}</td>
+                        <td data-label="Username">{{ $d->username }}</td>
 
-                        <td>
+                        <td data-label="Aksi">
                             <button
                                 class="btn-edit"
 
@@ -237,19 +245,19 @@
 
                     <tr>
 
-                        <td>{{ $i + 1 }}</td>
+                        <td data-label="No">{{ $i + 1 }}</td>
 
-                        <td>{{ $d->nama }}</td>
+                        <td data-label="Nama">{{ $d->nama }}</td>
 
-                        <td>
+                        <td data-label="Sekolah/Kampus">
                             {{ $d->sekolahKampus->nama_sekolah_kampus ?? '-' }}
                         </td>
 
-                        <td>{{ $d->no_telp }}</td>
+                        <td data-label="No HP">{{ $d->no_telp }}</td>
 
-                        <td>{{ $d->username }}</td>
+                        <td data-label="Username">{{ $d->username }}</td>
 
-                        <td>
+                        <td data-label="Aksi">
 
                             <button
                                 class="btn-edit"
@@ -290,7 +298,7 @@
 </div>
 
                 <!-- KANAN: FORM TAMBAH -->
-                <div style="display:flex; flex-direction:column; gap:20px;">
+                <div class="col-stack">
 
     <!-- FORM PEMBIMBING LAPANGAN -->
     <div class="card">
@@ -471,13 +479,11 @@
     </div>
 
 </div>
-                        </div>
-                    </form>
-                </div>
 
             </div>
         </div>
     </div>
+
 <!-- MODAL EDIT PEMBIMBING LAPANGAN -->
 <div class="modal" id="editModal">
 
