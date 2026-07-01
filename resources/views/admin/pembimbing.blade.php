@@ -104,6 +104,30 @@
 
         <div class="page-body">
 
+        <!-- KEPALA UPA PERPUSTAKAAN -->
+    <div class="card kepala-card">
+        <div class="kepala-info">
+            <div class="kepala-label">Kepala UPA Perpustakaan</div>
+            <div class="kepala-name-row">
+                <span class="kepala-nama">
+                    {{ $kepala->nama ?? 'Belum diatur' }}
+                </span>
+
+                <button
+                    type="button"
+                    class="btn-edit-avatar"
+                    title="Edit Nama Kepala Perpustakaan"
+                    onclick="openEditModalKepala('{{ $kepala->nama ?? '' }}')"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 20h9"/>
+                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
             @if(session('success'))
                 <div class="alert-success">{{ session('success') }}</div>
             @endif
@@ -690,6 +714,37 @@
     </div>
 
 </div>
+
+<!-- MODAL EDIT KEPALA PERPUSTAKAAN -->
+<div class="modal" id="editModalKepala">
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+            <div class="modal-title">Edit Nama Kepala Perpustakaan</div>
+            <button class="btn-close" onclick="closeModalKepala()">&times;</button>
+        </div>
+
+        <form id="editFormKepala" method="POST" action="{{ route('admin.kepala.update') }}">
+            @csrf
+            @method('PUT')
+
+            <div class="form-fields">
+                <div class="field">
+                    <label>Nama Kepala Perpustakaan</label>
+                    <input type="text" name="nama" id="editNamaKepala">
+                </div>
+            </div>
+
+            <div class="form-footer">
+                <button type="submit" class="btn-submit">Update</button>
+            </div>
+        </form>
+
+    </div>
+
+</div>
+
 <script src="{{ asset('js/admin/pembimbing.js') }}"></script>
 </body>
 </html>

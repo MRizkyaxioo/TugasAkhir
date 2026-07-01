@@ -158,6 +158,58 @@ body {
     border-bottom: 1px solid #F5E6D0;
 }
 
+.kepala-card{
+    margin-bottom: 20px;
+    padding: 18px 28px;
+}
+
+.kepala-info{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-items: center;
+}
+
+.kepala-label{
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.kepala-name-row{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.kepala-nama{
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--dark);
+}
+
+.btn-edit-avatar{
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid rgba(200,135,58,0.25);
+    background: rgba(200,135,58,0.1);
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.btn-edit-avatar:hover{
+    background: var(--gold);
+    color: #fff;
+}
+
 /* ALERT */
 .alert-success {
     background: #F0FDF4; border: 1px solid #BBF7D0; color: #166534;

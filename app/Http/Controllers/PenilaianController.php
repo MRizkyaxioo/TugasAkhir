@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\KriteriaNilai;
 use App\Models\PenilaianPeserta;
 use App\Models\Peserta;
+use App\Models\KepalaPerpustakaan;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
@@ -113,7 +114,9 @@ public function hapusNilai($id_peserta, $id_kriteria)
     'pembimbing'
 ])->findOrFail($id);
 
-    $pdf = Pdf::loadView('peserta.nilai_pdf', compact('peserta'));
+    $kepala = KepalaPerpustakaan::first();
+
+    $pdf = Pdf::loadView('peserta.nilai_pdf', compact('peserta', 'kepala'));
 
     return $pdf->download('nilai_'.$peserta->nama.'.pdf');
 }

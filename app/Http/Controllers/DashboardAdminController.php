@@ -8,6 +8,7 @@ use App\Models\KuotaMagang;
 use App\Models\Peserta;
 use App\Models\HasilPendaftaran;
 use App\Models\Logbook;
+use App\Models\KepalaPerpustakaan;
 use App\Models\Pembimbing;
 use App\Models\PembimbingPeserta;
 use App\Models\PresensiPeserta;
@@ -324,11 +325,31 @@ public function pembimbing()
 
     $sekolah = SekolahKampus::orderBy('nama_sekolah_kampus')->get();
 
+    $kepala = KepalaPerpustakaan::first();
+
     return view('admin.pembimbing', compact(
         'data',
         'pembimbingAsal',
-        'sekolah'
+        'sekolah',
+        'kepala'
     ));
+}
+
+public function updateKepalaPerpustakaan(Request $request)
+{
+    $request->validate([
+        'nama' => 'required|string|max:100'
+    ]);
+
+    $kepala = KepalaPerpustakaan::first();
+
+    if ($kepala) {
+        $kepala->update(['nama' => $request->nama]);
+    } else {
+        KepalaPerpustakaan::create(['nama' => $request->nama]);
+    }
+
+    return back()->with('success', 'Nama Kepala Perpustakaan berhasil diupdate');
 }
 
 public function storePembimbing(Request $request)
@@ -567,3 +588,4 @@ public function assignPembimbingAsal(Request $request, $id)
 }
 
 }
+

@@ -15,6 +15,21 @@ function openEditModal(id, nama, no_telp, nip_nidn, username)
         `/admin/pembimbing/update/${id}`;
 }
 
+// =========================
+// MODAL KEPALA PERPUSTAKAAN
+// =========================
+
+function openEditModalKepala(nama)
+{
+    document.getElementById('editModalKepala').style.display = 'flex';
+    document.getElementById('editNamaKepala').value = nama;
+}
+
+function closeModalKepala()
+{
+    document.getElementById('editModalKepala').style.display = 'none';
+}
+
 function closeModal()
 {
     document.getElementById('editModal').style.display = 'none';
@@ -58,6 +73,7 @@ window.onclick = function(e)
 {
     let modal1 = document.getElementById('editModal');
     let modal2 = document.getElementById('editModalAsal');
+    let modal3 = document.getElementById('editModalKepala');
 
     if(e.target == modal1){
         closeModal();
@@ -65,6 +81,10 @@ window.onclick = function(e)
 
     if(e.target == modal2){
         closeModalAsal();
+    }
+
+    if(e.target == modal3){
+        closeModalKepala();
     }
 }
 

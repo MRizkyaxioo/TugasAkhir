@@ -159,6 +159,9 @@ Route::get('/pembimbing/penilaian/{id}', [PenilaianController::class, 'form'])
 Route::post('/pembimbing/penilaian/{id}', [PenilaianController::class, 'simpan'])
     ->name('pembimbing.penilaian.simpan');
 
+    Route::put('/pembimbing/kepala/update', [DashboardAdminController::class, 'updateKepalaPerpustakaan'])
+    ->name('admin.kepala.update');
+
 // 🔥 KRITERIA NILAI
 Route::put('/pembimbing/kriteria/{id}/update', [PenilaianController::class, 'updateKriteria'])
     ->name('pembimbing.kriteria.update');
