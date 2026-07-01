@@ -91,7 +91,9 @@ Route::middleware(AdminMiddleware::class)->group(function () {
 Route::post('/admin/presensi/buka',
     [PresensiController::class, 'bukaPresensi'])
     ->name('admin.presensi.buka');
-Route::post('/admin/presensi/simpan-status', [PresensiController::class, 'simpanStatus'])->name('admin.presensi.simpanStatus');
+Route::post('/admin/presensi/update-status',
+    [PresensiController::class, 'updateStatus'])
+    ->name('admin.presensi.updateStatus');
 Route::post('/admin/presensi/{id}/tutup', [PresensiController::class, 'tutupPresensi'])
     ->name('admin.presensi.tutup');
     Route::get('/admin/presensi', [PresensiController::class, 'halamanPresensi'])->name('admin.presensi');

@@ -5,257 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Presensi Peserta - Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --cream: #F5E6D0;
-            --warm-white: #FFFDF9;
-            --gold: #C8873A;
-            --gold-light: #E8A85A;
-            --dark: #1A1208;
-            --muted: #7A6E62;
-            --card-bg: #FFFFFF;
-            --shadow: 0 4px 24px rgba(26,18,8,0.08);
-            --radius: 16px;
-            --sidebar-w: 220px;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            background-color: var(--cream);
-            font-family: 'DM Sans', sans-serif;
-            color: var(--dark);
-            min-height: 100vh;
-            display: flex;
-        }
-
-        /* SIDEBAR */
-        .sidebar {
-            width: var(--sidebar-w);
-            background: var(--warm-white);
-            border-right: 1px solid rgba(200,135,58,0.15);
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            top: 0; left: 0;
-            height: 100vh;
-            z-index: 200;
-            box-shadow: 2px 0 12px rgba(26,18,8,0.06);
-        }
-
-        .sidebar-logo {
-            padding: 24px 20px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-bottom: 1px solid rgba(200,135,58,0.12);
-        }
-
-        .sidebar-logo img { width: 64px; height: 64px; object-fit: contain; }
-
-        .sidebar-nav {
-            flex: 1;
-            padding: 16px 0;
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-            overflow-y: auto;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 11px 20px;
-            font-size: 0.875rem;
-            font-weight: 400;
-            color: var(--muted);
-            text-decoration: none;
-            transition: background 0.15s, color 0.15s;
-            border: none;
-            background: none;
-            width: 100%;
-            text-align: left;
-            cursor: pointer;
-        }
-
-        .nav-item:hover { background: rgba(200,135,58,0.08); color: var(--dark); }
-        .nav-item.active { background: rgba(200,135,58,0.12); color: var(--gold); font-weight: 500; }
-        .nav-item svg { flex-shrink: 0; opacity: 0.7; }
-        .nav-item.active svg { opacity: 1; }
-
-        .sidebar-footer {
-            padding: 16px 20px;
-            border-top: 1px solid rgba(200,135,58,0.12);
-        }
-
-        .btn-logout {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            width: 100%;
-            padding: 10px 16px;
-            background: rgba(200,135,58,0.1);
-            border: 1px solid rgba(200,135,58,0.2);
-            border-radius: 50px;
-            color: var(--gold);
-            font-family: 'DM Sans', sans-serif;
-            font-size: 0.875rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background 0.2s, color 0.2s;
-        }
-
-        .btn-logout:hover { background: var(--gold); color: #fff; }
-
-        /* MAIN */
-        .main-content {
-            margin-left: var(--sidebar-w);
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        .page-header {
-            padding: 28px 36px 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .page-header-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--dark);
-            border: 2px solid rgba(200,135,58,0.25);
-            padding: 12px 40px;
-            border-radius: 50px;
-            background: var(--card-bg);
-            box-shadow: var(--shadow);
-        }
-
-        .page-body { padding: 24px 36px 40px; }
-
-        /* ALERT */
-        .alert-success {
-            background: #F0FDF4; border: 1px solid #BBF7D0; color: #166534;
-            font-size: 0.85rem; padding: 12px 16px; border-radius: 10px; margin-bottom: 16px;
-        }
-        .alert-error {
-            background: #FEF2F2; border: 1px solid #FECACA; color: #C0392B;
-            font-size: 0.85rem; padding: 12px 16px; border-radius: 10px; margin-bottom: 16px;
-        }
-
-        /* ACTION BAR */
-        .action-bar {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-        }
-
-        .action-group {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .action-label {
-            font-size: 0.75rem;
-            font-weight: 500;
-            color: var(--muted);
-        }
-
-        /* CARD */
-        .card {
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            border: 1px solid rgba(200,135,58,0.08);
-            padding: 24px 28px;
-        }
-
-        /* BUTTONS */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 18px;
-            border-radius: 50px;
-            font-family: 'DM Sans', sans-serif;
-            font-size: 0.82rem;
-            font-weight: 500;
-            cursor: pointer;
-            border: none;
-            transition: background 0.2s, transform 0.15s;
-            text-decoration: none;
-            white-space: nowrap;
-        }
-
-        .btn-primary { background: var(--gold); color: #fff; box-shadow: 0 3px 10px rgba(200,135,58,0.3); }
-        .btn-primary:hover { background: var(--gold-light); transform: translateY(-1px); }
-        .btn-outline { background: transparent; border: 1.5px solid var(--gold); color: var(--gold); }
-        .btn-outline:hover { background: var(--gold); color: #fff; }
-        .btn-sm { padding: 6px 14px; font-size: 0.78rem; }
-
-        /* TABLE */
-        .table-wrap { overflow-x: auto; }
-
-        table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
-
-        thead tr { background: var(--cream); }
-        thead th {
-            padding: 11px 14px;
-            text-align: left;
-            font-weight: 600;
-            font-size: 0.82rem;
-            color: var(--muted);
-            border-bottom: 2px solid #E8D5B5;
-        }
-
-        tbody tr { border-bottom: 1px solid #F5E6D0; transition: background 0.15s; }
-        tbody tr:hover { background: #FFFDF9; }
-        tbody td { padding: 10px 14px; color: var(--dark); vertical-align: middle; }
-
-        /* SELECT STATUS */
-        .status-select {
-            padding: 6px 28px 6px 10px;
-            border: 1.5px solid #E8D5B5;
-            border-radius: 8px;
-            font-family: 'DM Sans', sans-serif;
-            font-size: 0.82rem;
-            color: var(--dark);
-            background: var(--warm-white);
-            outline: none;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%237A6E62' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 8px center;
-            cursor: pointer;
-            transition: border-color 0.2s;
-        }
-
-        .status-select:focus { border-color: var(--gold); }
-
-        .surat-link {
-            color: var(--gold);
-            text-decoration: none;
-            font-size: 0.82rem;
-            font-weight: 500;
-        }
-
-        .surat-link:hover { text-decoration: underline; }
-
-        .no-surat { color: var(--muted); font-size: 0.82rem; }
-
-        @media (max-width: 768px) {
-            .sidebar { transform: translateX(-100%); }
-            .main-content { margin-left: 0; }
-            .page-body { padding: 16px; }
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('css/admin/presensi.css') }}">
 </head>
 <body>
 
@@ -382,14 +132,6 @@
 </div>
 @endif
 
-    {{-- Simpan Perubahan Status --}}
-    <div class="action-group">
-        <span class="action-label">Simpan Perubahan Kehadiran</span>
-        <button type="button" id="btn-simpan-status" class="btn btn-outline btn-sm">
-            Ubah Kehadiran
-        </button>
-    </div>
-
     <div class="action-group">
         <span class="action-label">Rekap Presensi</span>
         <a href="{{ route('admin.rekap.presensi') }}" class="btn btn-outline btn-sm">Rekap Presensi</a>
@@ -430,7 +172,7 @@
 
 
                 <!-- TABLE -->
-                <form id="form-presensi" method="POST" action="{{ route('admin.presensi.simpanStatus') }}">
+                <form id="form-presensi">
                     @csrf
                     <div class="table-wrap">
                         <table>
@@ -450,13 +192,26 @@
                                     <td>{{ $d->peserta->nama }}</td>
                                     <td>{{ \Carbon\Carbon::parse($d->tanggal_presensi)->timezone('Asia/Makassar')->format('d-m-Y H:i') }} WITA</td>
                                     <td>
-                                        <select name="status[{{ $d->id_presensi_peserta }}]"
-                                                class="status-select">
-                                            <option value="hadir"  {{ $d->status_kehadiran == 'hadir'  ? 'selected' : '' }}>Hadir</option>
-                                            <option value="izin"   {{ $d->status_kehadiran == 'izin'   ? 'selected' : '' }}>Izin</option>
-                                            <option value="sakit"  {{ $d->status_kehadiran == 'sakit'  ? 'selected' : '' }}>Sakit</option>
-                                            <option value="alpa"  {{ $d->status_kehadiran == 'alpa'  ? 'selected' : '' }}>Alpa</option>
-                                        </select>
+                                        <select
+    class="status-select"
+    data-id="{{ $d->id_presensi_peserta }}"
+>
+    <option value="hadir" {{ $d->status_kehadiran == 'hadir' ? 'selected' : '' }}>
+        Hadir
+    </option>
+
+    <option value="izin" {{ $d->status_kehadiran == 'izin' ? 'selected' : '' }}>
+        Izin
+    </option>
+
+    <option value="sakit" {{ $d->status_kehadiran == 'sakit' ? 'selected' : '' }}>
+        Sakit
+    </option>
+
+    <option value="alpa" {{ $d->status_kehadiran == 'alpa' ? 'selected' : '' }}>
+        Alpa
+    </option>
+</select>
                                     </td>
                                     <td>
                                         @if($d->surat_pendukung_izin)
@@ -482,106 +237,147 @@
             </div>
         </div>
     </div>
-<script>
 
-    document.getElementById('btn-buka-presensi').addEventListener('click', function () {
+    <!-- JS tetap inline karena mengandung Blade syntax -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.getElementById('btn-buka-presensi').addEventListener('click', function () {
 
-    Swal.fire({
-        title: 'Buka Presensi',
-        html:
-            '<input id="swal-tanggal" type="date" class="swal2-input" value="{{ date("Y-m-d") }}">' +
-            '<input id="swal-buka" type="time" class="swal2-input" value="08:00">' +
-            '<input id="swal-tutup" type="time" class="swal2-input" value="16:00">',
-        showCancelButton: true,
-        confirmButtonText: 'Buka',
-        preConfirm: () => {
+            Swal.fire({
+                title: 'Buka Presensi',
+                html:
+                    '<input id="swal-tanggal" type="date" class="swal2-input" value="{{ date("Y-m-d") }}">' +
+                    '<input id="swal-buka" type="time" class="swal2-input" value="08:00">' +
+                    '<input id="swal-tutup" type="time" class="swal2-input" value="16:00">',
+                showCancelButton: true,
+                confirmButtonText: 'Buka',
+                preConfirm: () => {
 
-            return {
-                tanggal: document.getElementById('swal-tanggal').value,
-                buka: document.getElementById('swal-buka').value,
-                tutup: document.getElementById('swal-tutup').value
-            };
+                    return {
+                        tanggal: document.getElementById('swal-tanggal').value,
+                        buka: document.getElementById('swal-buka').value,
+                        tutup: document.getElementById('swal-tutup').value
+                    };
 
-        }
+                }
 
-    }).then((result)=>{
+            }).then((result)=>{
 
-        if(result.isConfirmed){
+                if(result.isConfirmed){
 
-            const form=document.createElement('form');
+                    const form=document.createElement('form');
 
-            form.method='POST';
+                    form.method='POST';
 
-            form.action='{{ route("admin.presensi.buka") }}';
+                    form.action='{{ route("admin.presensi.buka") }}';
 
-            form.innerHTML=`
-                @csrf
-                <input name="tanggal" value="${result.value.tanggal}">
-                <input name="jam_buka" value="${result.value.buka}">
-                <input name="jam_tutup" value="${result.value.tutup}">
-            `;
+                    form.innerHTML=`
+                        @csrf
+                        <input name="tanggal" value="${result.value.tanggal}">
+                        <input name="jam_buka" value="${result.value.buka}">
+                        <input name="jam_tutup" value="${result.value.tutup}">
+                    `;
 
-            document.body.appendChild(form);
+                    document.body.appendChild(form);
 
-            form.submit();
+                    form.submit();
 
-        }
+                }
+
+            });
+
+        });
+
+        document.getElementById('btn-tutup-presensi').addEventListener('click', function(){
+
+            Swal.fire({
+
+                title:'Tutup Presensi?',
+
+                text:'Peserta tidak dapat melakukan presensi lagi.',
+
+                icon:'warning',
+
+                showCancelButton:true,
+
+                confirmButtonText:'Ya, Tutup'
+
+            }).then((result)=>{
+
+                if(result.isConfirmed){
+
+                    const form=document.createElement('form');
+
+                    form.method='POST';
+
+                    form.action='{{ $presensi ? route("admin.presensi.tutup", $presensi->id_presensi) : "#" }}';
+
+                    form.innerHTML='@csrf';
+
+                    document.body.appendChild(form);
+
+                    form.submit();
+
+                }
+
+            });
+
+        });
+
+        document.querySelectorAll('.status-select').forEach(function(select){
+
+    select.addEventListener('change', function(){
+
+        fetch("{{ route('admin.presensi.updateStatus') }}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                "Accept": "application/json"
+            },
+            body: JSON.stringify({
+                id: this.dataset.id,
+                status: this.value
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+
+            if(data.success){
+
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Status berhasil diperbarui',
+                    showConfirmButton: false,
+                    timer: 1200
+                });
+
+            }else{
+
+                Swal.fire(
+                    'Gagal',
+                    'Status tidak berhasil diperbarui.',
+                    'error'
+                );
+
+            }
+
+        })
+        .catch(() => {
+
+            Swal.fire(
+                'Error',
+                'Terjadi kesalahan pada server.',
+                'error'
+            );
+
+        });
 
     });
 
 });
-
-document.getElementById('btn-simpan-status').addEventListener('click', function() {
-    Swal.fire({
-        title: 'Simpan Perubahan?',
-        text: 'Status peserta akan diperbarui tanpa menutup presensi.',
-        icon: 'info',
-        showCancelButton: true,
-        confirmButtonText: 'Ya, Simpan',
-    }).then((result) => {
-        if (result.isConfirmed) {
-            document.getElementById('form-presensi').submit();
-        }
-    });
-});
-
-document.getElementById('btn-tutup-presensi').addEventListener('click', function(){
-
-    Swal.fire({
-
-        title:'Tutup Presensi?',
-
-        text:'Peserta tidak dapat melakukan presensi lagi.',
-
-        icon:'warning',
-
-        showCancelButton:true,
-
-        confirmButtonText:'Ya, Tutup'
-
-    }).then((result)=>{
-
-        if(result.isConfirmed){
-
-            const form=document.createElement('form');
-
-            form.method='POST';
-
-            form.action='{{ $presensi ? route("admin.presensi.tutup", $presensi->id_presensi) : "#" }}';
-
-            form.innerHTML='@csrf';
-
-            document.body.appendChild(form);
-
-            form.submit();
-
-        }
-
-    });
-
-});
-
-</script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    </script>
 </body>
 </html>

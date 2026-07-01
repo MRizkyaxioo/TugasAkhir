@@ -132,28 +132,28 @@ public function tutupPresensi($id)
     return back()->with('success','Presensi berhasil ditutup.');
 }
 
-public function simpanStatus(Request $request)
+public function updateStatus(Request $request)
 {
-    foreach ($request->status as $id => $status) {
+    $request->validate([
+        'id' => 'required|exists:presensi_peserta,id_presensi_peserta',
+        'status' => 'required|in:hadir,izin,sakit,alpa',
+    ]);
 
-        PresensiPeserta::where(
-            'id_presensi_peserta',
-            $id
-        )->update([
-            'status_kehadiran' => $status
-        ]);
-    }
+    PresensiPeserta::where(
+        'id_presensi_peserta',
+        $request->id
+    )->update([
+        'status_kehadiran' => $request->status
+    ]);
 
-    return back()->with(
-        'success',
-        'Status kehadiran berhasil diperbarui.'
-    );
+    return response()->json([
+        'success' => true
+    ]);
 }
 
     public function rekapPresensi(Request $request)
 {
     $bulan   = $request->bulan;
-    $tanggal = $request->tanggal;
     $nama    = $request->nama;
 
     $query = PresensiPeserta::select(
@@ -174,11 +174,6 @@ public function simpanStatus(Request $request)
         $query->whereMonth('tanggal_presensi', $bulan);
     }
 
-    // FILTER TANGGAL
-    if ($tanggal) {
-        $query->whereDate('tanggal_presensi', $tanggal);
-    }
-
     // FILTER NAMA
     if ($nama) {
         $query->whereHas('peserta', function ($q) use ($nama) {
@@ -191,7 +186,6 @@ public function simpanStatus(Request $request)
     return view('admin.rekap_presensi', compact(
         'data',
         'bulan',
-        'tanggal',
         'nama'
     ));
 }
@@ -238,7 +232,7 @@ public function simpanStatus(Request $request)
     $namaFile .= '.xlsx';
 
     return Excel::download(
-        new RekapPresensiExport($bulan, $tanggal, $nama),
+        new RekapPresensiExport($bulan, $nama),
         $namaFile
     );
 }

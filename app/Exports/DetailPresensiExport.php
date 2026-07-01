@@ -4,20 +4,27 @@ namespace App\Exports;
 
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Concerns\WithStyles;
 use Maatwebsite\Excel\Concerns\WithColumnWidths;
+use Maatwebsite\Excel\Concerns\WithEvents;
+use Maatwebsite\Excel\Concerns\WithCustomStartCell;
+use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
-use Illuminate\Support\Collection;
 
-class DetailPresensiExport implements FromCollection, WithHeadings, WithTitle, WithStyles, WithColumnWidths
+class DetailPresensiExport implements
+    FromCollection,
+    WithHeadings,
+    WithStyles,
+    WithColumnWidths,
+    WithEvents,
+    WithCustomStartCell
 {
     protected $peserta;
     protected $presensiData;
 
     public function __construct($peserta, $presensiData)
     {
-        $this->peserta     = $peserta;
+        $this->peserta = $peserta;
         $this->presensiData = $presensiData;
     }
 
@@ -34,67 +41,130 @@ class DetailPresensiExport implements FromCollection, WithHeadings, WithTitle, W
         ];
 
         return $this->presensiData->map(function ($p) use ($hariIndonesia) {
-            $hari    = '-';
+
+            $hari = '-';
             $tanggal = '-';
 
             if ($p->tanggal_presensi) {
-                $hari    = $hariIndonesia[date('l', strtotime($p->tanggal_presensi))] ?? '-';
+                $hari = $hariIndonesia[date('l', strtotime($p->tanggal_presensi))] ?? '-';
                 $tanggal = date('d-m-Y', strtotime($p->tanggal_presensi));
             }
 
-            $statusMap = [
-                'hadir' => 'Hadir',
-                'izin'  => 'Izin',
-                'sakit' => 'Sakit',
-                'alpa'  => 'Alpa',
-            ];
-
             return [
-                'hari'    => $hari,
-                'tanggal' => $tanggal,
-                'status'  => $statusMap[$p->status_kehadiran] ?? ucfirst($p->status_kehadiran),
+                $hari,
+                $tanggal,
+                ucfirst($p->status_kehadiran),
             ];
         });
     }
 
     public function headings(): array
     {
-        return ['Hari', 'Tanggal', 'Status'];
+        return [
+            'Hari',
+            'Tanggal',
+            'Status',
+        ];
     }
 
-    public function title(): string
+    public function startCell(): string
     {
-        return 'Rekap Presensi';
-    }
-
-    public function styles(Worksheet $sheet)
-    {
-        // Bold header
-        $sheet->getStyle('A1:C1')->getFont()->setBold(true);
-
-        // Background header
-        $sheet->getStyle('A1:C1')->getFill()
-            ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-            ->getStartColor()->setARGB('FFF5E6D0');
-
-        // Border semua cell
-        $lastRow = $this->presensiData->count() + 1;
-        $sheet->getStyle("A1:C{$lastRow}")->getBorders()->getAllBorders()
-            ->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
-
-        // Center kolom Hari dan Status
-        $sheet->getStyle("A1:A{$lastRow}")->getAlignment()->setHorizontal('center');
-        $sheet->getStyle("C1:C{$lastRow}")->getAlignment()->setHorizontal('center');
-
-        return [];
+        return 'A7';
     }
 
     public function columnWidths(): array
     {
         return [
-            'A' => 15,
+            'A' => 18,
             'B' => 18,
-            'C' => 12,
+            'C' => 15,
+        ];
+    }
+
+    public function styles(Worksheet $sheet)
+    {
+        return [
+            7 => [
+                'font' => [
+                    'bold' => true,
+                    'color' => ['rgb' => 'FFFFFF'],
+                ],
+                'fill' => [
+                    'fillType' => 'solid',
+                    'startColor' => [
+                        'rgb' => '1F4E78',
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    public function registerEvents(): array
+    {
+        return [
+
+            AfterSheet::class => function (AfterSheet $event) {
+
+                // Judul
+                $event->sheet->mergeCells('A1:C1');
+                $event->sheet->setCellValue('A1', 'DETAIL PRESENSI PESERTA MAGANG');
+
+                $event->sheet->getStyle('A1')->applyFromArray([
+                    'font' => [
+                        'bold' => true,
+                        'size' => 16,
+                    ],
+                    'alignment' => [
+                        'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                    ],
+                ]);
+
+                // Biodata peserta
+                $event->sheet->setCellValue('A3', 'NISN/NIM');
+                $event->sheet->setCellValue('B3', ': ' . $this->peserta->nisn_nim);
+
+                $event->sheet->setCellValue('A4', 'Nama Peserta');
+                $event->sheet->setCellValue('B4', ': ' . $this->peserta->nama);
+
+                $event->sheet->setCellValue('A5', 'Sekolah/Kampus');
+                $event->sheet->setCellValue(
+                    'B5',
+                    ': ' . ($this->peserta->sekolahKampus->nama_sekolah_kampus ?? '-')
+                );
+
+                // Bold label
+                $event->sheet->getStyle('A3:A5')->getFont()->setBold(true);
+
+                $lastRow = $event->sheet->getHighestRow();
+
+                // Border tabel saja
+                $event->sheet
+                    ->getStyle("A7:C{$lastRow}")
+                    ->getBorders()
+                    ->getAllBorders()
+                    ->setBorderStyle(
+                        \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN
+                    );
+
+                // Tengah
+                $event->sheet
+                    ->getStyle("A7:C{$lastRow}")
+                    ->getAlignment()
+                    ->setVertical(
+                        \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
+                    );
+
+                $event->sheet
+                    ->getStyle("A7:C{$lastRow}")
+                    ->getAlignment()
+                    ->setHorizontal(
+                        \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER
+                    );
+
+                // Freeze header tabel
+                $event->sheet->freezePane('A8');
+            }
+
         ];
     }
 }

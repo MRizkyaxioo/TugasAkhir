@@ -23,12 +23,10 @@ class RekapPresensiExport implements
 {
     protected $bulan;
     protected $nama;
-    protected $tanggal;
 
-    public function __construct($bulan = null, $tanggal = null, $nama = null)
+    public function __construct($bulan = null, $nama = null)
     {
         $this->bulan = $bulan;
-        $this->tanggal = $tanggal;
         $this->nama = $nama;
     }
 
@@ -50,11 +48,6 @@ class RekapPresensiExport implements
         // Filter bulan
         if ($this->bulan) {
             $query->whereMonth('tanggal_presensi', $this->bulan);
-        }
-
-        // Filter tanggal
-        if ($this->tanggal) {
-            $query->whereDate('tanggal_presensi', $this->tanggal);
         }
 
         // Filter nama
@@ -166,14 +159,14 @@ $event->sheet->getStyle('A1')->applyFromArray([
                     );
 
                 // Kolom angka di tengah
-                $event->sheet->getStyle("C2:F{$lastRow}")
-                    ->getAlignment()
-                    ->setHorizontal(
-                        \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER
-                    );
+                $event->sheet->getStyle("C4:F{$lastRow}")
+    ->getAlignment()
+    ->setHorizontal(
+        \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER
+    );
 
                 // Freeze header
-                $event->sheet->freezePane('A2');
+                $event->sheet->freezePane('A4');
             },
         ];
     }

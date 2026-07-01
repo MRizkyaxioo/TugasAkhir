@@ -10,9 +10,6 @@ class JurusanSeeder extends Seeder
     public function run(): void
     {
         DB::table('jurusan')->insert([
-            ['jurusan' => 'IPA'],
-            ['jurusan' => 'IPS'],
-            ['jurusan' => 'Bahasa'],
             ['jurusan' => 'Rekayasa Perangkat Lunak'],
             ['jurusan' => 'Teknik Komputer dan Jaringan'],
             ['jurusan' => 'Multimedia'],

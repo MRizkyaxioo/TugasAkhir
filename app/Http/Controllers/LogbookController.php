@@ -19,9 +19,9 @@ class LogbookController extends Controller
 
     // Cek apakah peserta sudah presensi hari ini (ada record presensi_peserta dengan tanggal_presensi tidak null)
     $presensiHariIni = PresensiPeserta::where('id_peserta', $peserta->id_peserta)
-        ->whereNotNull('tanggal_presensi')
-        ->whereDate('tanggal_presensi', $today)
-        ->first();
+    ->whereDate('tanggal_presensi', $today)
+    ->whereIn('status_kehadiran', ['hadir', 'izin', 'sakit'])
+    ->first();
 
     // Cek apakah logbook hari ini sudah ada
     $logbookHariIni = Logbook::where('id_peserta', $peserta->id_peserta)
@@ -54,9 +54,9 @@ class LogbookController extends Controller
 
         // Validasi sudah presensi
         $presensi = PresensiPeserta::where('id_peserta', $peserta->id_peserta)
-            ->whereNotNull('tanggal_presensi')
-            ->whereDate('tanggal_presensi', $today)
-            ->first();
+    ->whereDate('tanggal_presensi', $today)
+    ->whereIn('status_kehadiran', ['hadir', 'izin', 'sakit'])
+    ->first();
 
         if (!$presensi) {
             return back()->with('error', 'Anda harus melakukan presensi terlebih dahulu.');
