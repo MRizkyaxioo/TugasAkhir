@@ -2,6 +2,7 @@
 function togglePassword(inputId, eyeId) {
     const input = document.getElementById(inputId);
     const eye = document.getElementById(eyeId);
+
     if (input.type === 'password') {
         input.type = 'text';
         eye.innerHTML = `
@@ -18,11 +19,44 @@ function togglePassword(inputId, eyeId) {
     }
 }
 
-// ── Validasi Tanggal & Konfirmasi ──
+// ── Validasi Tanggal, TomSelect & Konfirmasi ──
 document.addEventListener('DOMContentLoaded', function () {
+
+    // ==========================
+    // Tom Select
+    // ==========================
+    new TomSelect("#jurusan", {
+        create: false,
+        sortField: {
+            field: "text",
+            direction: "asc"
+        },
+        placeholder: "Cari jurusan..."
+    });
+
+    new TomSelect("#sekolah", {
+        create: false,
+        sortField: {
+            field: "text",
+            direction: "asc"
+        },
+        placeholder: "Cari sekolah/kampus..."
+    });
+
+    // ==========================
+    // Kode lama
+    // ==========================
+
     const awal = document.getElementById('awal_magang');
     const akhir = document.getElementById('akhir_magang');
     const form = document.getElementById('formRegister');
+
+    // Tanggal hari ini
+const today = new Date();
+const todayString = formatTanggal(today);
+
+// Tidak bisa memilih tanggal sebelum hari ini
+awal.min = todayString;
 
     function tambahSatuBulan(tanggalString) {
         const [tahun, bulan, hari] = tanggalString.split('-').map(Number);
@@ -46,45 +80,72 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     awal.addEventListener('change', function () {
+        const tanggalDipilih = new Date(this.value);
+
+if (tanggalDipilih < new Date(todayString)) {
+    Swal.fire({
+        icon: 'warning',
+        title: 'Tanggal tidak valid',
+        text: 'Awal magang tidak boleh sebelum hari ini.'
+    });
+
+    this.value = '';
+    akhir.value = '';
+    akhir.disabled = true;
+    return;
+}
+
         akhir.value = '';
+
         if (!this.value) {
             akhir.disabled = true;
             akhir.removeAttribute('min');
             return;
         }
+
         akhir.disabled = false;
         const minimal = tambahSatuBulan(this.value);
         akhir.min = formatTanggal(minimal);
     });
 
     akhir.addEventListener('change', function () {
+
         if (!awal.value || !akhir.value) return;
+
         const minimal = tambahSatuBulan(awal.value);
+
         const [tahun, bulan, hari] = akhir.value.split('-').map(Number);
         const tanggalAkhir = new Date(tahun, bulan - 1, hari);
+
         if (tanggalAkhir < minimal) {
             Swal.fire({
                 icon: 'warning',
                 title: 'Tanggal tidak valid',
                 text: `Tanggal akhir magang minimal ${formatTanggal(minimal)}.`
             });
+
             this.value = '';
         }
     });
 
     form.addEventListener('submit', function (e) {
+
         e.preventDefault();
 
         if (awal.value && akhir.value) {
+
             const minimal = tambahSatuBulan(awal.value);
+
             const [tahun, bulan, hari] = akhir.value.split('-').map(Number);
             const tanggalAkhir = new Date(tahun, bulan - 1, hari);
+
             if (tanggalAkhir < minimal) {
                 Swal.fire({
                     icon: 'warning',
                     title: 'Tanggal tidak valid',
                     text: `Tanggal akhir magang minimal ${formatTanggal(minimal)}.`
                 });
+
                 return;
             }
         }
@@ -100,7 +161,9 @@ document.addEventListener('DOMContentLoaded', function () {
             cancelButtonText: 'Batal',
             reverseButtons: true
         }).then((result) => {
+
             if (result.isConfirmed) {
+
                 Swal.fire({
                     title: 'Mengirim...',
                     text: 'Mohon tunggu sebentar.',
@@ -110,8 +173,11 @@ document.addEventListener('DOMContentLoaded', function () {
                         Swal.showLoading();
                     }
                 });
+
                 form.submit();
             }
         });
+
     });
+
 });

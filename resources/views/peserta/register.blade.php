@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pendaftaran Magang - Perpustakaan Poliban</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/peserta/register.css') }}">
 </head>
 <body>
@@ -56,7 +57,7 @@
 
                     <div class="field">
                         <label>Jurusan</label>
-                        <select name="id_jurusan">
+                        <select id="jurusan" name="id_jurusan">
                             <option value="">Pilih Jurusan</option>
                             @foreach($jurusan as $j)
                                 <option value="{{ $j->id_jurusan }}" {{ old('id_jurusan') == $j->id_jurusan ? 'selected' : '' }}>
@@ -81,7 +82,7 @@
 
                     <div class="field">
                         <label>Sekolah/Kampus</label>
-                        <select name="id_sekolah_kampus">
+                        <select id="sekolah" name="id_sekolah_kampus">
                             <option value="">Pilih Sekolah/Kampus</option>
                             @foreach($sekolah as $s)
                                 <option value="{{ $s->id_sekolah_kampus }}" {{ old('id_sekolah_kampus') == $s->id_sekolah_kampus ? 'selected' : '' }}>
@@ -122,7 +123,7 @@
 
                     <div class="field">
                         <label>Awal Magang</label>
-                        <input type="date" id="awal_magang" name="awal_magang" value="{{ old('awal_magang') }}">
+                        <input type="date" id="awal_magang" name="awal_magang" value="{{ old('awal_magang') }}" min="{{ \Carbon\Carbon::today()->format('Y-m-d') }}">
                         @error('awal_magang')<span class="field-error">{{ $message }}</span>@enderror
                     </div>
 
@@ -180,6 +181,7 @@
     <!-- SweetAlert2 CDN -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- JavaScript Custom -->
+    <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
     <script src="{{ asset('js/peserta/register.js') }}"></script>
 </body>
 </html>

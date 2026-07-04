@@ -11,5 +11,6 @@ class KepalaPerpustakaan extends Model
 
     protected $fillable = [
         'nama',
+        'nip',
     ];
 }

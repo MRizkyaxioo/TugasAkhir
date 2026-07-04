@@ -448,3 +448,40 @@ tbody td { padding: 10px 14px; color: var(--dark); vertical-align: middle; font-
         letter-spacing: 0.02em;
     }
 }
+
+.search-form{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    margin:18px 0;
+}
+
+.search-input{
+    flex:1;
+    padding:10px 16px;
+    border:1px solid #D1D5DB;
+    border-radius:50px;
+    font-family:'DM Sans',sans-serif;
+    font-size:.95rem;
+    outline:none;
+    transition:.2s;
+}
+
+.search-input:focus{
+    border-color:#0F766E;
+    box-shadow:0 0 0 3px rgba(15,118,110,.12);
+}
+
+.btn-reset{
+    padding:10px 18px;
+    border-radius:50px;
+    text-decoration:none;
+    background:#F3F4F6;
+    color:#374151;
+    font-family:'DM Sans',sans-serif;
+    font-size:.9rem;
+}
+
+.btn-reset:hover{
+    background:#E5E7EB;
+}

@@ -338,18 +338,25 @@ public function pembimbing()
 public function updateKepalaPerpustakaan(Request $request)
 {
     $request->validate([
-        'nama' => 'required|string|max:100'
+        'nama' => 'required|string|max:100',
+        'nip'  => 'required|string|max:30',
     ]);
 
     $kepala = KepalaPerpustakaan::first();
 
     if ($kepala) {
-        $kepala->update(['nama' => $request->nama]);
+        $kepala->update([
+            'nama' => $request->nama,
+            'nip'  => $request->nip,
+        ]);
     } else {
-        KepalaPerpustakaan::create(['nama' => $request->nama]);
+        KepalaPerpustakaan::create([
+            'nama' => $request->nama,
+            'nip'  => $request->nip,
+        ]);
     }
 
-    return back()->with('success', 'Nama Kepala Perpustakaan berhasil diupdate');
+    return back()->with('success', 'Data Kepala Perpustakaan berhasil diupdate');
 }
 
 public function storePembimbing(Request $request)
@@ -399,9 +406,17 @@ public function exportLogbookAdmin($id)
     return $pdf->download('logbook_'.$peserta->nama.'.pdf');
 }
 
-public function jurusan()
+public function jurusan(Request $request)
 {
-    $data = Jurusan::all();
+    $query = Jurusan::query();
+
+    if ($request->filled('search')) {
+        $query->where('jurusan', 'like', '%' . $request->search . '%');
+    }
+
+    $data = $query
+        ->orderBy('jurusan')
+        ->get();
 
     return view('admin.jurusan', compact('data'));
 }
@@ -409,7 +424,7 @@ public function jurusan()
 public function storeJurusan(Request $request)
 {
     $request->validate([
-        'jurusan' => 'required'
+        'jurusan' => 'required|string|max:50'
     ]);
 
     Jurusan::create([
@@ -419,9 +434,17 @@ public function storeJurusan(Request $request)
     return back()->with('success', 'Jurusan berhasil ditambahkan');
 }
 
-public function sekolah()
+public function sekolahKampus(Request $request)
 {
-    $data = SekolahKampus::all();
+    $query = SekolahKampus::query();
+
+    if ($request->filled('search')) {
+        $query->where('nama_sekolah_kampus', 'like', '%' . $request->search . '%');
+    }
+
+    $data = $query
+        ->orderBy('nama_sekolah_kampus')
+        ->get();
 
     return view('admin.sekolah', compact('data'));
 }
@@ -429,7 +452,7 @@ public function sekolah()
 public function storeSekolahKampus(Request $request)
 {
     $request->validate([
-        'nama_sekolah_kampus' => 'required'
+        'nama_sekolah_kampus' => 'required|string|max:75'
     ]);
 
     SekolahKampus::create([
@@ -442,7 +465,7 @@ public function storeSekolahKampus(Request $request)
 public function updateJurusan(Request $request, $id)
 {
     $request->validate([
-        'jurusan' => 'required'
+        'jurusan' => 'required|string|max:50'
     ]);
 
     $jurusan = Jurusan::findOrFail($id);
@@ -457,7 +480,7 @@ public function updateJurusan(Request $request, $id)
 public function updateSekolahKampus(Request $request, $id)
 {
     $request->validate([
-        'nama_sekolah_kampus' => 'required'
+        'nama_sekolah_kampus' => 'required|string|max:75'
     ]);
 
     $sekolah = SekolahKampus::findOrFail($id);

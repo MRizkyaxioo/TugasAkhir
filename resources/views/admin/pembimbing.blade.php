@@ -117,16 +117,24 @@
         <div class="kepala-info">
             <div class="kepala-label">Kepala UPA Perpustakaan</div>
             <div class="kepala-name-row">
-                <span class="kepala-nama">
-                    {{ $kepala->nama ?? 'Belum diatur' }}
-                </span>
+                <div class="kepala-data">
+    <span class="kepala-nama">
+        {{ $kepala->nama ?? 'Belum diatur' }}
+    </span>
+
+    <small class="kepala-nip">
+        NIP: {{ $kepala->nip ?? '-' }}
+    </small>
+</div>
 
                 <button
                     type="button"
                     class="btn-edit-avatar"
                     title="Edit Nama Kepala Perpustakaan"
-                    onclick="openEditModalKepala('{{ $kepala->nama ?? '' }}')"
-                >
+                    onclick="openEditModalKepala(
+    '{{ $kepala->nama ?? '' }}',
+    '{{ $kepala->nip ?? '' }}'
+)">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 20h9"/>
                         <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/>
@@ -317,6 +325,7 @@
                     <label>Nama</label>
                     <input type="text"
                            name="nama"
+                           maxlength="60"
                            value="{{ old('nama') }}">
                 </div>
 
@@ -324,6 +333,7 @@
                     <label>No hp</label>
                     <input type="text"
                            name="no_telp"
+                           maxlength="20"
                            value="{{ old('no_telp') }}">
                 </div>
 
@@ -331,6 +341,7 @@
                     <label>NIP/NIDN</label>
                     <input type="text"
                            name="nip_nidn"
+                           maxlength="20"
                            value="{{ old('nip_nidn') }}">
                 </div>
 
@@ -338,6 +349,7 @@
                     <label>Username</label>
                     <input type="text"
                            name="username"
+                           maxlength="60"
                            value="{{ old('username') }}">
                 </div>
 
@@ -348,6 +360,7 @@
 
                         <input type="password"
                                name="password"
+                               maxlength="60"
                                id="passwordTambah">
 
                         <span class="toggle-password"
@@ -402,7 +415,7 @@
 
                 <div class="field">
                     <label>Nama</label>
-                    <input type="text" name="nama">
+                    <input type="text" name="nama" maxlength="60">
                 </div>
 
                 <div class="field">
@@ -422,13 +435,13 @@
                 <div class="field">
                     <label>No HP</label>
                     <input type="text"
-                           name="no_telp">
+                           name="no_telp" maxlength="20">
                 </div>
 
                 <div class="field">
                     <label>Username</label>
                     <input type="text"
-                           name="username">
+                           name="username" maxlength="60">
                 </div>
 
                 <div class="field">
@@ -439,6 +452,7 @@
 
         <input type="password"
                name="password"
+               maxlength="60"
                id="passwordTambahAsal">
 
         <span class="toggle-password"
@@ -514,6 +528,7 @@
 
                     <input type="text"
                            name="nama"
+                           maxlength="60"
                            id="editNama">
                 </div>
 
@@ -522,6 +537,7 @@
 
                     <input type="text"
                            name="no_telp"
+                           maxlength="20"
                            id="editNoTelp">
                 </div>
 
@@ -530,6 +546,7 @@
 
                     <input type="text"
                            name="nip_nidn"
+                           maxlength="20"
                            id="editNip">
                 </div>
 
@@ -538,6 +555,7 @@
 
                     <input type="text"
                            name="username"
+                           maxlength="60"
                            id="editUsername">
                 </div>
 
@@ -550,6 +568,7 @@
                         <input
                             type="password"
                             name="password"
+                            maxlength="60"
                             id="passwordEdit"
                             placeholder="Kosongkan jika tidak ingin diubah"
                         >
@@ -628,6 +647,7 @@
 
                     <input type="text"
                            name="nama"
+                           maxlength="60"
                            id="editNamaAsal">
                 </div>
 
@@ -655,6 +675,7 @@
 
                     <input type="text"
                            name="no_telp"
+                           maxlength="20"
                            id="editNoTelpAsal">
                 </div>
 
@@ -663,6 +684,7 @@
 
                     <input type="text"
                            name="username"
+                           maxlength="60"
                            id="editUsernameAsal">
                 </div>
 
@@ -675,6 +697,7 @@
                         <input
                             type="password"
                             name="password"
+                            maxlength="60"
                             id="passwordEditAsal"
                             placeholder="Kosongkan jika tidak ingin diubah"
                         >
@@ -737,9 +760,14 @@
 
             <div class="form-fields">
                 <div class="field">
-                    <label>Nama Kepala Perpustakaan</label>
-                    <input type="text" name="nama" id="editNamaKepala">
-                </div>
+    <label>Nama Kepala Perpustakaan</label>
+    <input type="text" name="nama" maxlength="60" id="editNamaKepala">
+</div>
+
+<div class="field">
+    <label>NIP</label>
+    <input type="text" name="nip" maxlength="20" id="editNipKepala">
+</div>
             </div>
 
             <div class="form-footer">

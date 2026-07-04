@@ -340,3 +340,37 @@ main {
         padding: 20px 14px 28px;
     }
 }
+
+/* =========================
+   TOM SELECT
+========================= */
+
+.ts-wrapper.single .ts-control {
+    border: 1.5px solid #E8D5B5;
+    border-radius: 8px;
+    min-height: 40px;
+    font-size: 0.875rem;
+    font-family: 'DM Sans', sans-serif;
+    background: var(--warm-white);
+    box-shadow: none;
+}
+
+.ts-wrapper.focus .ts-control {
+    border-color: var(--gold);
+    box-shadow: none;
+}
+
+.ts-dropdown {
+    border-radius: 8px;
+    border: 1px solid #E8D5B5;
+    font-family: 'DM Sans', sans-serif;
+}
+
+.ts-dropdown .active {
+    background: var(--cream);
+    color: var(--dark);
+}
+
+.ts-control input {
+    font-family: 'DM Sans', sans-serif;
+}

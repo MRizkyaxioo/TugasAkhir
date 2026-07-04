@@ -12,12 +12,14 @@ return new class extends Migration
         Schema::create('kepala_perpustakaan', function (Blueprint $table) {
             $table->id('id_kepala');
             $table->string('nama', 60);
+            $table->string('nip', 20)->nullable();
             $table->timestamps();
         });
 
         // seed default 1 baris
         DB::table('kepala_perpustakaan')->insert([
             'nama'       => 'Asrani, S.I.Pust.',
+            'nip'        => '198107152005011002',
             'created_at' => now(),
             'updated_at' => now(),
         ]);

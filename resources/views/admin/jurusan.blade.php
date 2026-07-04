@@ -120,6 +120,21 @@
                 <!-- KIRI: LIST -->
                 <div class="card">
                     <div class="card-label">List Jurusan</div>
+
+<form method="GET" action="{{ route('admin.jurusan') }}" class="search-form">
+    <input
+        type="text"
+        name="search"
+        placeholder="Cari jurusan..."
+        value="{{ request('search') }}"
+        class="search-input">
+
+    @if(request('search'))
+        <a href="{{ route('admin.jurusan') }}" class="btn-reset">
+            Reset
+        </a>
+    @endif
+</form>
                     <div class="table-wrap">
                         <table>
                             <thead>
@@ -160,8 +175,11 @@
                         <div class="form-fields">
                             <div class="field">
                                 <label>Nama Jurusan</label>
-                                <input type="text" name="jurusan"
-                                       placeholder="Contoh: Rekayasa Perangkat Lunak (RPL)">
+                                <input type="text" name="jurusan" maxlength="50"
+                                       placeholder="Contoh: Rekayasa Perangkat Lunak (RPL)" value="{{ old('jurusan') }}">
+                                       @error('jurusan')
+    <small style="color:red">{{ $message }}</small>
+@enderror
                             </div>
                         </div>
                         <div class="form-footer">
@@ -187,7 +205,10 @@
                 <div class="form-fields">
                     <div class="field">
                         <label>Nama Jurusan</label>
-                        <input type="text" name="jurusan" id="editJurusan">
+                        <input type="text" name="jurusan" id="editJurusan" maxlength="50" value="{{ old('jurusan') }}">
+                        @error('jurusan')
+    <small style="color:red">{{ $message }}</small>
+@enderror
                     </div>
                 </div>
                 <div class="form-footer" style="justify-content:space-between;">

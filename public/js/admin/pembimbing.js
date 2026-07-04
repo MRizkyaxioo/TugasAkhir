@@ -19,10 +19,12 @@ function openEditModal(id, nama, no_telp, nip_nidn, username)
 // MODAL KEPALA PERPUSTAKAAN
 // =========================
 
-function openEditModalKepala(nama)
+function openEditModalKepala(nama, nip)
 {
     document.getElementById('editModalKepala').style.display = 'flex';
+
     document.getElementById('editNamaKepala').value = nama;
+    document.getElementById('editNipKepala').value = nip;
 }
 
 function closeModalKepala()

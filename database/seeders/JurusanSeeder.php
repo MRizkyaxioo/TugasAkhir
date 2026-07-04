@@ -10,48 +10,52 @@ class JurusanSeeder extends Seeder
     public function run(): void
     {
         DB::table('jurusan')->insert([
+            // Bidang Perpustakaan
+            ['jurusan' => 'Perpustakaan'],
+
+            // Bidang Teknologi Informasi
+            ['jurusan' => 'Teknik Informatika'],
+            ['jurusan' => 'Manajemen Informatika'],
+            ['jurusan' => 'Sistem Informasi'],
+            ['jurusan' => 'Teknologi Informasi'],
             ['jurusan' => 'Rekayasa Perangkat Lunak'],
             ['jurusan' => 'Teknik Komputer dan Jaringan'],
             ['jurusan' => 'Multimedia'],
             ['jurusan' => 'Desain Komunikasi Visual'],
-            ['jurusan' => 'Animasi'],
-            ['jurusan' => 'Akuntansi dan Keuangan Lembaga'],
+
+            // Bidang Administrasi
+            ['jurusan' => 'Administrasi Perkantoran'],
+            ['jurusan' => 'Otomatisasi dan Tata Kelola Perkantoran'],
             ['jurusan' => 'Manajemen Perkantoran'],
-            ['jurusan' => 'Bisnis Daring dan Pemasaran'],
-            ['jurusan' => 'Perhotelan'],
-            ['jurusan' => 'Usaha Layanan Pariwisata'],
-            ['jurusan' => 'Teknik Kendaraan Ringan'],
-            ['jurusan' => 'Teknik Sepeda Motor'],
-            ['jurusan' => 'Teknik Instalasi Tenaga Listrik'],
-            ['jurusan' => 'Teknik Audio Video'],
-            ['jurusan' => 'Teknik Pemesinan'],
-            ['jurusan' => 'Teknik Pengelasan'],
-            ['jurusan' => 'Teknik Pendingin dan Tata Udara'],
-            ['jurusan' => 'Kimia Industri'],
-            ['jurusan' => 'Farmasi'],
-            ['jurusan' => 'Keperawatan'],
-            ['jurusan' => 'Teknik Informatika'],
-            ['jurusan' => 'Sistem Informasi'],
-            ['jurusan' => 'Teknik Sipil'],
-            ['jurusan' => 'Teknik Mesin'],
-            ['jurusan' => 'Teknik Elektro'],
-            ['jurusan' => 'Arsitektur'],
-            ['jurusan' => 'Akuntansi'],
-            ['jurusan' => 'Manajemen'],
             ['jurusan' => 'Administrasi Bisnis'],
-            ['jurusan' => 'Hukum'],
-            ['jurusan' => 'Ilmu Komunikasi'],
-            ['jurusan' => 'Pendidikan Matematika'],
+
+            // Bidang Bisnis
+            ['jurusan' => 'Akuntansi'],
+            ['jurusan' => 'Akuntansi dan Keuangan Lembaga'],
+            ['jurusan' => 'Manajemen'],
+            ['jurusan' => 'Bisnis Digital'],
+
+            // Bidang Bahasa
+            ['jurusan' => 'Bahasa Indonesia'],
+            ['jurusan' => 'Sastra Indonesia'],
+            ['jurusan' => 'Sastra Inggris'],
+            ['jurusan' => 'Pendidikan Bahasa Indonesia'],
             ['jurusan' => 'Pendidikan Bahasa Inggris'],
+
+            // Bidang Pendidikan
             ['jurusan' => 'Pendidikan Guru Sekolah Dasar'],
-            ['jurusan' => 'Agribisnis'],
-            ['jurusan' => 'Agroteknologi'],
-            ['jurusan' => 'Peternakan'],
-            ['jurusan' => 'Perikanan'],
-            ['jurusan' => 'Kesehatan Masyarakat'],
-            ['jurusan' => 'Psikologi'],
-            ['jurusan' => 'Ekonomi Syariah'],
-            ['jurusan' => 'Pendidikan Agama Islam'],
+            ['jurusan' => 'Pendidikan Guru Pendidikan Anak Usia Dini'],
+
+            // Bidang Komunikasi
+            ['jurusan' => 'Ilmu Komunikasi'],
+            ['jurusan' => 'Hubungan Masyarakat'],
+
+            // Bidang Kearsipan
+            ['jurusan' => 'Kearsipan'],
+
+            // Bidang Umum
+            ['jurusan' => 'Administrasi Publik'],
+            ['jurusan' => 'Ilmu Pemerintahan'],
         ]);
     }
 }

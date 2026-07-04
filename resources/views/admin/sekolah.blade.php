@@ -120,6 +120,14 @@
                 <!-- KIRI: LIST -->
                 <div class="card">
                     <div class="card-label">List Sekolah/Kampus</div>
+                    <form method="GET" action="{{ route('admin.sekolah') }}" style="margin-bottom:16px;">
+    <input
+        type="text"
+        name="search"
+        value="{{ request('search') }}"
+        placeholder="Cari sekolah/kampus..."
+        class="search-input">
+</form>
                     <div class="table-wrap">
                         <table>
                             <thead>
@@ -159,8 +167,11 @@
                         <div class="form-fields">
                             <div class="field">
                                 <label>Nama Sekolah/Kampus</label>
-                                <input type="text" name="nama_sekolah_kampus"
-                                       placeholder="Contoh: SMK Negeri 1 Banjarmasin">
+                                <input type="text" name="nama_sekolah_kampus" maxlength="75"
+                                       placeholder="Contoh: SMK Negeri 1 Banjarmasin" value="{{ old('nama_sekolah_kampus') }}">
+                                       @error('nama_sekolah_kampus')
+    <small style="color:red">{{ $message }}</small>
+@enderror
                             </div>
                         </div>
                         <div class="form-footer">
@@ -186,7 +197,10 @@
                 <div class="form-fields">
                     <div class="field">
                         <label>Nama Sekolah/Kampus</label>
-                        <input type="text" name="nama_sekolah_kampus" id="editNama">
+                        <input type="text" name="nama_sekolah_kampus" id="editNama" maxlength="75" value="{{ old('nama_sekolah_kampus') }}">
+                        @error('nama_sekolah_kampus')
+    <small style="color:red">{{ $message }}</small>
+@enderror
                     </div>
                 </div>
                 <div class="form-footer" style="justify-content:space-between;">

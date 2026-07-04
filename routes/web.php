@@ -131,7 +131,7 @@ Route::put(
 Route::post('/admin/jurusan', [DashboardAdminController::class, 'storeJurusan'])
     ->name('admin.jurusan.store');
 
-Route::get('/admin/sekolah', [DashboardAdminController::class, 'sekolah'])
+Route::get('/admin/sekolah', [DashboardAdminController::class, 'sekolahKampus'])
     ->name('admin.sekolah');
 
 Route::post('/admin/sekolah', [DashboardAdminController::class, 'storeSekolahKampus'])

@@ -448,3 +448,19 @@ tbody td { padding: 10px 14px; color: var(--dark); vertical-align: middle; font-
         letter-spacing: 0.02em;
     }
 }
+
+.search-input{
+    width:100%;
+    padding:10px 14px;
+    border:1.5px solid #E8D5B5;
+    border-radius:8px;
+    font-size:.875rem;
+    font-family:'DM Sans',sans-serif;
+    outline:none;
+    background:#FFFDF9;
+    transition:.2s;
+}
+
+.search-input:focus{
+    border-color:var(--gold);
+}
