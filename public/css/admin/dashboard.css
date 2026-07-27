@@ -9,6 +9,10 @@
     --shadow: 0 4px 24px rgba(26,18,8,0.08);
     --radius: 16px;
     --sidebar-w: 220px;
+    /* Fallback untuk browser yang belum support 100dvh.
+       Nilai --vh di-set lewat JS di blade (setVhVariable) supaya sama
+       persis dengan tinggi viewport yang benar-benar terlihat di HP. */
+    --vh: 1vh;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -18,6 +22,8 @@ body {
     font-family: 'DM Sans', sans-serif;
     color: var(--dark);
     min-height: 100vh;
+    min-height: calc(var(--vh, 1vh) * 100);
+    min-height: 100dvh;
     display: flex;
 }
 
@@ -28,12 +34,18 @@ body {
     border-right: 1px solid rgba(200,135,58,0.15);
     display: flex;
     flex-direction: column;
+    /* PENTING: pakai top/left/bottom (BUKAN height:100vh/100dvh).
+       Browser sendiri yang mengikat sidebar ke tepi ATAS dan BAWAH
+       viewport yang benar-benar terlihat saat ini. */
     position: fixed;
-    top: 0; left: 0;
-    height: 100vh;
+    top: 0; left: 0; bottom: 0;
     z-index: 200;
     box-shadow: 2px 0 12px rgba(26,18,8,0.06);
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* PENTING: overflow-y auto di sini (bukan di .sidebar-nav) jadi
+       jaring pengaman utama kalau perhitungan tinggi meleset. */
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .sidebar-logo {
@@ -51,13 +63,12 @@ body {
 }
 
 .sidebar-nav {
-    flex: 1;
+    flex: 1 0 auto;
     padding: 16px 0;
     display: flex;
     flex-direction: column;
     gap: 2px;
-    overflow-y: auto;
-    min-height: 0;
+    /* Tidak perlu overflow-y sendiri lagi — scroll sudah ditangani .sidebar */
 }
 
 /* ── SIDEBAR OVERLAY (mobile) ── */
@@ -146,8 +157,16 @@ body {
 
 .sidebar-footer {
     padding: 16px 20px;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
     border-top: 1px solid rgba(200,135,58,0.12);
     flex-shrink: 0;
+    /* KUNCI PERBAIKAN: sticky bottom membuat footer selalu nempel di
+       bagian BAWAH AREA YANG SEDANG TERLIHAT dari .sidebar (elemen
+       scroll induknya), terlepas dari akurasi 100vh/100dvh. */
+    position: sticky;
+    bottom: 0;
+    background: var(--warm-white);
+    z-index: 2;
 }
 
 .btn-logout {
@@ -179,6 +198,8 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    min-height: calc(var(--vh, 1vh) * 100);
+    min-height: 100dvh;
     min-width: 0; /* penting agar konten tidak overflow di layar kecil */
     transition: margin-left 0.3s ease;
 }
@@ -369,4 +390,148 @@ body {
     .topbar-title { font-size: 1.05rem; }
     .card-title { font-size: 0.92rem; }
     .stat-block .stat-num { font-size: 1.6rem; }
+}
+
+/* ── PROFILE BUTTON (topbar kanan) ── */
+.btn-profile-admin {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 38px;
+    height: 38px;
+    background: transparent;
+    border: 1px solid rgba(200,135,58,0.25);
+    border-radius: 8px;
+    cursor: pointer;
+    padding: 0;
+    flex-shrink: 0;
+    color: var(--gold);
+    transition: background 0.2s, color 0.2s;
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.btn-profile-admin:hover {
+    background: var(--gold);
+    color: #fff;
+}
+
+/* ── MODAL PROFIL ADMIN ── */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26,18,8,0.5);
+    z-index: 300;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal-overlay.is-open {
+    display: flex;
+}
+
+.modal-box {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    width: 100%;
+    max-width: 380px;
+    padding: 24px 26px;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+}
+
+.modal-header h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--dark);
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    line-height: 1;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 0;
+}
+
+.modal-close:hover { color: var(--dark); }
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--dark);
+    margin-bottom: 6px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid #E8D5B5;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    color: var(--dark);
+    background: var(--warm-white);
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.form-group input:focus { border-color: var(--gold); }
+
+.password-field-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-field-wrapper input {
+    padding-right: 42px;
+}
+
+.btn-toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.btn-toggle-password:hover { color: var(--gold); }
+
+.form-hint {
+    display: block;
+    margin-top: 6px;
+    font-size: 0.72rem;
+    color: var(--muted);
+    line-height: 1.4;
+}
+
+@media (max-width: 420px) {
+    .modal-box { padding: 20px; }
 }

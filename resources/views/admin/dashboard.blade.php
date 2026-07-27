@@ -6,6 +6,16 @@
     <title>Dashboard Admin - Magang Poliban</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <link href="{{ asset('css/admin/dashboard.css') }}" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function setVhVariable() {
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        }
+        setVhVariable();
+        window.addEventListener('resize', setVhVariable);
+        window.addEventListener('orientationchange', setVhVariable);
+    </script>
 </head>
 <body>
 
@@ -135,6 +145,14 @@
                     Login sebagai : {{ auth()->guard('admin')->user()->username ?? auth()->guard('pembimbing')->user()->username ?? '-' }}
                 </div>
             </div>
+
+            <button type="button" class="btn-profile-admin" id="btnProfileAdmin" aria-label="Profil Admin">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+            </button>
         </div>
 
         <!-- BODY -->
@@ -179,7 +197,138 @@
         </div>
     </div>
 
+    <!-- POPUP PROFIL ADMIN -->
+    <div class="modal-overlay" id="profileModalOverlay">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Profil Admin</h3>
+                <button type="button" class="modal-close" id="btnCloseProfileModal" aria-label="Tutup">&times;</button>
+            </div>
+
+            <form id="formProfileAdmin">
+                @csrf
+                <div class="form-group">
+                    <label for="inputUsername">Username</label>
+                    <input type="text" id="inputUsername" name="username">
+                </div>
+
+                <div class="form-group">
+                    <label for="inputPassword">Password Baru</label>
+                    <div class="password-field-wrapper">
+                        <input type="password" id="inputPassword" name="password"
+                               placeholder="Kosongkan jika tidak ingin mengubah password">
+                        <button type="button" class="btn-toggle-password" id="btnTogglePassword" aria-label="Tampilkan password" tabindex="-1">
+                            <svg id="iconEyeOpen" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                            <svg id="iconEyeClosed" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                                <path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a18.9 18.9 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                                <line x1="1" y1="1" x2="23" y2="23"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <small class="form-hint">
+                        Untuk keamanan, password lama tidak bisa ditampilkan. Isi kolom ini hanya jika ingin menggantinya (minimal 5 karakter).
+                    </small>
+                </div>
+
+                <button type="submit" class="btn-tambah" style="width:100%;">Simpan Perubahan</button>
+            </form>
+        </div>
+    </div>
+
     <script src="{{ asset('js/admin/sidebar.js') }}"></script>
+    <script>
+        (function () {
+            const btnProfile = document.getElementById('btnProfileAdmin');
+            const overlay = document.getElementById('profileModalOverlay');
+            const btnClose = document.getElementById('btnCloseProfileModal');
+            const form = document.getElementById('formProfileAdmin');
+            const inputUsername = document.getElementById('inputUsername');
+            const inputPassword = document.getElementById('inputPassword');
+            const btnTogglePassword = document.getElementById('btnTogglePassword');
+            const iconEyeOpen = document.getElementById('iconEyeOpen');
+            const iconEyeClosed = document.getElementById('iconEyeClosed');
+
+            btnTogglePassword.addEventListener('click', function () {
+                const isHidden = inputPassword.type === 'password';
+                inputPassword.type = isHidden ? 'text' : 'password';
+                iconEyeOpen.style.display = isHidden ? 'none' : 'block';
+                iconEyeClosed.style.display = isHidden ? 'block' : 'none';
+                btnTogglePassword.setAttribute(
+                    'aria-label',
+                    isHidden ? 'Sembunyikan password' : 'Tampilkan password'
+                );
+            });
+
+            function openModal() {
+                overlay.classList.add('is-open');
+
+                fetch("{{ route('admin.profile') }}", {
+                    headers: { 'Accept': 'application/json' }
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        inputUsername.value = data.username ?? '';
+                        inputPassword.value = '';
+                        inputPassword.type = 'password';
+                        iconEyeOpen.style.display = 'block';
+                        iconEyeClosed.style.display = 'none';
+                    })
+                    .catch(() => {
+                        Swal.fire('Gagal', 'Tidak bisa memuat data profil.', 'error');
+                    });
+            }
+
+            function closeModal() {
+                overlay.classList.remove('is-open');
+            }
+
+            btnProfile.addEventListener('click', openModal);
+            btnClose.addEventListener('click', closeModal);
+            overlay.addEventListener('click', function (e) {
+                if (e.target === overlay) closeModal();
+            });
+
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                const formData = new FormData(form);
+
+                fetch("{{ route('admin.profile.update') }}", {
+                    method: 'PUT',
+                    headers: {
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                })
+                    .then(res => res.json().then(data => ({ status: res.status, body: data })))
+                    .then(({ status, body }) => {
+                        if (status >= 200 && status < 300 && body.success) {
+                            closeModal();
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil',
+                                text: body.message,
+                                timer: 2000,
+                                showConfirmButton: false
+                            });
+                        } else {
+                            const firstError = body.errors
+                                ? Object.values(body.errors)[0][0]
+                                : (body.message || 'Terjadi kesalahan.');
+                            Swal.fire('Gagal', firstError, 'warning');
+                        }
+                    })
+                    .catch(() => {
+                        Swal.fire('Gagal', 'Terjadi kesalahan saat menyimpan data.', 'error');
+                    });
+            });
+        })();
+    </script>
 
 </body>
 </html>

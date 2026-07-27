@@ -6,6 +6,15 @@
     <title>Daftar Calon Peserta - Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/admin/calon.css') }}">
+    <script>
+        function setVhVariable() {
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        }
+        setVhVariable();
+        window.addEventListener('resize', setVhVariable);
+        window.addEventListener('orientationchange', setVhVariable);
+    </script>
 </head>
 <body>
 
@@ -165,7 +174,7 @@
                             <tr>
                                 <th>No</th>
                                 <th>Nama</th>
-                                <th>Nisn/NIM</th>
+                                <th>Nis/NIM</th>
                                 <th>Sekolah</th>
                                 <th>Jurusan</th>
                                 <th>Status</th>
@@ -177,7 +186,7 @@
                             <tr>
                                 <td>{{ $data->firstItem() + $i }}</td>
                                 <td>{{ $d->nama }}</td>
-                                <td>{{ $d->nisn_nim }}</td>
+                                <td>{{ $d->nis_nim }}</td>
                                 <td>{{ $d->sekolahKampus->nama_sekolah_kampus ?? '-' }}</td>
                                 <td>{{ $d->jurusan->jurusan ?? '-' }}</td>
                                 <td>

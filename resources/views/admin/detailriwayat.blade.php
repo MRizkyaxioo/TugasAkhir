@@ -9,16 +9,11 @@
 </head>
 <body>
 
-    <!-- HAMBURGER TOGGLE (mobile) -->
-    <button class="sidebar-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open'); document.querySelector('.sidebar-overlay').classList.toggle('active');">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
-        </svg>
-    </button>
-    <div class="sidebar-overlay" onclick="document.querySelector('.sidebar').classList.remove('open'); this.classList.remove('active');"></div>
+    <!-- OVERLAY (mobile) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <!-- SIDEBAR -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebarAdmin">
         <div class="sidebar-logo">
             <img src="{{ asset('images/logo-poliban.jpg') }}" alt="Logo Poliban">
         </div>
@@ -108,6 +103,9 @@
     <!-- MAIN -->
     <div class="main-content">
         <div class="page-header">
+            <button type="button" class="btn-hamburger-admin" id="btnHamburger" aria-label="Buka menu">
+                <span></span><span></span><span></span>
+            </button>
             <div class="page-header-title">Daftar Riwayat Peserta</div>
         </div>
 
@@ -120,7 +118,7 @@
                     <span class="info-value">{{ $peserta->nama }}</span>
                 </div>
                 <div class="info-row">
-                    <span class="info-label">NISN/NIM</span>
+                    <span class="info-label">NIS/NIM</span>
                     <span class="info-value">{{ $peserta->nisn_nim }}</span>
                 </div>
                 <div class="info-row">
@@ -239,5 +237,6 @@
         </div>
     </div>
 
+    <script src="{{ asset('js/admin/sidebar.js') }}"></script>
 </body>
 </html>

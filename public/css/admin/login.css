@@ -31,6 +31,7 @@ header {
     align-items: center;
     gap: 16px;
     box-shadow: 0 2px 12px rgba(26,18,8,0.05);
+    position: relative;
 }
 
 .logo-wrap {
@@ -95,6 +96,24 @@ main {
     object-fit: cover;
 }
 
+.card-photo-fallback {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #E8D5B5 0%, #C8A87A 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-photo-fallback span {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: #7B4F2E;
+    text-align: center;
+    padding: 20px;
+    line-height: 1.6;
+}
+
 .card-form {
     padding: 40px 36px;
     display: flex;
@@ -109,6 +128,37 @@ main {
     font-weight: 700;
     color: var(--dark);
     text-align: center;
+}
+
+/* ── LOGIN TABS ── */
+.login-tabs {
+    display: flex;
+    background: var(--cream);
+    border-radius: 50px;
+    padding: 4px;
+    gap: 4px;
+}
+
+.login-tab {
+    flex: 1;
+    text-align: center;
+    padding: 9px 12px;
+    border-radius: 50px;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--muted);
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+}
+
+.login-tab.active {
+    background: var(--card-bg);
+    color: var(--dark);
+    box-shadow: 0 2px 8px rgba(26,18,8,0.08);
+}
+
+.login-tab:hover:not(.active) {
+    color: var(--dark);
 }
 
 .alert-error {
@@ -178,7 +228,6 @@ main {
    RESPONSIVE — TABLET (≤700px)
 ══════════════════════════════════════════ */
 @media (max-width: 700px) {
-    /* Header: lepas dari absolute, ikut flow normal */
     header {
         padding: 14px 16px;
         gap: 12px;
@@ -205,25 +254,21 @@ main {
         height: 38px;
     }
 
-    /* Main */
     main {
         padding: 24px 16px;
         align-items: flex-start;
     }
 
-    /* Card: 1 kolom */
     .login-card {
         grid-template-columns: 1fr;
         max-width: 420px;
     }
 
-    /* Foto lebih pendek */
     .card-photo {
         min-height: 160px;
         max-height: 200px;
     }
 
-    /* Form */
     .card-form {
         padding: 28px 24px 32px;
         gap: 16px;
@@ -248,5 +293,10 @@ main {
 
     .card-form {
         padding: 24px 18px 28px;
+    }
+
+    .login-tab {
+        font-size: 0.75rem;
+        padding: 8px 6px;
     }
 }

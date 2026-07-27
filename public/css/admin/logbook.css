@@ -9,6 +9,7 @@
     --shadow: 0 4px 24px rgba(26,18,8,0.08);
     --radius: 16px;
     --sidebar-w: 220px;
+    --vh: 1vh;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -23,6 +24,8 @@ body {
     font-family: 'DM Sans', sans-serif;
     color: var(--dark);
     min-height: 100vh;
+    min-height: calc(var(--vh, 1vh) * 100);
+    min-height: 100dvh;
     display: flex;
 }
 
@@ -34,10 +37,12 @@ body {
     display: flex;
     flex-direction: column;
     position: fixed;
-    top: 0; left: 0;
-    height: 100vh;
+    top: 0; left: 0; bottom: 0;
     z-index: 250;
     box-shadow: 2px 0 12px rgba(26,18,8,0.06);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .sidebar-logo {
@@ -46,17 +51,17 @@ body {
     align-items: center;
     justify-content: center;
     border-bottom: 1px solid rgba(200,135,58,0.12);
+    flex-shrink: 0;
 }
 
 .sidebar-logo img { width: 64px; height: 64px; object-fit: contain; }
 
 .sidebar-nav {
-    flex: 1;
+    flex: 1 0 auto;
     padding: 16px 0;
     display: flex;
     flex-direction: column;
     gap: 2px;
-    overflow-y: auto;
 }
 
 .nav-item {
@@ -83,7 +88,13 @@ body {
 
 .sidebar-footer {
     padding: 16px 20px;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
     border-top: 1px solid rgba(200,135,58,0.12);
+    flex-shrink: 0;
+    position: sticky;
+    bottom: 0;
+    background: var(--warm-white);
+    z-index: 2;
 }
 
 .btn-logout {
@@ -112,9 +123,11 @@ body {
     inset: 0;
     background: rgba(26,18,8,0.45);
     z-index: 150;
+    opacity: 0;
+    transition: opacity 0.3s;
 }
 
-.sidebar-overlay.is-open { display: block; }
+.sidebar-overlay.is-open { display: block; opacity: 1; }
 
 /* MAIN */
 .main-content {
@@ -123,6 +136,10 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    min-height: calc(var(--vh, 1vh) * 100);
+    min-height: 100dvh;
+    min-width: 0;
+    transition: margin-left 0.3s ease;
 }
 
 .page-header {
@@ -131,6 +148,7 @@ body {
     align-items: center;
     justify-content: center;
     gap: 12px;
+    position: relative;
 }
 
 .page-header-title {
@@ -274,7 +292,6 @@ tbody td { padding: 10px 14px; color: var(--dark); vertical-align: middle; }
 @media (max-width: 768px) {
     .sidebar {
         transform: translateX(-100%);
-        transition: transform 0.25s ease;
     }
 
     .sidebar.is-open { transform: translateX(0); }

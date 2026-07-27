@@ -9,6 +9,10 @@
     --shadow: 0 4px 24px rgba(26,18,8,0.08);
     --radius: 16px;
     --sidebar-w: 200px;
+    /* Fallback untuk browser yang belum support 100dvh.
+       Nilai --vh di-set lewat JS (lihat script di bawah blade)
+       supaya sama persis dengan tinggi viewport yang benar-benar terlihat di HP. */
+    --vh: 1vh;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -18,22 +22,35 @@ body {
     font-family: 'DM Sans', sans-serif;
     color: var(--dark);
     min-height: 100vh;
+    min-height: calc(var(--vh, 1vh) * 100);
+    min-height: 100dvh;
     display: flex;
 }
 
-/* ── SIDEBAR ── */
 .sidebar {
     width: var(--sidebar-w);
     background: var(--warm-white);
     border-right: 1px solid rgba(200,135,58,0.15);
     display: flex;
     flex-direction: column;
+    /* PENTING: pakai top/left/bottom (BUKAN height:100vh/100dvh).
+       Dengan cara ini browser sendiri yang mengikat sidebar ke tepi ATAS
+       dan BAWAH viewport yang benar-benar terlihat saat ini — dihitung
+       ulang otomatis oleh browser tiap kali address bar muncul/hilang.
+       Ini jauh lebih akurat daripada satuan vh/dvh yang di beberapa
+       browser mobile bisa salah hitung (sidebar jadi lebih tinggi dari
+       layar, sehingga tombol Logout "hilang" di bagian yang tidak
+       terlihat dan tidak bisa di-scroll karena elemennya fixed). */
     position: fixed;
-    top: 0; left: 0;
-    height: 100vh;
+    top: 0; left: 0; bottom: 0;
     z-index: 300;
     box-shadow: 2px 0 12px rgba(26,18,8,0.06);
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* PENTING: overflow-y auto (BUKAN hidden). Kalau perhitungan tinggi meleset
+       sedikit pun, konten yang "lebih" akan bisa di-scroll, bukan malah
+       terpotong/hilang begitu saja. Ini jaring pengaman utama. */
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .sidebar-logo {
@@ -42,18 +59,18 @@ body {
     align-items: center;
     justify-content: center;
     border-bottom: 1px solid rgba(200,135,58,0.12);
+    flex-shrink: 0;
 }
 
 .sidebar-logo img { width: 64px; height: 64px; object-fit: contain; }
 
 .sidebar-nav {
-    flex: 1;
+    flex: 1 0 auto;
     padding: 16px 0;
     display: flex;
     flex-direction: column;
     gap: 2px;
-    overflow-y: auto;
-    min-height: 0; /* ← tambahkan ini */
+    /* Tidak perlu overflow-y sendiri lagi — scroll sudah ditangani oleh .sidebar */
 }
 
 .nav-item {
@@ -76,7 +93,18 @@ body {
 .sidebar-footer {
     padding: 16px 20px;
     border-top: 1px solid rgba(200,135,58,0.12);
-    flex-shrink: 0; /* ← tambahkan ini */
+    flex-shrink: 0;
+    /* Beri jarak aman untuk area gesture/home-indicator di HP modern */
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+
+    /* KUNCI PERBAIKAN: sticky bottom membuat footer selalu nempel di bagian
+       BAWAH AREA YANG SEDANG TERLIHAT dari .sidebar (elemen scroll induknya),
+       terlepas dari apakah tinggi .sidebar dihitung pas atau meleset.
+       Ini tidak bergantung sama sekali pada akurasi 100vh/100dvh. */
+    position: sticky;
+    bottom: 0;
+    background: var(--warm-white);
+    z-index: 2;
 }
 
 .btn-logout {
@@ -98,7 +126,6 @@ body {
 
 .btn-logout:hover { background: var(--gold); color: #fff; }
 
-/* ── SIDEBAR OVERLAY (mobile) ── */
 .sidebar-overlay {
     display: none;
     position: fixed;
@@ -114,16 +141,17 @@ body {
     opacity: 1;
 }
 
-/* ── MAIN CONTENT ── */
+
 .main-content {
     margin-left: var(--sidebar-w);
     flex: 1;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    min-height: calc(var(--vh, 1vh) * 100);
+    min-height: 100dvh;
 }
 
-/* ── TOPBAR ── */
 .topbar {
     background: var(--warm-white);
     border-bottom: 1px solid rgba(200,135,58,0.15);
@@ -135,7 +163,6 @@ body {
     box-shadow: 0 2px 8px rgba(26,18,8,0.04);
 }
 
-/* Hamburger — hanya tampil di mobile */
 .btn-hamburger-sidebar {
     display: none;
     flex-direction: column;
@@ -190,13 +217,11 @@ body {
     color: var(--muted);
 }
 
-/* Spacer kanan agar title tetap center di desktop */
 .topbar-spacer {
     width: 38px;
     flex-shrink: 0;
 }
 
-/* ── PAGE BODY ── */
 .page-body {
     padding: 28px 36px 40px;
     display: grid;
@@ -205,7 +230,6 @@ body {
     align-items: start;
 }
 
-/* ── CARD ── */
 .card {
     background: var(--card-bg);
     border-radius: var(--radius);
@@ -225,7 +249,6 @@ body {
     border-bottom: 1px solid #F5E6D0;
 }
 
-/* ── ALERTS ── */
 .alert-success {
     background: #F0FDF4; border: 1px solid #BBF7D0; color: #166534;
     font-size: 0.82rem; padding: 10px 14px; border-radius: 8px; margin-bottom: 14px;
@@ -236,7 +259,6 @@ body {
     font-size: 0.82rem; padding: 10px 14px; border-radius: 8px; margin-bottom: 14px;
 }
 
-/* ── PRESENSI ── */
 .presensi-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -292,7 +314,6 @@ body {
     text-align: center;
 }
 
-/* ── FILE UPLOAD ── */
 .upload-row {
     display: flex;
     gap: 10px;
@@ -365,6 +386,95 @@ body {
     padding: 8px 0;
 }
 
+.topbar-profile{
+    width:38px;
+    display:flex;
+    justify-content:flex-end;
+}
+
+.profile-btn{
+    width:42px;
+    height:42px;
+    border:none;
+    border-radius:50%;
+    cursor:pointer;
+    background:var(--gold);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:.2s;
+}
+
+.profile-btn:hover{
+    background:var(--gold-light);
+}
+
+.modal-profile{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.45);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+}
+
+.modal-profile.show{
+    display:flex;
+}
+
+.modal-content-profile{
+    width:95%;
+    max-width:500px;
+    background:#fff;
+    border-radius:16px;
+    padding:24px;
+}
+
+.modal-header-profile{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
+}
+
+.modal-header-profile h3{
+    font-family:'Playfair Display',serif;
+}
+
+.close-profile{
+    border:none;
+    background:none;
+    font-size:28px;
+    cursor:pointer;
+}
+
+.form-group{
+    margin-bottom:16px;
+}
+
+.form-group label{
+    display:block;
+    margin-bottom:6px;
+    font-weight:500;
+}
+
+.form-group input,
+.form-group textarea{
+    width:100%;
+    padding:10px 12px;
+    border:1px solid #ddd;
+    border-radius:8px;
+    font-family:'DM Sans',sans-serif;
+    outline:none;
+}
+
+.form-group textarea{
+    resize:vertical;
+}
+
+
 /* ══════════════════════════════════════════
    RESPONSIVE — MOBILE (≤768px)
 ══════════════════════════════════════════ */
@@ -422,7 +532,6 @@ body {
         gap: 16px;
     }
 
-    /* Upload row: stack di mobile */
     .upload-row {
         flex-direction: column;
         align-items: stretch;
@@ -434,9 +543,6 @@ body {
     }
 }
 
-/* ══════════════════════════════════════════
-   RESPONSIVE — SMALL MOBILE (≤400px)
-══════════════════════════════════════════ */
 @media (max-width: 400px) {
     .presensi-col h4 {
         font-size: 0.8rem;

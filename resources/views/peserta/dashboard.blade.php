@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Peserta - Magang Perpustakaan Poliban</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('css/peserta/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/peserta/dashboard.css') }}?v={{ time() }}">
 </head>
 <body>
 
@@ -70,14 +70,22 @@
                     @if($pembimbing)
                         <div class="pembimbing-info">
                             Pembimbing Lapangan: <strong>{{ $pembimbing->nama }}</strong>
-                            | NO HP: {{ $pembimbing->no_telp }}
+                            | NO HP Pembimbing: {{ $pembimbing->no_telp }}
                         </div>
                     @endif
                 </div>
             </div>
 
-            <!-- Spacer agar title center di desktop -->
-            <div class="topbar-spacer"></div>
+            <div class="topbar-profile">
+    <button type="button" id="btnEditProfile" class="profile-btn">
+        <svg width="22" height="22" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor"
+            stroke-width="2">
+            <path d="M20 21a8 8 0 0 0-16 0"/>
+            <circle cx="12" cy="7" r="4"/>
+        </svg>
+    </button>
+</div>
         </div>
 
         <div class="page-body">
@@ -169,8 +177,130 @@
 
         </div>
     </div>
+    
+    <div class="modal-profile" id="profileModal">
+
+    <div class="modal-content-profile">
+
+        <div class="modal-header-profile">
+
+            <h3>Edit Profil</h3>
+
+            <button type="button"
+                class="close-profile"
+                id="closeProfile">
+                &times;
+            </button>
+
+        </div>
+        
+        
+        @if ($errors->any())
+    <div class="alert-error" style="margin-bottom:15px;">
+        <ul style="margin:0;padding-left:18px;">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+        <form action="{{ route('peserta.updateProfil') }}"
+              method="POST">
+
+            @csrf
+            @method('PUT')
+
+            <div class="form-group">
+                <label>Nama</label>
+
+                <input
+                    type="text"
+                    name="nama"
+                    value="{{ $peserta->nama }}"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label>No Telepon</label>
+
+                <input
+                    type="text"
+                    name="no_telp"
+                    value="{{ $peserta->no_telp }}"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label>Email</label>
+
+                <input
+                    type="email"
+                    name="email"
+                    value="{{ $peserta->email }}"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label>Alamat</label>
+
+                <textarea
+                    name="alamat"
+                    rows="3"
+                    required>{{ $peserta->alamat }}</textarea>
+            </div>
+
+            <button
+                class="btn-kirim"
+                type="submit">
+                Simpan Perubahan
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
 
     <script>
+        
+        const profileModal = document.getElementById("profileModal");
+
+const btnEditProfile = document.getElementById("btnEditProfile");
+
+const closeProfile = document.getElementById("closeProfile");
+
+btnEditProfile.addEventListener("click", function () {
+    profileModal.classList.add("show");
+});
+
+closeProfile.addEventListener("click", function () {
+    profileModal.classList.remove("show");
+});
+
+profileModal.addEventListener("click", function(e){
+
+    if(e.target === profileModal){
+        profileModal.classList.remove("show");
+    }
+
+});
+@if ($errors->any())
+    profileModal.classList.add("show");
+@endif
+        
+        
+        // ── Fix 100vh di mobile (address bar bikin 100vh > tinggi layar terlihat) ──
+        // Browser modern sudah punya 100dvh (sudah di-set lewat CSS), tapi ini fallback
+        // untuk browser lama yang belum support dvh, supaya sidebar & tombol logout
+        // tetap pas dengan tinggi layar yang BENAR-BENAR terlihat.
+        function setVhVariable() {
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        }
+        setVhVariable();
+        window.addEventListener('resize', setVhVariable);
+        window.addEventListener('orientationchange', setVhVariable);
+
         // ── Sidebar drawer (mobile) ──
         const sidebar        = document.getElementById('sidebar');
         const sidebarOverlay = document.getElementById('sidebarOverlay');
@@ -226,6 +356,8 @@
             updateCountdown();
             setInterval(updateCountdown, 1000);
         @endif
+        
+        
     </script>
 
 </body>

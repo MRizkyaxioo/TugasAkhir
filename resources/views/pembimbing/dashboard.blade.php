@@ -113,7 +113,7 @@
                         <tr>
                             <th>No</th>
                             <th>Nama</th>
-                            <th>NIM/NISN</th>
+                            <th>NIS/NIM</th>
                             <th>Sekolah/Kampus</th>
                             <th>Jurusan</th>
                             <th>Status</th>

@@ -19,7 +19,7 @@ return new class extends Migration
                 ->cascadeOnDelete();
 
             $table->date('tanggal');
-            $table->string('kegiatan', 60);
+            $table->text('kegiatan');
             $table->string('bukti_foto', 255);
 
             $table->timestamps();

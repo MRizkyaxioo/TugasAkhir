@@ -6,6 +6,15 @@
     <title>Detail Calon Peserta - Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/admin/detail.css') }}">
+    <script>
+        function setVhVariable() {
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        }
+        setVhVariable();
+        window.addEventListener('resize', setVhVariable);
+        window.addEventListener('orientationchange', setVhVariable);
+    </script>
 </head>
 <body>
 
@@ -121,7 +130,7 @@
                         <span class="info-value">{{ $peserta->nama }}</span>
                     </div>
                     <div class="info-row">
-                        <span class="info-label">NISN/NIM</span>
+                        <span class="info-label">NIS/NIM</span>
                         <span class="info-value">{{ $peserta->nisn_nim }}</span>
                     </div>
                     <div class="info-row">
@@ -135,6 +144,10 @@
                     <div class="info-row">
                         <span class="info-label">Kelas</span>
                         <span class="info-value">{{ $peserta->kelas }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">No HP</span>
+                        <span class="info-value">{{ $peserta->no_telp }}</span>
                     </div>
                     <div class="info-row">
                         <span class="info-label">Semester</span>

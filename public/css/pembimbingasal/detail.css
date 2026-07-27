@@ -8,15 +8,22 @@
     --card-bg: #FFFFFF;
     --shadow: 0 4px 24px rgba(26,18,8,0.08);
     --radius: 16px;
+    --vh: 1vh;
 }
-
 * { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
 
 body {
     background-color: var(--cream);
     font-family: 'DM Sans', sans-serif;
     color: var(--dark);
     min-height: 100vh;
+    min-height: calc(var(--vh, 1vh) * 100);
+    min-height: 100dvh;
     display: flex;
     flex-direction: column;
 }
@@ -31,21 +38,20 @@ header {
     justify-content: space-between;
     box-shadow: 0 2px 12px rgba(26,18,8,0.05);
     position: relative;
+    gap: 12px;
+    flex-wrap: wrap;
 }
-
 .header-left {
     display: flex;
     align-items: center;
     gap: 16px;
 }
-
 .logo-wrap {
     width: 52px; height: 52px;
     display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
 }
-
 .logo-wrap img { width: 100%; height: 100%; object-fit: contain; }
-
 .header-title {
     font-family: 'Playfair Display', serif;
     font-size: 1.2rem;
@@ -56,8 +62,9 @@ header {
     border-radius: 50px;
     background: var(--card-bg);
     box-shadow: var(--shadow);
+    text-align: center;
+    /* posisi absolute-center hanya dipakai di layar besar, lihat media query */
 }
-
 .btn-logout {
     display: inline-flex;
     align-items: center;
@@ -73,17 +80,43 @@ header {
     cursor: pointer;
     transition: background 0.2s;
     box-shadow: 0 4px 14px rgba(200,135,58,0.35);
+    white-space: nowrap;
+    flex-shrink: 0;
 }
-
 .btn-logout:hover { background: var(--gold-light); }
+
+/* Versi desktop: judul benar-benar di tengah absolute */
+@media (min-width: 769px) {
+    .header-title-center {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+}
 
 /* MAIN */
 main {
     flex: 1;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    padding: 40px 24px;
+    padding: 32px 24px;
+}
+
+.detail-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    max-width: 960px;
+    width: 100%;
+    align-items: start;
+}
+
+.right-col {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
 }
 
 .card {
@@ -92,8 +125,8 @@ main {
     box-shadow: var(--shadow);
     border: 1px solid rgba(200,135,58,0.08);
     padding: 28px 32px;
-    max-width: 480px;
     width: 100%;
+    min-width: 0;
 }
 
 .card-label {
@@ -113,20 +146,19 @@ main {
     padding: 9px 0;
     border-bottom: 1px solid #F5E6D0;
     gap: 10px;
+    flex-wrap: wrap;
 }
-
 .info-row:last-child { border-bottom: none; }
 
 .info-label {
     font-size: 0.82rem;
     font-weight: 500;
     color: var(--muted);
-    width: 110px;
+    width: 150px;
     flex-shrink: 0;
 }
-
 .info-label::after { content: ' :'; }
-.info-value { font-size: 0.875rem; color: var(--dark); }
+.info-value { font-size: 0.875rem; color: var(--dark); word-break: break-word; }
 
 .badge {
     display: inline-block;
@@ -135,15 +167,59 @@ main {
     font-size: 0.75rem;
     font-weight: 500;
 }
-
 .badge-diterima { background: #DCFCE7; color: #166534; border: 1px solid #BBF7D0; }
 .badge-selesai  { background: #E0F2FE; color: #075985; border: 1px solid #BAE6FD; }
+
+/* REKAP KEHADIRAN */
+.rekap-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.stat-box {
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    margin-bottom: 6px;
+}
+
+.stat-value {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.stat-unit { font-size: 0.72rem; }
+
+.stat-hadir { background:#DCFCE7; border:1px solid #BBF7D0; }
+.stat-hadir .stat-label, .stat-hadir .stat-value, .stat-hadir .stat-unit { color:#166534; }
+
+.stat-izin { background:#E0F2FE; border:1px solid #BAE6FD; }
+.stat-izin .stat-label, .stat-izin .stat-value, .stat-izin .stat-unit { color:#075985; }
+
+.stat-sakit { background:#FEF9C3; border:1px solid #FDE68A; }
+.stat-sakit .stat-label, .stat-sakit .stat-value, .stat-sakit .stat-unit { color:#92400E; }
+
+.stat-alpa { background:#FEE2E2; border:1px solid #FECACA; }
+.stat-alpa .stat-label, .stat-alpa .stat-value, .stat-alpa .stat-unit { color:#991B1B; }
+
+.empty-note {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.82rem;
+    padding: 12px 0;
+}
 
 /* FOOTER */
 footer {
     padding: 0 48px 40px;
 }
-
 .btn-back {
     display: inline-flex;
     align-items: center;
@@ -161,10 +237,39 @@ footer {
     transition: background 0.2s;
     box-shadow: 0 4px 12px rgba(200,135,58,0.3);
 }
-
 .btn-back:hover { background: var(--gold-light); }
 
+/* ── RESPONSIVE ── */
+@media (max-width: 992px) {
+    .detail-wrap { grid-template-columns: 1fr; max-width: 600px; }
+}
+
 @media (max-width: 600px) {
-    header { padding: 14px 20px; }
+    header {
+        padding: 14px 20px;
+        justify-content: space-between;
+    }
+    .header-title {
+        font-size: 0.95rem;
+        padding: 8px 18px;
+        order: 3;
+        width: 100%;
+        text-align: center;
+    }
+    .logo-wrap { width: 44px; height: 44px; }
+
+    main { padding: 20px 16px; }
+    .card { padding: 18px 18px; }
+
+    .info-row { flex-direction: column; gap: 2px; }
+    .info-label { width: auto; }
+
+    .rekap-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .stat-value { font-size: 1.5rem; }
+
     footer { padding: 0 20px 32px; }
+}
+
+@media (max-width: 380px) {
+    .rekap-grid { grid-template-columns: 1fr; }
 }

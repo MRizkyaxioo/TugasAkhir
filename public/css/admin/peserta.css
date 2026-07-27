@@ -9,15 +9,23 @@
     --shadow: 0 4px 24px rgba(26,18,8,0.08);
     --radius: 16px;
     --sidebar-w: 220px;
+    --vh: 1vh;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+    max-width: 100%;
+    overflow-x: hidden;
+}
 
 body {
     background-color: var(--cream);
     font-family: 'DM Sans', sans-serif;
     color: var(--dark);
     min-height: 100vh;
+    min-height: calc(var(--vh, 1vh) * 100);
+    min-height: 100dvh;
     display: flex;
 }
 
@@ -29,11 +37,12 @@ body {
     display: flex;
     flex-direction: column;
     position: fixed;
-    top: 0; left: 0;
-    height: 100vh;
+    top: 0; left: 0; bottom: 0;
     z-index: 200;
     box-shadow: 2px 0 12px rgba(26,18,8,0.06);
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .sidebar-logo {
@@ -48,13 +57,11 @@ body {
 .sidebar-logo img { width: 64px; height: 64px; object-fit: contain; }
 
 .sidebar-nav {
-    flex: 1;
+    flex: 1 0 auto;
     padding: 16px 0;
     display: flex;
     flex-direction: column;
     gap: 2px;
-    overflow-y: auto;
-    min-height: 0;
 }
 
 /* OVERLAY (mobile) */
@@ -122,8 +129,13 @@ body {
 
 .sidebar-footer {
     padding: 16px 20px;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
     border-top: 1px solid rgba(200,135,58,0.12);
     flex-shrink: 0;
+    position: sticky;
+    bottom: 0;
+    background: var(--warm-white);
+    z-index: 2;
 }
 
 .btn-logout {
@@ -152,6 +164,8 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    min-height: calc(var(--vh, 1vh) * 100);
+    min-height: 100dvh;
     min-width: 0;
     transition: margin-left 0.3s ease;
 }
@@ -162,6 +176,7 @@ body {
     align-items: center;
     justify-content: center;
     gap: 12px;
+    position: relative;
 }
 
 .page-header-title {
@@ -245,6 +260,12 @@ body {
     background-repeat: no-repeat;
     background-position: right 10px center;
     padding-right: 28px;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 8px;
+    align-items: flex-end;
 }
 
 .btn {
@@ -393,6 +414,7 @@ tbody td { padding: 11px 14px; color: var(--dark); vertical-align: middle; }
     list-style: none;
     padding: 0;
     margin: 0;
+    flex-wrap: wrap;
 }
 
 .pagination .page-item {
@@ -469,11 +491,8 @@ tbody td { padding: 11px 14px; color: var(--dark); vertical-align: middle; }
     .filter-bar { flex-direction: column; align-items: stretch; }
     .filter-group { flex: 1 1 auto; }
 
-    table { font-size: 0.8rem; }
-    thead th, tbody td { padding: 9px 10px; }
-
-    .aksi-cell { flex-direction: column; align-items: stretch; }
-    .aksi-cell .btn { width: 100%; justify-content: center; }
+    .filter-actions { flex-direction: row; width: 100%; }
+    .filter-actions .btn { flex: 1; justify-content: center; }
 
     .modal-box { padding: 26px 20px; }
 
@@ -487,4 +506,51 @@ tbody td { padding: 11px 14px; color: var(--dark); vertical-align: middle; }
 
 @media (max-width: 420px) {
     .page-header-title { font-size: 0.9rem; padding: 9px 16px; }
+}
+
+/* TABEL -> CARD LIST di layar sangat sempit, supaya tidak perlu scroll ke samping */
+@media (max-width: 600px) {
+    .table-wrap { overflow-x: visible; }
+
+    table { min-width: 0; width: 100%; }
+
+    thead { display: none; }
+
+    tbody, tr, td { display: block; width: 100%; }
+
+    tr {
+        border: 1px solid #F0DDBC;
+        border-radius: 12px;
+        margin-bottom: 12px;
+        padding: 10px 14px;
+        background: var(--warm-white);
+    }
+
+    tr.empty-row {
+        border: none;
+        background: none;
+        padding: 0;
+    }
+
+    td {
+        border-bottom: 1px dashed #F0DDBC;
+        padding: 8px 0;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+    }
+
+    td:last-child { border-bottom: none; }
+
+    td[data-label]::before {
+        content: attr(data-label);
+        font-size: 0.72rem;
+        font-weight: 600;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+    }
+
+    .aksi-cell { flex-direction: column; align-items: stretch; }
+    .aksi-cell .btn { width: 100%; justify-content: center; }
 }

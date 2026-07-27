@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Logbook - {{ $peserta->nama }} | Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/admin/logbook.css') }}">
@@ -118,11 +119,13 @@
             <div class="card" style="margin-bottom:20px;">
                 <div class="info-flex">
                     <div><strong>Nama:</strong> {{ $peserta->nama }}</div>
-                    <div><strong>NISN/NIM:</strong> {{ $peserta->nisn_nim }}</div>
+                    <div><strong>NIS/NIM:</strong> {{ $peserta->nisn_nim }}</div>
                     <div><strong>Sekolah:</strong> {{ $peserta->sekolahKampus->nama_sekolah_kampus ?? '-' }}</div>
                     <div><strong>Jurusan:</strong> {{ $peserta->jurusan->jurusan ?? '-' }}</div>
                 </div>
             </div>
+
+
 
             <!-- Tabel Logbook -->
             <div class="card">
@@ -134,30 +137,40 @@
                                 <th>Tanggal</th>
                                 <th>Kegiatan</th>
                                 <th>Bukti Kegiatan</th>
+                                <th>Aksi</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="logbookTableBody">
                             @forelse($data as $i => $d)
-                            <tr>
+                            <tr data-id="{{ $d->id_logbook }}">
                                 <td data-label="No">{{ $i + 1 }}</td>
-                                <td data-label="Tanggal">{{ \Carbon\Carbon::parse($d->tanggal)->format('d-m-Y') }}</td>
-                                <td data-label="Kegiatan">{{ $d->kegiatan }}</td>
-                                <td data-label="Bukti Kegiatan">
+                                <td data-label="Tanggal" class="cell-tanggal">{{ \Carbon\Carbon::parse($d->tanggal)->format('d-m-Y') }}</td>
+                                <td data-label="Kegiatan" class="cell-kegiatan">{{ $d->kegiatan }}</td>
+                                <td data-label="Bukti Kegiatan" class="cell-bukti">
                                     @if($d->bukti_foto)
                                         @php $ext = pathinfo($d->bukti_foto, PATHINFO_EXTENSION); @endphp
                                         @if(in_array(strtolower($ext), ['jpg','jpeg','png','gif']))
                                             <img src="{{ asset('storage/'.$d->bukti_foto) }}" class="bukti-img" alt="Bukti">
                                         @else
-                                            <a href="{{ asset('storage/'.$d->bukti_foto) }}" target="_blank" class="bukti-link">Lihat Bukti (PDF)</a>
+                                            <a href="{{ asset('storage/'.$d->bukti_foto) }}" target="_blank" class="bukti-link">Lihat Bukti</a>
                                         @endif
                                     @else
                                         <span style="color:var(--muted); font-size:0.8rem;">-</span>
                                     @endif
                                 </td>
+                                <td data-label="Aksi">
+                                    <button type="button" class="btn-icon-edit"
+                                        onclick='openEditModal({{ $d->id_logbook }}, "{{ \Carbon\Carbon::parse($d->tanggal)->format('Y-m-d') }}", {{ json_encode($d->kegiatan) }})'>
+                                        Edit
+                                    </button>
+                                    <button type="button" class="btn-icon-delete" onclick="hapusLogbook({{ $d->id_logbook }})">
+                                        Hapus
+                                    </button>
+                                </td>
                             </tr>
                             @empty
-                            <tr class="empty-row">
-                                <td colspan="4">Belum ada data logbook</td>
+                            <tr class="empty-row" id="emptyRow">
+                                <td colspan="5">Belum ada data logbook</td>
                             </tr>
                             @endforelse
                         </tbody>
@@ -166,20 +179,177 @@
             </div>
 
             <div class="action-row">
-                <a href="{{ route('admin.logbook.pdf', $peserta->id_peserta) }}"
+    <button type="button" class="btn btn-primary" onclick="openTambahModal()">
+        + Tambah Logbook
+    </button>
+
+    <a href="{{ route('admin.logbook.pdf', $peserta->id_peserta) }}"
        class="btn btn-primary">
         Cetak PDF
     </a>
 
-                <a href="{{ route('admin.peserta') }}" class="btn btn-outline">
-                    ← Kembali ke Daftar Peserta
-                </a>
-            </div>
+    <a href="{{ route('admin.peserta') }}" class="btn btn-outline">
+        ← Kembali ke Daftar Peserta
+    </a>
+</div>
         </div>
     </div>
 
+    <!-- Modal Tambah/Edit Logbook -->
+    <div id="logbookModal" class="modal-overlay" style="display:none;">
+        <div class="modal-box">
+            <h3 id="modalTitle">Tambah Logbook</h3>
+            <form id="logbookForm" enctype="multipart/form-data">
+                @csrf
+                <input type="hidden" id="logbookId" value="">
+                <input type="hidden" id="formMode" value="tambah">
+
+                <label for="tanggalInput">Tanggal</label>
+                <input type="date" id="tanggalInput" name="tanggal" required>
+
+                <label for="kegiatanInput">Kegiatan</label>
+                <textarea id="kegiatanInput" name="kegiatan" rows="3" required></textarea>
+
+                <label for="buktiInput">Bukti Kegiatan (kosongkan jika tidak ingin ganti)</label>
+                <input type="file" id="buktiInput" name="bukti_foto" accept=".jpg,.jpeg,.png,.gif,.heic,.heif">
+
+                <div class="modal-actions">
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                    <button type="button" class="btn btn-outline" onclick="closeLogbookModal()">Batal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <style>
+    .modal-overlay {
+        position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+        display: flex; align-items: center; justify-content: center; z-index: 999;
+    }
+    .modal-box {
+        background: #fff; padding: 24px; border-radius: 12px;
+        width: 90%; max-width: 420px;
+    }
+    .modal-box label { display:block; margin-top:12px; font-weight:500; font-size:0.9rem; }
+    .modal-box input, .modal-box textarea {
+        width: 100%; padding: 8px; margin-top:4px; border:1px solid #ddd; border-radius:6px;
+        font-family: inherit; box-sizing: border-box;
+    }
+    .modal-actions { margin-top:18px; display:flex; gap:10px; justify-content:flex-end; }
+    .btn-icon-edit, .btn-icon-delete {
+        border:none; padding:5px 10px; border-radius:6px; font-size:0.8rem; cursor:pointer; margin-right:4px;
+    }
+    .btn-icon-edit { background:#e6b96a; color:#fff; }
+    .btn-icon-delete { background:#e05656; color:#fff; }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ asset('js/admin/sidebar.js') }}"></script>
     <script src="{{ asset('js/admin/admin.js') }}"></script>
+
+    <script>
+    const pesertaId = {{ $peserta->id_peserta }};
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+    const todayStr = new Date().toISOString().split('T')[0]; // batas tanggal maksimal (hari ini)
+
+    function openTambahModal() {
+        document.getElementById('modalTitle').innerText = 'Tambah Logbook';
+        document.getElementById('formMode').value = 'tambah';
+        document.getElementById('logbookId').value = '';
+        document.getElementById('tanggalInput').value = '';
+        document.getElementById('tanggalInput').max = todayStr;
+        document.getElementById('kegiatanInput').value = '';
+        document.getElementById('buktiInput').value = '';
+        document.getElementById('logbookModal').style.display = 'flex';
+    }
+
+    function openEditModal(id, tanggal, kegiatan) {
+        document.getElementById('modalTitle').innerText = 'Edit Logbook';
+        document.getElementById('formMode').value = 'edit';
+        document.getElementById('logbookId').value = id;
+        document.getElementById('tanggalInput').value = tanggal;
+        document.getElementById('tanggalInput').max = todayStr;
+        document.getElementById('kegiatanInput').value = kegiatan;
+        document.getElementById('buktiInput').value = '';
+        document.getElementById('logbookModal').style.display = 'flex';
+    }
+
+    function closeLogbookModal() {
+        document.getElementById('logbookModal').style.display = 'none';
+    }
+
+    document.getElementById('logbookForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const mode = document.getElementById('formMode').value;
+        const id = document.getElementById('logbookId').value;
+        const formData = new FormData(this);
+
+        let url = mode === 'tambah'
+            ? `/admin/logbook/${pesertaId}/store`
+            : `/admin/logbook/update/${id}`;
+
+        if (mode === 'edit') {
+            formData.append('_method', 'PUT');
+        }
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json'
+            },
+            body: formData
+        })
+        .then(async res => {
+            const data = await res.json();
+            if (!res.ok) {
+                throw data;
+            }
+            return data;
+        })
+        .then(data => {
+            closeLogbookModal();
+            Swal.fire({ icon: 'success', title: data.message, timer: 1800, showConfirmButton: false });
+            setTimeout(() => location.reload(), 900);
+        })
+        .catch(err => {
+            const firstError = err.errors
+                ? Object.values(err.errors)[0][0]
+                : (err.message || 'Gagal menyimpan logbook.');
+            Swal.fire({ icon: 'error', title: 'Gagal', text: firstError });
+        });
+    });
+
+    function hapusLogbook(id) {
+        Swal.fire({
+            title: 'Hapus logbook ini?',
+            text: 'Data yang dihapus tidak dapat dikembalikan.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Ya, hapus',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`/admin/logbook/delete/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    Swal.fire({ icon: 'success', title: data.message, timer: 1500, showConfirmButton: false });
+                    setTimeout(() => location.reload(), 800);
+                })
+                .catch(() => {
+                    Swal.fire({ icon: 'error', title: 'Gagal menghapus logbook' });
+                });
+            }
+        });
+    }
+    </script>
 
 </body>
 </html>

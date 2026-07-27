@@ -43,7 +43,7 @@
                     <span class="info-value">{{ $peserta->nama }}</span>
                 </div>
                 <div class="info-row">
-                    <span class="info-label">NISN/NIM</span>
+                    <span class="info-label">NIS/NIM</span>
                     <span class="info-value">{{ $peserta->nisn_nim }}</span>
                 </div>
                 <div class="info-row">

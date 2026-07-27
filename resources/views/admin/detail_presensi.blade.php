@@ -113,7 +113,7 @@
             <div class="card">
                 <div class="info-section">
                     <div class="info-item">
-                        <span class="info-label">NISN/NIM</span>
+                        <span class="info-label">NIS/NIM</span>
                         <span class="info-value">{{ $peserta->nisn_nim }}</span>
                     </div>
                     <div class="info-item">

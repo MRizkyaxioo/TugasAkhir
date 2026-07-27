@@ -50,7 +50,7 @@
                     </div>
 
                     <div class="field">
-                        <label>Nisn/Nim</label>
+                        <label>Nis/Nim</label>
                         <input type="text" name="nisn_nim" value="{{ old('nisn_nim') }}">
                         @error('nisn_nim')<span class="field-error">{{ $message }}</span>@enderror
                     </div>

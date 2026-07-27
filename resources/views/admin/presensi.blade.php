@@ -9,16 +9,11 @@
 </head>
 <body>
 
-    <!-- HAMBURGER TOGGLE (mobile) -->
-    <button class="sidebar-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open'); document.querySelector('.sidebar-overlay').classList.toggle('active');">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
-        </svg>
-    </button>
-    <div class="sidebar-overlay" onclick="document.querySelector('.sidebar').classList.remove('open'); this.classList.remove('active');"></div>
+    <!-- OVERLAY (mobile) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <!-- SIDEBAR -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebarAdmin">
         <div class="sidebar-logo">
             <img src="{{ asset('images/logo-poliban.jpg') }}" alt="Logo Poliban">
         </div>
@@ -72,22 +67,22 @@
                 Data Pembimbing
             </a>
             <a href="{{ route('admin.jurusan') }}"
-   class="nav-item {{ request()->routeIs('admin.jurusan') ? 'active' : '' }}">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
-        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
-    </svg>
-    Data Jurusan
-</a>
+               class="nav-item {{ request()->routeIs('admin.jurusan') ? 'active' : '' }}">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                </svg>
+                Data Jurusan
+            </a>
 
-<a href="{{ route('admin.sekolah') }}"
-   class="nav-item {{ request()->routeIs('admin.sekolah') ? 'active' : '' }}">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-        <polyline points="9 22 9 12 15 12 15 22"/>
-    </svg>
-    Data Sekolah/Kampus
-</a>
+            <a href="{{ route('admin.sekolah') }}"
+               class="nav-item {{ request()->routeIs('admin.sekolah') ? 'active' : '' }}">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+                Data Sekolah/Kampus
+            </a>
         </nav>
         <div class="sidebar-footer">
             <form action="{{ route('admin.logout') }}" method="POST">
@@ -107,6 +102,9 @@
     <!-- MAIN -->
     <div class="main-content">
         <div class="page-header">
+            <button type="button" class="btn-hamburger-admin" id="btnHamburger" aria-label="Buka menu">
+                <span></span><span></span><span></span>
+            </button>
             <div class="page-header-title">Presensi Peserta</div>
         </div>
 
@@ -123,15 +121,14 @@
 
                 <!-- ACTION BAR -->
                 <div class="action-bar">
-    {{-- Tombol Atur Waktu --}}
-    <div class="action-group">
-    <span class="action-label">Buka Presensi</span>
-    <button type="button" id="btn-buka-presensi" class="btn btn-primary btn-sm">
-        Buka Presensi
-    </button>
-</div>
+                    <div class="action-group">
+                        <span class="action-label">Buka Presensi</span>
+                        <button type="button" id="btn-buka-presensi" class="btn btn-primary btn-sm">
+                            Buka Presensi
+                        </button>
+                    </div>
 
-@if($presensi)
+                    @if($presensi && $presensi->status == 'dibuka')
 <div class="action-group">
     <span class="action-label">Tutup Presensi</span>
     <button type="button" id="btn-tutup-presensi" class="btn btn-outline btn-sm">
@@ -140,44 +137,41 @@
 </div>
 @endif
 
-    <div class="action-group">
-        <span class="action-label">Rekap Presensi</span>
-        <a href="{{ route('admin.rekap.presensi') }}" class="btn btn-outline btn-sm">Rekap Presensi</a>
-    </div>
-    <div class="action-group">
-        <span class="action-label">Rekap Surat</span>
-        <a href="{{ route('admin.rekap.surat') }}" class="btn btn-outline btn-sm">Rekap Surat</a>
-    </div>
-</div>
-
-{{-- INFORMASI JADWAL PRESENSI --}}
-            @if($presensi)
-                <div class="info-jadwal info-jadwal-ok">
-                    ⏰ Presensi dibuka: <strong>{{ \Carbon\Carbon::parse($presensi->jam_buka)->format('H:i') }} WITA</strong>
-                    &nbsp;|&nbsp;
-                    Ditutup: <strong>{{ \Carbon\Carbon::parse($presensi->jam_tutup)->format('H:i') }} WITA</strong>
-                    @if($presensi->status == 'dibuka')
-    <span style="color:#16A34A;font-weight:600;">
-        (Sedang dibuka)
-    </span>
-
-@elseif($presensi->status == 'ditutup')
-    <span style="color:#DC2626;font-weight:600;">
-        (Sudah ditutup)
-    </span>
-
-@else
-    <span style="color:var(--muted);">
-        (Belum dibuka)
-    </span>
-@endif
+                    <div class="action-group">
+                        <span class="action-label">Rekap Presensi</span>
+                        <a href="{{ route('admin.rekap.presensi') }}" class="btn btn-outline btn-sm">Rekap Presensi</a>
+                    </div>
+                    <div class="action-group">
+                        <span class="action-label">Rekap Surat</span>
+                        <a href="{{ route('admin.rekap.surat') }}" class="btn btn-outline btn-sm">Rekap Surat</a>
+                    </div>
                 </div>
-            @else
-                <div class="info-jadwal info-jadwal-kosong">
-                    ⚠️ Belum ada jadwal presensi hari ini.
-                </div>
-            @endif
 
+                {{-- INFORMASI JADWAL PRESENSI --}}
+                @if($presensi)
+                    <div class="info-jadwal info-jadwal-ok">
+                        ⏰ Presensi dibuka: <strong>{{ \Carbon\Carbon::parse($presensi->jam_buka)->format('H:i') }} WITA</strong>
+                        &nbsp;|&nbsp;
+                        Ditutup: <strong>{{ \Carbon\Carbon::parse($presensi->jam_tutup)->format('H:i') }} WITA</strong>
+                        @if($presensi->status == 'dibuka')
+                            <span style="color:#16A34A;font-weight:600;">
+                                (Sedang dibuka)
+                            </span>
+                        @elseif($presensi->status == 'ditutup')
+                            <span style="color:#DC2626;font-weight:600;">
+                                (Sudah ditutup)
+                            </span>
+                        @else
+                            <span style="color:var(--muted);">
+                                (Belum dibuka)
+                            </span>
+                        @endif
+                    </div>
+                @else
+                    <div class="info-jadwal info-jadwal-kosong">
+                        ⚠️ Belum ada jadwal presensi hari ini.
+                    </div>
+                @endif
 
                 <!-- TABLE -->
                 <form id="form-presensi">
@@ -186,7 +180,7 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>NISN/NIM</th>
+                                    <th>NIS/NIM</th>
                                     <th>Nama</th>
                                     <th>Waktu Presensi</th>
                                     <th>Status</th>
@@ -201,25 +195,25 @@
                                     <td data-label="Waktu Presensi">{{ \Carbon\Carbon::parse($d->tanggal_presensi)->timezone('Asia/Makassar')->format('d-m-Y H:i') }} WITA</td>
                                     <td data-label="Status">
                                         <select
-    class="status-select"
-    data-id="{{ $d->id_presensi_peserta }}"
->
-    <option value="hadir" {{ $d->status_kehadiran == 'hadir' ? 'selected' : '' }}>
-        Hadir
-    </option>
+                                            class="status-select"
+                                            data-id="{{ $d->id_presensi_peserta }}"
+                                        >
+                                            <option value="hadir" {{ $d->status_kehadiran == 'hadir' ? 'selected' : '' }}>
+                                                Hadir
+                                            </option>
 
-    <option value="izin" {{ $d->status_kehadiran == 'izin' ? 'selected' : '' }}>
-        Izin
-    </option>
+                                            <option value="izin" {{ $d->status_kehadiran == 'izin' ? 'selected' : '' }}>
+                                                Izin
+                                            </option>
 
-    <option value="sakit" {{ $d->status_kehadiran == 'sakit' ? 'selected' : '' }}>
-        Sakit
-    </option>
+                                            <option value="sakit" {{ $d->status_kehadiran == 'sakit' ? 'selected' : '' }}>
+                                                Sakit
+                                            </option>
 
-    <option value="alpa" {{ $d->status_kehadiran == 'alpa' ? 'selected' : '' }}>
-        Alpa
-    </option>
-</select>
+                                            <option value="alpa" {{ $d->status_kehadiran == 'alpa' ? 'selected' : '' }}>
+                                                Alpa
+                                            </option>
+                                        </select>
                                     </td>
                                     <td data-label="Surat">
                                         @if($d->surat_pendukung_izin)
@@ -245,6 +239,8 @@
             </div>
         </div>
     </div>
+
+    <script src="{{ asset('js/admin/sidebar.js') }}"></script>
 
     <!-- JS tetap inline karena mengandung Blade syntax -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -334,58 +330,58 @@
 
         document.querySelectorAll('.status-select').forEach(function(select){
 
-    select.addEventListener('change', function(){
+            select.addEventListener('change', function(){
 
-        fetch("{{ route('admin.presensi.updateStatus') }}", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                "Accept": "application/json"
-            },
-            body: JSON.stringify({
-                id: this.dataset.id,
-                status: this.value
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
+                fetch("{{ route('admin.presensi.updateStatus') }}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                        "Accept": "application/json"
+                    },
+                    body: JSON.stringify({
+                        id: this.dataset.id,
+                        status: this.value
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
 
-            if(data.success){
+                    if(data.success){
 
-                Swal.fire({
-                    toast: true,
-                    position: 'top-end',
-                    icon: 'success',
-                    title: 'Status berhasil diperbarui',
-                    showConfirmButton: false,
-                    timer: 1200
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Status berhasil diperbarui',
+                            showConfirmButton: false,
+                            timer: 1200
+                        });
+
+                    }else{
+
+                        Swal.fire(
+                            'Gagal',
+                            'Status tidak berhasil diperbarui.',
+                            'error'
+                        );
+
+                    }
+
+                })
+                .catch(() => {
+
+                    Swal.fire(
+                        'Error',
+                        'Terjadi kesalahan pada server.',
+                        'error'
+                    );
+
                 });
 
-            }else{
-
-                Swal.fire(
-                    'Gagal',
-                    'Status tidak berhasil diperbarui.',
-                    'error'
-                );
-
-            }
-
-        })
-        .catch(() => {
-
-            Swal.fire(
-                'Error',
-                'Terjadi kesalahan pada server.',
-                'error'
-            );
+            });
 
         });
-
-    });
-
-});
     </script>
 </body>
 </html>

@@ -6,6 +6,7 @@
     <title>Detail Peserta Magang - Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <link href="{{ asset('css/admin/peserta-detail.css') }}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.css" rel="stylesheet">
 </head>
 <body>
 
@@ -115,30 +116,253 @@
                 <!-- KOLOM KIRI: PROFIL -->
                 <div class="card">
                     <div class="card-label">Detail Peserta Magang</div>
-                    <div class="info-row">
+
+                    <!-- NAMA -->
+                    <div class="info-row info-row-editable">
                         <span class="info-label">Nama</span>
-                        <span class="info-value">{{ $peserta->nama }}</span>
+                        <div class="info-edit-wrapper">
+                            <div class="info-display" id="view-nama" style="{{ $errors->has('nama') ? 'display:none;' : '' }}">
+                                <span class="info-value">{{ $peserta->nama }}</span>
+                                <button type="button" class="btn-edit-icon" data-field="nama" aria-label="Edit Nama" style="{{ $errors->has('nama') ? 'display:none;' : '' }}">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <form action="{{ route('admin.peserta.updateData', $peserta->id_peserta) }}"
+                                  method="POST" class="edit-form {{ $errors->has('nama') ? 'is-visible' : '' }}" id="edit-nama">
+                                @csrf
+                                @method('PUT')
+                                <input type="hidden" name="nisn_nim" value="{{ $peserta->nisn_nim }}">
+                                <input type="hidden" name="id_jurusan" value="{{ $peserta->id_jurusan }}">
+                                <input type="hidden" name="id_sekolah_kampus" value="{{ $peserta->id_sekolah_kampus }}">
+                                <input type="hidden" name="kelas" value="{{ $peserta->kelas }}">
+                                <input type="hidden" name="semester" value="{{ $peserta->semester }}">
+                                <input type="text" name="nama" id="input-nama" class="edit-input"
+                                       value="{{ old('nama', $peserta->nama) }}" data-original="{{ $peserta->nama }}"
+                                       maxlength="100" required>
+                                @error('nama')
+                                    <span class="edit-error">{{ $message }}</span>
+                                @enderror
+                                <div class="edit-actions">
+                                    <button type="submit" class="btn-save-icon" aria-label="Simpan">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                                    </button>
+                                    <button type="button" class="btn-cancel-icon" data-field="nama" aria-label="Batal">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                    <div class="info-row">
-                        <span class="info-label">NISN/NIM</span>
-                        <span class="info-value">{{ $peserta->nisn_nim }}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Sekolah/Kampus</span>
-                        <span class="info-value">{{ $peserta->sekolahKampus->nama_sekolah_kampus ?? '-' }}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Jurusan</span>
-                        <span class="info-value">{{ $peserta->jurusan->jurusan ?? '-' }}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Kelas</span>
-                        <span class="info-value">{{ $peserta->kelas }}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Semester</span>
-                        <span class="info-value">{{ $peserta->semester }}</span>
-                    </div>
+
+                    <!-- NISN/NIM -->
+<div class="info-row info-row-editable">
+    <span class="info-label">NIS/NIM</span>
+    <div class="info-edit-wrapper">
+        <div class="info-display" id="view-nisn" style="{{ $errors->has('nisn_nim') ? 'display:none;' : '' }}">
+            <span class="info-value">{{ $peserta->nisn_nim }}</span>
+            <button type="button" class="btn-edit-icon" data-field="nisn" aria-label="Edit NISN/NIM" style="{{ $errors->has('nisn_nim') ? 'display:none;' : '' }}">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+                </svg>
+            </button>
+        </div>
+
+        <form action="{{ route('admin.peserta.updateData', $peserta->id_peserta) }}"
+              method="POST" class="edit-form {{ $errors->has('nisn_nim') ? 'is-visible' : '' }}" id="edit-nisn">
+            @csrf
+            @method('PUT')
+            <input type="hidden" name="nama" value="{{ $peserta->nama }}">
+            <input type="hidden" name="id_jurusan" value="{{ $peserta->id_jurusan }}">
+            <input type="hidden" name="id_sekolah_kampus" value="{{ $peserta->id_sekolah_kampus }}">
+            <input type="hidden" name="kelas" value="{{ $peserta->kelas }}">
+            <input type="hidden" name="semester" value="{{ $peserta->semester }}">
+            <input type="text" name="nisn_nim" id="input-nisn" class="edit-input"
+                   value="{{ old('nisn_nim', $peserta->nisn_nim) }}" data-original="{{ $peserta->nisn_nim }}"
+                   maxlength="30" required>
+            @error('nisn_nim')
+                <span class="edit-error">{{ $message }}</span>
+            @enderror
+            <div class="edit-actions">
+                <button type="submit" class="btn-save-icon" aria-label="Simpan">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </button>
+                <button type="button" class="btn-cancel-icon" data-field="nisn" aria-label="Batal">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- SEKOLAH/KAMPUS -->
+<div class="info-row info-row-editable">
+    <span class="info-label">Sekolah/Kampus</span>
+    <div class="info-edit-wrapper">
+        <div class="info-display" id="view-sekolah">
+            <span class="info-value">{{ $peserta->sekolahKampus->nama_sekolah_kampus ?? '-' }}</span>
+            <button type="button" class="btn-edit-icon" data-field="sekolah" aria-label="Edit Sekolah/Kampus">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+                </svg>
+            </button>
+        </div>
+
+        <form action="{{ route('admin.peserta.updateData', $peserta->id_peserta) }}"
+              method="POST" class="edit-form" id="edit-sekolah">
+            @csrf
+            @method('PUT')
+            <input type="hidden" name="nama" value="{{ $peserta->nama }}">
+            <input type="hidden" name="nisn_nim" value="{{ $peserta->nisn_nim }}">
+            <input type="hidden" name="id_jurusan" value="{{ $peserta->id_jurusan }}">
+            <input type="hidden" name="kelas" value="{{ $peserta->kelas }}">
+            <input type="hidden" name="semester" value="{{ $peserta->semester }}">
+            <select name="id_sekolah_kampus" id="editSekolah" class="edit-select"
+                    data-original="{{ $peserta->id_sekolah_kampus }}">
+                <option value="">Pilih Sekolah/Kampus</option>
+                @foreach($sekolah as $s)
+                    <option value="{{ $s->id_sekolah_kampus }}"
+                        {{ $peserta->id_sekolah_kampus == $s->id_sekolah_kampus ? 'selected' : '' }}>
+                        {{ $s->nama_sekolah_kampus }}
+                    </option>
+                @endforeach
+            </select>
+            <div class="edit-actions">
+                <button type="submit" class="btn-save-icon" aria-label="Simpan">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </button>
+                <button type="button" class="btn-cancel-icon" data-field="sekolah" aria-label="Batal">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- JURUSAN -->
+<div class="info-row info-row-editable">
+    <span class="info-label">Jurusan</span>
+    <div class="info-edit-wrapper">
+        <div class="info-display" id="view-jurusan">
+            <span class="info-value">{{ $peserta->jurusan->jurusan ?? '-' }}</span>
+            <button type="button" class="btn-edit-icon" data-field="jurusan" aria-label="Edit Jurusan">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+                </svg>
+            </button>
+        </div>
+
+        <form action="{{ route('admin.peserta.updateData', $peserta->id_peserta) }}"
+              method="POST" class="edit-form" id="edit-jurusan">
+            @csrf
+            @method('PUT')
+            <input type="hidden" name="nama" value="{{ $peserta->nama }}">
+            <input type="hidden" name="nisn_nim" value="{{ $peserta->nisn_nim }}">
+            <input type="hidden" name="id_sekolah_kampus" value="{{ $peserta->id_sekolah_kampus }}">
+            <input type="hidden" name="kelas" value="{{ $peserta->kelas }}">
+            <input type="hidden" name="semester" value="{{ $peserta->semester }}">
+            <select name="id_jurusan" id="editJurusan" class="edit-select"
+                    data-original="{{ $peserta->id_jurusan }}">
+                <option value="">Pilih Jurusan</option>
+                @foreach($jurusan as $j)
+                    <option value="{{ $j->id_jurusan }}"
+                        {{ $peserta->id_jurusan == $j->id_jurusan ? 'selected' : '' }}>
+                        {{ $j->jurusan }}
+                    </option>
+                @endforeach
+            </select>
+            <div class="edit-actions">
+                <button type="submit" class="btn-save-icon" aria-label="Simpan">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </button>
+                <button type="button" class="btn-cancel-icon" data-field="jurusan" aria-label="Batal">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+                    <!-- KELAS -->
+<div class="info-row info-row-editable">
+    <span class="info-label">Kelas</span>
+    <div class="info-edit-wrapper">
+        <div class="info-display" id="view-kelas" style="{{ $errors->has('kelas') ? 'display:none;' : '' }}">
+            <span class="info-value">{{ $peserta->kelas }}</span>
+            <button type="button" class="btn-edit-icon" data-field="kelas" aria-label="Edit Kelas" style="{{ $errors->has('kelas') ? 'display:none;' : '' }}">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+                </svg>
+            </button>
+        </div>
+
+        <form action="{{ route('admin.peserta.updateData', $peserta->id_peserta) }}"
+              method="POST" class="edit-form {{ $errors->has('kelas') ? 'is-visible' : '' }}" id="edit-kelas">
+            @csrf
+            @method('PUT')
+            <input type="hidden" name="nama" value="{{ $peserta->nama }}">
+            <input type="hidden" name="nisn_nim" value="{{ $peserta->nisn_nim }}">
+            <input type="hidden" name="id_jurusan" value="{{ $peserta->id_jurusan }}">
+            <input type="hidden" name="id_sekolah_kampus" value="{{ $peserta->id_sekolah_kampus }}">
+            <input type="hidden" name="semester" value="{{ $peserta->semester }}">
+            <input type="text" name="kelas" id="input-kelas" class="edit-input"
+                   value="{{ old('kelas', $peserta->kelas) }}" data-original="{{ $peserta->kelas }}"
+                   maxlength="2">
+            @error('kelas')
+                <span class="edit-error">{{ $message }}</span>
+            @enderror
+            <div class="edit-actions">
+                <button type="submit" class="btn-save-icon" aria-label="Simpan">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </button>
+                <button type="button" class="btn-cancel-icon" data-field="kelas" aria-label="Batal">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- SEMESTER -->
+<div class="info-row info-row-editable">
+    <span class="info-label">Semester</span>
+    <div class="info-edit-wrapper">
+        <div class="info-display" id="view-semester" style="{{ $errors->has('semester') ? 'display:none;' : '' }}">
+            <span class="info-value">{{ $peserta->semester }}</span>
+            <button type="button" class="btn-edit-icon" data-field="semester" aria-label="Edit Semester" style="{{ $errors->has('semester') ? 'display:none;' : '' }}">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+                </svg>
+            </button>
+        </div>
+
+        <form action="{{ route('admin.peserta.updateData', $peserta->id_peserta) }}"
+              method="POST" class="edit-form {{ $errors->has('semester') ? 'is-visible' : '' }}" id="edit-semester">
+            @csrf
+            @method('PUT')
+            <input type="hidden" name="nama" value="{{ $peserta->nama }}">
+            <input type="hidden" name="nisn_nim" value="{{ $peserta->nisn_nim }}">
+            <input type="hidden" name="id_jurusan" value="{{ $peserta->id_jurusan }}">
+            <input type="hidden" name="id_sekolah_kampus" value="{{ $peserta->id_sekolah_kampus }}">
+            <input type="hidden" name="kelas" value="{{ $peserta->kelas }}">
+            <input type="number" name="semester" id="input-semester" class="edit-input"
+                   value="{{ old('semester', $peserta->semester) }}" data-original="{{ $peserta->semester }}"
+                   min="1" max="14" required>
+            @error('semester')
+                <span class="edit-error">{{ $message }}</span>
+            @enderror
+            <div class="edit-actions">
+                <button type="submit" class="btn-save-icon" aria-label="Simpan">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </button>
+                <button type="button" class="btn-cancel-icon" data-field="semester" aria-label="Batal">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
                     <div class="info-row">
                         <span class="info-label">Email</span>
                         <span class="info-value">{{ $peserta->email }}</span>
@@ -157,14 +381,91 @@
                         <span class="info-label">Alamat</span>
                         <span class="info-value">{{ $peserta->alamat }}</span>
                     </div>
-                    <div class="info-row">
-                        <span class="info-label">Awal Magang</span>
-                        <span class="info-value">{{ \Carbon\Carbon::parse($peserta->awal_magang)->format('d-m-Y') }}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Akhir Magang</span>
-                        <span class="info-value">{{ \Carbon\Carbon::parse($peserta->akhir_magang)->format('d-m-Y') }}</span>
-                    </div>
+                    <!-- AWAL MAGANG -->
+<div class="info-row info-row-editable">
+    <span class="info-label">Awal Magang</span>
+    <div class="info-edit-wrapper">
+        <div class="info-display" id="view-awal" style="{{ $errors->has('awal_magang') ? 'display:none;' : '' }}">
+            <span class="info-value">{{ \Carbon\Carbon::parse($peserta->awal_magang)->format('d-m-Y') }}</span>
+            <button type="button" class="btn-edit-icon" data-field="awal" aria-label="Edit Awal Magang" style="{{ $errors->has('awal_magang') ? 'display:none;' : '' }}">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+                </svg>
+            </button>
+        </div>
+
+        <form action="{{ route('admin.peserta.updateData', $peserta->id_peserta) }}"
+              method="POST" class="edit-form {{ $errors->has('awal_magang') ? 'is-visible' : '' }}" id="edit-awal">
+            @csrf
+            @method('PUT')
+            <input type="hidden" name="nama" value="{{ $peserta->nama }}">
+            <input type="hidden" name="nisn_nim" value="{{ $peserta->nisn_nim }}">
+            <input type="hidden" name="id_jurusan" value="{{ $peserta->id_jurusan }}">
+            <input type="hidden" name="id_sekolah_kampus" value="{{ $peserta->id_sekolah_kampus }}">
+            <input type="hidden" name="kelas" value="{{ $peserta->kelas }}">
+            <input type="hidden" name="semester" value="{{ $peserta->semester }}">
+            <input type="hidden" name="akhir_magang" value="{{ $peserta->akhir_magang }}">
+            <input type="date" name="awal_magang" id="input-awal" class="edit-input"
+                   value="{{ old('awal_magang', \Carbon\Carbon::parse($peserta->awal_magang)->format('Y-m-d')) }}"
+                   data-original="{{ \Carbon\Carbon::parse($peserta->awal_magang)->format('Y-m-d') }}"
+                   required>
+            @error('awal_magang')
+                <span class="edit-error">{{ $message }}</span>
+            @enderror
+            <div class="edit-actions">
+                <button type="submit" class="btn-save-icon" aria-label="Simpan">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </button>
+                <button type="button" class="btn-cancel-icon" data-field="awal" aria-label="Batal">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- AKHIR MAGANG -->
+<div class="info-row info-row-editable">
+    <span class="info-label">Akhir Magang</span>
+    <div class="info-edit-wrapper">
+        <div class="info-display" id="view-akhir" style="{{ $errors->has('akhir_magang') ? 'display:none;' : '' }}">
+            <span class="info-value">{{ \Carbon\Carbon::parse($peserta->akhir_magang)->format('d-m-Y') }}</span>
+            <button type="button" class="btn-edit-icon" data-field="akhir" aria-label="Edit Akhir Magang" style="{{ $errors->has('akhir_magang') ? 'display:none;' : '' }}">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>
+                </svg>
+            </button>
+        </div>
+
+        <form action="{{ route('admin.peserta.updateData', $peserta->id_peserta) }}"
+              method="POST" class="edit-form {{ $errors->has('akhir_magang') ? 'is-visible' : '' }}" id="edit-akhir">
+            @csrf
+            @method('PUT')
+            <input type="hidden" name="nama" value="{{ $peserta->nama }}">
+            <input type="hidden" name="nisn_nim" value="{{ $peserta->nisn_nim }}">
+            <input type="hidden" name="id_jurusan" value="{{ $peserta->id_jurusan }}">
+            <input type="hidden" name="id_sekolah_kampus" value="{{ $peserta->id_sekolah_kampus }}">
+            <input type="hidden" name="kelas" value="{{ $peserta->kelas }}">
+            <input type="hidden" name="semester" value="{{ $peserta->semester }}">
+            <input type="hidden" name="awal_magang" value="{{ $peserta->awal_magang }}">
+            <input type="date" name="akhir_magang" id="input-akhir" class="edit-input"
+                   value="{{ old('akhir_magang', \Carbon\Carbon::parse($peserta->akhir_magang)->format('Y-m-d')) }}"
+                   data-original="{{ \Carbon\Carbon::parse($peserta->akhir_magang)->format('Y-m-d') }}"
+                   required>
+            @error('akhir_magang')
+                <span class="edit-error">{{ $message }}</span>
+            @enderror
+            <div class="edit-actions">
+                <button type="submit" class="btn-save-icon" aria-label="Simpan">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </button>
+                <button type="button" class="btn-cancel-icon" data-field="akhir" aria-label="Batal">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
                 </div>
 
                 <!-- KOLOM KANAN -->
@@ -284,7 +585,10 @@
             </a>
         </div>
     </div>
+
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
     <script src="{{ asset('js/admin/sidebar.js') }}"></script>
     <script src="{{ asset('js/admin/peserta-detail.js') }}"></script>
 

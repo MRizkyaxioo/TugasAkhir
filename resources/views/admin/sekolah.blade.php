@@ -120,14 +120,20 @@
                 <!-- KIRI: LIST -->
                 <div class="card">
                     <div class="card-label">List Sekolah/Kampus</div>
-                    <form method="GET" action="{{ route('admin.sekolah') }}" style="margin-bottom:16px;">
-    <input
-        type="text"
-        name="search"
-        value="{{ request('search') }}"
-        placeholder="Cari sekolah/kampus..."
-        class="search-input">
-</form>
+                    <form method="GET" action="{{ route('admin.sekolah') }}" class="search-form">
+                    <input
+                        type="text"
+                        name="search"
+                        placeholder="Cari sekolah/kampus..."
+                        value="{{ request('search') }}"
+                        class="search-input">
+
+                    @if(request('search'))
+                        <a href="{{ route('admin.sekolah') }}" class="btn-reset">
+                            Reset
+                        </a>
+                    @endif
+                    </form>
                     <div class="table-wrap">
                         <table>
                             <thead>
@@ -140,7 +146,9 @@
                             <tbody>
                                 @forelse($data as $i => $d)
                                 <tr>
-                                    <td data-label="No">{{ $i + 1 }}</td>
+                                    <td data-label="No">
+    {{ $data->firstItem() + $i }}
+</td>
                                     <td data-label="Nama Sekolah/Kampus">{{ $d->nama_sekolah_kampus }}</td>
                                     <td data-label="Aksi">
                                         <button class="btn-edit"
@@ -156,6 +164,19 @@
                                 @endforelse
                             </tbody>
                         </table>
+                        @if ($data->hasPages())
+    <div class="pagination-wrapper">
+        <ul class="pagination">
+            @foreach ($data->getUrlRange(1, $data->lastPage()) as $page => $url)
+                <li class="page-item {{ $page == $data->currentPage() ? 'active' : '' }}">
+                    <a class="page-link" href="{{ $url }}">
+                        {{ $page }}
+                    </a>
+                </li>
+            @endforeach
+        </ul>
+    </div>
+@endif
                     </div>
                 </div>
 

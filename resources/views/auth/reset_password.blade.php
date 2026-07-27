@@ -16,10 +16,13 @@
             <img src="{{ asset('images/logo-poliban.jpg') }}" alt="Logo Poliban">
         </div>
 
-        <div class="brand-text" style="position:absolute; left:50%; transform:translateX(-50%); text-align:center;">
+        <div class="brand-text">
             <h1>Perpustakaan Politeknik Negeri Banjarmasin</h1>
             <p>Penerimaan dan Pengelolaan Peserta Magang</p>
         </div>
+
+        <!-- Spacer seukuran logo agar brand-text center sempurna -->
+        <div class="header-spacer"></div>
     </header>
 
     <!-- MAIN -->

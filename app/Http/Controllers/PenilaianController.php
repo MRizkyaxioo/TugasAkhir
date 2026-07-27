@@ -53,13 +53,20 @@ class PenilaianController extends Controller
 
     // 🔹 CRUD KRITERIA
     public function storeKriteria(Request $request)
-    {
-        KriteriaNilai::create([
-            'kriteria_nilai' => $request->kriteria
-        ]);
+{
+    $request->validate([
+        'kriteria' => 'required|string|max:100|unique:kriteria_nilai,kriteria_nilai'
+    ], [
+        'kriteria.required' => 'Kriteria wajib diisi.',
+        'kriteria.unique' => 'Kriteria penilaian ini sudah ada.',
+    ]);
 
-        return back();
-    }
+    KriteriaNilai::create([
+        'kriteria_nilai' => $request->kriteria
+    ]);
+
+    return back()->with('success', 'Kriteria berhasil ditambahkan');
+}
 
     public function deleteKriteria($id)
 {
@@ -74,7 +81,10 @@ class PenilaianController extends Controller
 public function updateKriteria(Request $request, $id)
 {
     $request->validate([
-        'kriteria' => 'required'
+        'kriteria' => 'required|string|max:100|unique:kriteria_nilai,kriteria_nilai,' . $id . ',id_kriteria_nilai'
+    ], [
+        'kriteria.required' => 'Kriteria wajib diisi.',
+        'kriteria.unique' => 'Kriteria penilaian ini sudah ada.',
     ]);
 
     KriteriaNilai::where('id_kriteria_nilai', $id)

@@ -91,8 +91,8 @@
             {{-- NOTICE --}}
             <div class="notice-card">
                 Tunggu kabar dari admin ya, jika ada yang ingin ditanyakan bisa hubungi
-                <strong>08123123123</strong> atau melalui email
-                <strong>adminperpustakaan@gmail.com</strong>
+                <strong>087736567651</strong> atau melalui email
+                <strong>magangperpustakaanpoliban@gmail.com</strong>
             </div>
 
         </div>

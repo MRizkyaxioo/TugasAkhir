@@ -9,16 +9,11 @@
 </head>
 <body>
 
-    <!-- HAMBURGER TOGGLE (mobile) -->
-    <button class="sidebar-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open'); document.querySelector('.sidebar-overlay').classList.toggle('active');">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
-        </svg>
-    </button>
-    <div class="sidebar-overlay" onclick="document.querySelector('.sidebar').classList.remove('open'); this.classList.remove('active');"></div>
+    <!-- OVERLAY (mobile) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <!-- SIDEBAR -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebarAdmin">
         <div class="sidebar-logo">
             <img src="{{ asset('images/logo-poliban.jpg') }}" alt="Logo Poliban">
         </div>
@@ -72,22 +67,22 @@
                 Data Pembimbing
             </a>
             <a href="{{ route('admin.jurusan') }}"
-   class="nav-item {{ request()->routeIs('admin.jurusan') ? 'active' : '' }}">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
-        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
-    </svg>
-    Data Jurusan
-</a>
+               class="nav-item {{ request()->routeIs('admin.jurusan') ? 'active' : '' }}">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                </svg>
+                Data Jurusan
+            </a>
 
-<a href="{{ route('admin.sekolah') }}"
-   class="nav-item {{ request()->routeIs('admin.sekolah') ? 'active' : '' }}">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-        <polyline points="9 22 9 12 15 12 15 22"/>
-    </svg>
-    Data Sekolah/Kampus
-</a>
+            <a href="{{ route('admin.sekolah') }}"
+               class="nav-item {{ request()->routeIs('admin.sekolah') ? 'active' : '' }}">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+                Data Sekolah/Kampus
+            </a>
         </nav>
         <div class="sidebar-footer">
             <form action="{{ route('admin.logout') }}" method="POST">
@@ -107,45 +102,52 @@
     <!-- MAIN -->
     <div class="main-content">
         <div class="page-header">
+            <button type="button" class="btn-hamburger-admin" id="btnHamburger" aria-label="Buka menu">
+                <span></span><span></span><span></span>
+            </button>
             <div class="page-header-title">Data Pembimbing Magang</div>
         </div>
 
         <div class="page-body">
 
         <!-- KEPALA UPA PERPUSTAKAAN -->
-    <div class="card kepala-card">
-        <div class="kepala-info">
-            <div class="kepala-label">Kepala UPA Perpustakaan</div>
-            <div class="kepala-name-row">
-                <div class="kepala-data">
-    <span class="kepala-nama">
-        {{ $kepala->nama ?? 'Belum diatur' }}
-    </span>
+        <div class="card kepala-card">
+            <div class="kepala-info">
+                <div class="kepala-label">Kepala UPA Perpustakaan</div>
+                <div class="kepala-name-row">
+                    <div class="kepala-data">
+                        <span class="kepala-nama">
+                            {{ $kepala->nama ?? 'Belum diatur' }}
+                        </span>
 
-    <small class="kepala-nip">
-        NIP: {{ $kepala->nip ?? '-' }}
-    </small>
-</div>
+                        <small class="kepala-nip">
+                            NIP: {{ $kepala->nip ?? '-' }}
+                        </small>
+                    </div>
 
-                <button
-                    type="button"
-                    class="btn-edit-avatar"
-                    title="Edit Nama Kepala Perpustakaan"
-                    onclick="openEditModalKepala(
-    '{{ $kepala->nama ?? '' }}',
-    '{{ $kepala->nip ?? '' }}'
-)">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 20h9"/>
-                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/>
-                    </svg>
-                </button>
+                    <button
+                        type="button"
+                        class="btn-edit-avatar"
+                        title="Edit Nama Kepala Perpustakaan"
+                        onclick="openEditModalKepala(
+                            '{{ $kepala->nama ?? '' }}',
+                            '{{ $kepala->nip ?? '' }}'
+                        )">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 20h9"/>
+                            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"/>
+                        </svg>
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
 
             @if(session('success'))
                 <div class="alert-success">{{ session('success') }}</div>
+            @endif
+
+            @if(session('error'))
+                <div class="alert-error">{{ session('error') }}</div>
             @endif
 
             @if($errors->any())
@@ -161,338 +163,336 @@
             <div class="content-grid">
 
                 <!-- KIRI -->
-<div class="col-stack">
+                <div class="col-stack">
 
-    <!-- LIST PEMBIMBING LAPANGAN -->
-    <div class="card">
-        <div class="card-label">
-            List Pembimbing Lapangan
-        </div>
+                    <!-- LIST PEMBIMBING LAPANGAN -->
+                    <div class="card">
+                        <div class="card-label">
+                            List Pembimbing Lapangan
+                        </div>
 
-        <div class="table-wrap">
-            <table>
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Nama</th>
-                        <th>No HP</th>
-                        <th>NIP/NIDN</th>
-                        <th>Username</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Nama</th>
+                                        <th>No HP</th>
+                                        <th>NIP/NIDN</th>
+                                        <th>Username</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
 
-                <tbody>
+                                <tbody>
 
-                @forelse($data as $i => $d)
+                                @forelse($data as $i => $d)
 
-                    <tr>
-                        <td data-label="No">{{ $i + 1 }}</td>
-                        <td data-label="Nama">{{ $d->nama }}</td>
-                        <td data-label="No HP">{{ $d->no_telp }}</td>
-                        <td data-label="NIP/NIDN">{{ $d->nip_nidn }}</td>
-                        <td data-label="Username">{{ $d->username }}</td>
+                                    <tr>
+                                        <td data-label="No">{{ $i + 1 }}</td>
+                                        <td data-label="Nama">{{ $d->nama }}</td>
+                                        <td data-label="No HP">{{ $d->no_telp }}</td>
+                                        <td data-label="NIP/NIDN">{{ $d->nip_nidn }}</td>
+                                        <td data-label="Username">{{ $d->username }}</td>
 
-                        <td data-label="Aksi">
-                            <button
-                                class="btn-edit"
+                                        <td data-label="Aksi">
+                                            <button
+                                                class="btn-edit"
+                                                onclick="openEditModal(
+                                                    '{{ $d->id_pembimbing }}',
+                                                    '{{ $d->nama }}',
+                                                    '{{ $d->no_telp }}',
+                                                    '{{ $d->nip_nidn }}',
+                                                    '{{ $d->username }}'
+                                                )"
+                                            >
+                                                Edit
+                                            </button>
+                                        </td>
+                                    </tr>
 
-                                onclick="openEditModal(
-                                    '{{ $d->id_pembimbing }}',
-                                    '{{ $d->nama }}',
-                                    '{{ $d->no_telp }}',
-                                    '{{ $d->nip_nidn }}',
-                                    '{{ $d->username }}'
-                                )"
-                            >
-                                Edit
-                            </button>
-                        </td>
-                    </tr>
+                                @empty
 
-                @empty
+                                    <tr class="empty-row">
+                                        <td colspan="6">
+                                            Tidak ada data pembimbing lapangan
+                                        </td>
+                                    </tr>
 
-                    <tr class="empty-row">
-                        <td colspan="6">
-                            Tidak ada data pembimbing lapangan
-                        </td>
-                    </tr>
+                                @endforelse
 
-                @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
 
-                </tbody>
-            </table>
-        </div>
-    </div>
+                    <!-- LIST PEMBIMBING ASAL -->
+                    <div class="card">
 
-    <!-- LIST PEMBIMBING ASAL -->
-    <div class="card">
+                        <div class="card-label">
+                            List Pembimbing Sekolah/Kampus
+                        </div>
 
-        <div class="card-label">
-            List Pembimbing Sekolah/Kampus
-        </div>
+                        <div class="table-wrap">
 
-        <div class="table-wrap">
+                            <table>
 
-            <table>
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Nama</th>
+                                        <th>Sekolah/Kampus</th>
+                                        <th>No HP</th>
+                                        <th>Username</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
 
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Nama</th>
-                        <th>Sekolah/Kampus</th>
-                        <th>No HP</th>
-                        <th>Username</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
+                                <tbody>
 
-                <tbody>
+                                @forelse($pembimbingAsal as $i => $d)
 
-                @forelse($pembimbingAsal as $i => $d)
+                                    <tr>
 
-                    <tr>
+                                        <td data-label="No">{{ $i + 1 }}</td>
 
-                        <td data-label="No">{{ $i + 1 }}</td>
+                                        <td data-label="Nama">{{ $d->nama }}</td>
 
-                        <td data-label="Nama">{{ $d->nama }}</td>
+                                        <td data-label="Sekolah/Kampus">
+                                            {{ $d->sekolahKampus->nama_sekolah_kampus ?? '-' }}
+                                        </td>
 
-                        <td data-label="Sekolah/Kampus">
-                            {{ $d->sekolahKampus->nama_sekolah_kampus ?? '-' }}
-                        </td>
+                                        <td data-label="No HP">{{ $d->no_telp }}</td>
 
-                        <td data-label="No HP">{{ $d->no_telp }}</td>
+                                        <td data-label="Username">{{ $d->username }}</td>
 
-                        <td data-label="Username">{{ $d->username }}</td>
+                                        <td data-label="Aksi">
 
-                        <td data-label="Aksi">
+                                            <button
+                                                class="btn-edit"
+                                                onclick="openEditModalAsal(
+                                                    '{{ $d->id_pembimbing_asal }}',
+                                                    '{{ $d->nama }}',
+                                                    '{{ $d->no_telp }}',
+                                                    '{{ $d->username }}',
+                                                    '{{ $d->id_sekolah_kampus }}'
+                                                )"
+                                            >
+                                                Edit
+                                            </button>
 
-                            <button
-                                class="btn-edit"
+                                        </td>
 
-                                onclick="openEditModalAsal(
-                                    '{{ $d->id_pembimbing_asal }}',
-                                    '{{ $d->nama }}',
-                                    '{{ $d->no_telp }}',
-                                    '{{ $d->username }}',
-                                    '{{ $d->id_sekolah_kampus }}'
-                                )"
-                            >
-                                Edit
-                            </button>
+                                    </tr>
 
-                        </td>
+                                @empty
 
-                    </tr>
+                                    <tr class="empty-row">
+                                        <td colspan="6">
+                                            Tidak ada data pembimbing sekolah/kampus
+                                        </td>
+                                    </tr>
 
-                @empty
+                                @endforelse
 
-                    <tr class="empty-row">
-                        <td colspan="6">
-                            Tidak ada data pembimbing sekolah/kampus
-                        </td>
-                    </tr>
+                                </tbody>
 
-                @endforelse
+                            </table>
 
-                </tbody>
+                        </div>
 
-            </table>
+                    </div>
 
-        </div>
-
-    </div>
-
-</div>
+                </div>
 
                 <!-- KANAN: FORM TAMBAH -->
                 <div class="col-stack">
 
-    <!-- FORM PEMBIMBING LAPANGAN -->
-    <div class="card">
-        <div class="card-label">
-            Tambah Pembimbing Magang
-        </div>
+                    <!-- FORM PEMBIMBING LAPANGAN -->
+                    <div class="card">
+                        <div class="card-label">
+                            Tambah Pembimbing Magang
+                        </div>
 
-        <form action="{{ route('admin.pembimbing.store') }}"
-              method="POST">
+                        <form action="{{ route('admin.pembimbing.store') }}"
+                              method="POST">
 
-            @csrf
+                            @csrf
 
-            <div class="form-fields">
+                            <div class="form-fields">
 
-                <div class="field">
-                    <label>Nama</label>
-                    <input type="text"
-                           name="nama"
-                           maxlength="60"
-                           value="{{ old('nama') }}">
-                </div>
+                                <div class="field">
+                                    <label>Nama</label>
+                                    <input type="text"
+                                           name="nama"
+                                           maxlength="60"
+                                           value="{{ old('nama') }}">
+                                </div>
 
-                <div class="field">
-                    <label>No hp</label>
-                    <input type="text"
-                           name="no_telp"
-                           maxlength="20"
-                           value="{{ old('no_telp') }}">
-                </div>
+                                <div class="field">
+                                    <label>No hp</label>
+                                    <input type="text"
+                                           name="no_telp"
+                                           maxlength="20"
+                                           value="{{ old('no_telp') }}">
+                                </div>
 
-                <div class="field">
-                    <label>NIP/NIDN</label>
-                    <input type="text"
-                           name="nip_nidn"
-                           maxlength="20"
-                           value="{{ old('nip_nidn') }}">
-                </div>
+                                <div class="field">
+                                    <label>NIP/NIDN</label>
+                                    <input type="text"
+                                           name="nip_nidn"
+                                           maxlength="20"
+                                           value="{{ old('nip_nidn') }}">
+                                </div>
 
-                <div class="field">
-                    <label>Username</label>
-                    <input type="text"
-                           name="username"
-                           maxlength="60"
-                           value="{{ old('username') }}">
-                </div>
+                                <div class="field">
+                                    <label>Username</label>
+                                    <input type="text"
+                                           name="username"
+                                           maxlength="60"
+                                           value="{{ old('username') }}">
+                                </div>
 
-                <div class="field">
-                    <label>Password</label>
+                                <div class="field">
+                                    <label>Password</label>
 
-                    <div class="password-wrapper">
+                                    <div class="password-wrapper">
 
-                        <input type="password"
-                               name="password"
-                               maxlength="60"
-                               id="passwordTambah">
+                                        <input type="password"
+                                               name="password"
+                                               maxlength="60"
+                                               id="passwordTambah">
 
-                        <span class="toggle-password"
-                              onclick="togglePassword('passwordTambah', this)">
+                                        <span class="toggle-password"
+                                              onclick="togglePassword('passwordTambah', this)">
 
-                            <svg xmlns="http://www.w3.org/2000/svg"
-                                 fill="none"
-                                 viewBox="0 0 24 24"
-                                 stroke="currentColor"
-                                 stroke-width="2">
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                 fill="none"
+                                                 viewBox="0 0 24 24"
+                                                 stroke="currentColor"
+                                                 stroke-width="2">
 
-                                <path stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                      d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/>
+                                                <path stroke-linecap="round"
+                                                      stroke-linejoin="round"
+                                                      d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/>
 
-                                <circle cx="12"
-                                        cy="12"
-                                        r="3"/>
+                                                <circle cx="12"
+                                                        cy="12"
+                                                        r="3"/>
 
-                            </svg>
+                                            </svg>
 
-                        </span>
+                                        </span>
 
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="form-footer">
+                                <button type="submit"
+                                        class="btn-submit">
+                                    Tambah
+                                </button>
+                            </div>
+
+                        </form>
                     </div>
+
+                    <!-- FORM PEMBIMBING ASAL -->
+                    <div class="card">
+
+                        <div class="card-label">
+                            Tambah Pembimbing Sekolah/Kampus
+                        </div>
+
+                        <form action="{{ route('admin.pembimbing-asal.store') }}"
+                              method="POST">
+
+                            @csrf
+
+                            <div class="form-fields">
+
+                                <div class="field">
+                                    <label>Nama</label>
+                                    <input type="text" name="nama" maxlength="60">
+                                </div>
+
+                                <div class="field">
+                                    <label>Asal Sekolah/Kampus</label>
+
+                                    <select name="id_sekolah_kampus">
+                                        <option value="">-- Pilih Sekolah/Kampus --</option>
+
+                                        @foreach($sekolah as $s)
+                                            <option value="{{ $s->id_sekolah_kampus }}">
+                                                {{ $s->nama_sekolah_kampus }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                                <div class="field">
+                                    <label>No HP</label>
+                                    <input type="text"
+                                           name="no_telp" maxlength="20">
+                                </div>
+
+                                <div class="field">
+                                    <label>Username</label>
+                                    <input type="text"
+                                           name="username" maxlength="60">
+                                </div>
+
+                                <div class="field">
+
+                                    <label>Password</label>
+
+                                    <div class="password-wrapper">
+
+                                        <input type="password"
+                                               name="password"
+                                               maxlength="60"
+                                               id="passwordTambahAsal">
+
+                                        <span class="toggle-password"
+                                              onclick="togglePassword('passwordTambahAsal')">
+
+                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                 fill="none"
+                                                 viewBox="0 0 24 24"
+                                                 stroke="currentColor"
+                                                 stroke-width="2">
+
+                                                <path stroke-linecap="round"
+                                                      stroke-linejoin="round"
+                                                      d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/>
+
+                                                <circle cx="12"
+                                                        cy="12"
+                                                        r="3"/>
+
+                                            </svg>
+
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div class="form-footer">
+                                <button type="submit"
+                                        class="btn-submit">
+                                    Tambah
+                                </button>
+                            </div>
+
+                        </form>
+                    </div>
+
                 </div>
-
-            </div>
-
-            <div class="form-footer">
-                <button type="submit"
-                        class="btn-submit">
-                    Tambah
-                </button>
-            </div>
-
-        </form>
-    </div>
-
-    <!-- FORM PEMBIMBING ASAL -->
-    <div class="card">
-
-        <div class="card-label">
-            Tambah Pembimbing Sekolah/Kampus
-        </div>
-
-        <form action="{{ route('admin.pembimbing-asal.store') }}"
-              method="POST">
-
-            @csrf
-
-            <div class="form-fields">
-
-                <div class="field">
-                    <label>Nama</label>
-                    <input type="text" name="nama" maxlength="60">
-                </div>
-
-                <div class="field">
-    <label>Asal Sekolah/Kampus</label>
-
-    <select name="id_sekolah_kampus">
-        <option value="">-- Pilih Sekolah/Kampus --</option>
-
-        @foreach($sekolah as $s)
-            <option value="{{ $s->id_sekolah_kampus }}">
-                {{ $s->nama_sekolah_kampus }}
-            </option>
-        @endforeach
-    </select>
-</div>
-
-                <div class="field">
-                    <label>No HP</label>
-                    <input type="text"
-                           name="no_telp" maxlength="20">
-                </div>
-
-                <div class="field">
-                    <label>Username</label>
-                    <input type="text"
-                           name="username" maxlength="60">
-                </div>
-
-                <div class="field">
-
-    <label>Password</label>
-
-    <div class="password-wrapper">
-
-        <input type="password"
-               name="password"
-               maxlength="60"
-               id="passwordTambahAsal">
-
-        <span class="toggle-password"
-              onclick="togglePassword('passwordTambahAsal')">
-
-            <svg xmlns="http://www.w3.org/2000/svg"
-                 fill="none"
-                 viewBox="0 0 24 24"
-                 stroke="currentColor"
-                 stroke-width="2">
-
-                <path stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/>
-
-                <circle cx="12"
-                        cy="12"
-                        r="3"/>
-
-            </svg>
-
-        </span>
-
-    </div>
-
-</div>
-
-            </div>
-
-            <div class="form-footer">
-                <button type="submit"
-                        class="btn-submit">
-                    Tambah
-                </button>
-            </div>
-
-        </form>
-    </div>
-
-</div>
 
             </div>
         </div>
@@ -600,7 +600,13 @@
 
             </div>
 
-            <div class="form-footer">
+            <div class="modal-form-footer">
+
+                <button type="button"
+                        class="btn-delete"
+                        onclick="if(confirm('Yakin ingin menghapus pembimbing lapangan ini? Data yang dihapus tidak dapat dikembalikan.')){ document.getElementById('deleteFormPembimbing').submit(); }">
+                    Hapus
+                </button>
 
                 <button type="submit"
                         class="btn-submit">
@@ -609,6 +615,12 @@
 
             </div>
 
+        </form>
+
+        <!-- FORM HAPUS PEMBIMBING LAPANGAN (terpisah dari form update) -->
+        <form id="deleteFormPembimbing" method="POST" style="display:none;">
+            @csrf
+            @method('DELETE')
         </form>
 
     </div>
@@ -729,7 +741,13 @@
 
             </div>
 
-            <div class="form-footer">
+            <div class="modal-form-footer">
+
+                <button type="button"
+                        class="btn-delete"
+                        onclick="if(confirm('Yakin ingin menghapus pembimbing sekolah/kampus ini? Data yang dihapus tidak dapat dikembalikan.')){ document.getElementById('deleteFormPembimbingAsal').submit(); }">
+                    Hapus
+                </button>
 
                 <button type="submit"
                         class="btn-submit">
@@ -738,6 +756,12 @@
 
             </div>
 
+        </form>
+
+        <!-- FORM HAPUS PEMBIMBING ASAL (terpisah dari form update) -->
+        <form id="deleteFormPembimbingAsal" method="POST" style="display:none;">
+            @csrf
+            @method('DELETE')
         </form>
 
     </div>
@@ -760,14 +784,14 @@
 
             <div class="form-fields">
                 <div class="field">
-    <label>Nama Kepala Perpustakaan</label>
-    <input type="text" name="nama" maxlength="60" id="editNamaKepala">
-</div>
+                    <label>Nama Kepala Perpustakaan</label>
+                    <input type="text" name="nama" maxlength="60" id="editNamaKepala">
+                </div>
 
-<div class="field">
-    <label>NIP</label>
-    <input type="text" name="nip" maxlength="20" id="editNipKepala">
-</div>
+                <div class="field">
+                    <label>NIP</label>
+                    <input type="text" name="nip" maxlength="20" id="editNipKepala">
+                </div>
             </div>
 
             <div class="form-footer">
@@ -779,6 +803,7 @@
 
 </div>
 
+<script src="{{ asset('js/admin/sidebar.js') }}"></script>
 <script src="{{ asset('js/admin/pembimbing.js') }}"></script>
 </body>
 </html>

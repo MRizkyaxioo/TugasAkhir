@@ -20,6 +20,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class DashboardAdminController extends Controller
 {
@@ -215,9 +216,13 @@ public function pesertaMagang(Request $request)
         $peserta->id_sekolah_kampus
     )->get();
 
+    // dropdown data — WAJIB untuk fitur edit jurusan/sekolah
+    $jurusan = Jurusan::orderBy('jurusan')->get();
+    $sekolah = SekolahKampus::orderBy('nama_sekolah_kampus')->get();
+
     return view(
         'admin.detailpeserta',
-        compact('peserta', 'pembimbing', 'pembimbingAsal')
+        compact('peserta', 'pembimbing', 'pembimbingAsal', 'jurusan', 'sekolah')
     );
 }
 
@@ -406,6 +411,125 @@ public function exportLogbookAdmin($id)
     return $pdf->download('logbook_'.$peserta->nama.'.pdf');
 }
 
+// =========================================================
+// 🔹 LOGBOOK - ADMIN TAMBAH / EDIT / HAPUS
+// =========================================================
+public function storeLogbookAdmin(Request $request, $peserta)
+{
+    $request->validate([
+        'tanggal' => 'required|date|before_or_equal:today',
+        'kegiatan' => 'required|string',
+        'bukti_foto' => 'nullable|mimes:jpeg,png,jpg,gif,heic,heif|max:5120',
+    ], [
+        'tanggal.required' => 'Tanggal wajib diisi.',
+        'tanggal.before_or_equal' => 'Tanggal tidak boleh melebihi hari ini.',
+        'kegiatan.required' => 'Kegiatan wajib diisi.',
+        'bukti_foto.mimes' => 'Format gambar harus JPG, JPEG, PNG, GIF, HEIC, atau HEIF.',
+        'bukti_foto.max' => 'Ukuran gambar maksimal 5 MB.',
+    ]);
+
+    $path = null;
+if ($request->hasFile('bukti_foto')) {
+    $file = $request->file('bukti_foto');
+    $mime = strtolower($file->getMimeType());
+
+    if (in_array($mime, ['image/heic', 'image/heif'])) {
+        $imagick = new \Imagick($file->getRealPath());
+        $imagick->setImageFormat('jpeg');
+        $filename = time().'_'.pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME).'.jpg';
+        Storage::disk('public')->put('logbook/'.$filename, $imagick->getImageBlob());
+        $path = 'logbook/'.$filename;
+    } else {
+        $filename = time().'_'.$file->getClientOriginalName();
+        $path = $file->storeAs('logbook', $filename, 'public');
+    }
+}
+
+    $logbook = Logbook::create([
+        'id_peserta' => $peserta,
+        'tanggal' => $request->tanggal,
+        'kegiatan' => $request->kegiatan,
+        'bukti_foto' => $path,
+    ]);
+
+    return response()->json([
+        'message' => 'Logbook berhasil ditambahkan',
+        'data' => [
+            'id_logbook' => $logbook->id_logbook,
+            'tanggal' => Carbon::parse($logbook->tanggal)->format('d-m-Y'),
+            'kegiatan' => $logbook->kegiatan,
+            'bukti_foto' => $logbook->bukti_foto ? asset('storage/'.$logbook->bukti_foto) : null,
+        ]
+    ]);
+}
+
+public function updateLogbookAdmin(Request $request, $id)
+{
+    $logbook = Logbook::findOrFail($id);
+
+    $request->validate([
+        'tanggal' => 'required|date|before_or_equal:today',
+        'kegiatan' => 'required|string',
+        'bukti_foto' => 'nullable|mimes:jpeg,png,jpg,gif,heic,heif|max:5120',
+    ], [
+        'tanggal.required' => 'Tanggal wajib diisi.',
+        'tanggal.before_or_equal' => 'Tanggal tidak boleh melebihi hari ini.',
+        'kegiatan.required' => 'Kegiatan wajib diisi.',
+        'bukti_foto.mimes' => 'Format gambar harus JPG, JPEG, PNG, GIF, HEIC, atau HEIF.',
+        'bukti_foto.max' => 'Ukuran gambar maksimal 5 MB.',
+    ]);
+
+    $path = $logbook->bukti_foto;
+if ($request->hasFile('bukti_foto')) {
+    if ($path && Storage::disk('public')->exists($path)) {
+        Storage::disk('public')->delete($path);
+    }
+
+    $file = $request->file('bukti_foto');
+    $mime = strtolower($file->getMimeType());
+
+    if (in_array($mime, ['image/heic', 'image/heif'])) {
+        $imagick = new \Imagick($file->getRealPath());
+        $imagick->setImageFormat('jpeg');
+        $filename = time().'_'.pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME).'.jpg';
+        Storage::disk('public')->put('logbook/'.$filename, $imagick->getImageBlob());
+        $path = 'logbook/'.$filename;
+    } else {
+        $filename = time().'_'.$file->getClientOriginalName();
+        $path = $file->storeAs('logbook', $filename, 'public');
+    }
+}
+
+    $logbook->update([
+        'tanggal' => $request->tanggal,
+        'kegiatan' => $request->kegiatan,
+        'bukti_foto' => $path,
+    ]);
+
+    return response()->json([
+        'message' => 'Logbook berhasil diperbarui',
+        'data' => [
+            'id_logbook' => $logbook->id_logbook,
+            'tanggal' => Carbon::parse($logbook->tanggal)->format('d-m-Y'),
+            'kegiatan' => $logbook->kegiatan,
+            'bukti_foto' => $logbook->bukti_foto ? asset('storage/'.$logbook->bukti_foto) : null,
+        ]
+    ]);
+}
+
+public function deleteLogbookAdmin($id)
+{
+    $logbook = Logbook::findOrFail($id);
+
+    if ($logbook->bukti_foto && Storage::disk('public')->exists($logbook->bukti_foto)) {
+        Storage::disk('public')->delete($logbook->bukti_foto);
+    }
+
+    $logbook->delete();
+
+    return response()->json(['message' => 'Logbook berhasil dihapus']);
+}
+
 public function jurusan(Request $request)
 {
     $query = Jurusan::query();
@@ -416,7 +540,8 @@ public function jurusan(Request $request)
 
     $data = $query
         ->orderBy('jurusan')
-        ->get();
+        ->paginate(10)
+        ->withQueryString();
 
     return view('admin.jurusan', compact('data'));
 }
@@ -424,7 +549,9 @@ public function jurusan(Request $request)
 public function storeJurusan(Request $request)
 {
     $request->validate([
-        'jurusan' => 'required|string|max:50'
+        'jurusan' => 'required|string|max:50|unique:jurusan,jurusan'
+    ], [
+        'jurusan.unique' => 'Nama jurusan ini sudah terdaftar.',
     ]);
 
     Jurusan::create([
@@ -444,7 +571,8 @@ public function sekolahKampus(Request $request)
 
     $data = $query
         ->orderBy('nama_sekolah_kampus')
-        ->get();
+        ->paginate(10)
+        ->withQueryString();
 
     return view('admin.sekolah', compact('data'));
 }
@@ -452,7 +580,9 @@ public function sekolahKampus(Request $request)
 public function storeSekolahKampus(Request $request)
 {
     $request->validate([
-        'nama_sekolah_kampus' => 'required|string|max:75'
+        'nama_sekolah_kampus' => 'required|string|max:75|unique:sekolah_kampus,nama_sekolah_kampus'
+    ], [
+        'nama_sekolah_kampus.unique' => 'Nama sekolah/kampus ini sudah terdaftar.',
     ]);
 
     SekolahKampus::create([
@@ -465,7 +595,9 @@ public function storeSekolahKampus(Request $request)
 public function updateJurusan(Request $request, $id)
 {
     $request->validate([
-        'jurusan' => 'required|string|max:50'
+        'jurusan' => 'required|string|max:50|unique:jurusan,jurusan,' . $id . ',id_jurusan'
+    ], [
+        'jurusan.unique' => 'Nama jurusan ini sudah terdaftar.',
     ]);
 
     $jurusan = Jurusan::findOrFail($id);
@@ -480,7 +612,9 @@ public function updateJurusan(Request $request, $id)
 public function updateSekolahKampus(Request $request, $id)
 {
     $request->validate([
-        'nama_sekolah_kampus' => 'required|string|max:75'
+        'nama_sekolah_kampus' => 'required|string|max:75|unique:sekolah_kampus,nama_sekolah_kampus,' . $id . ',id_sekolah_kampus'
+    ], [
+        'nama_sekolah_kampus.unique' => 'Nama sekolah/kampus ini sudah terdaftar.',
     ]);
 
     $sekolah = SekolahKampus::findOrFail($id);
@@ -531,6 +665,25 @@ public function updatePembimbing(Request $request, $id)
     $pembimbing->update($data);
 
     return back()->with('success', 'Data pembimbing berhasil diupdate');
+}
+
+public function deletePembimbing($id)
+{
+    $pembimbing = Pembimbing::findOrFail($id);
+
+    // cegah hapus kalau masih jadi pembimbing aktif peserta
+    $masihDipakai = PembimbingPeserta::where('id_pembimbing', $id)->exists();
+
+    if ($masihDipakai) {
+        return back()->with(
+            'error',
+            'Pembimbing tidak bisa dihapus karena masih ditugaskan ke peserta aktif.'
+        );
+    }
+
+    $pembimbing->delete();
+
+    return back()->with('success', 'Data pembimbing lapangan berhasil dihapus');
 }
 
 public function storePembimbingAsal(Request $request)
@@ -589,6 +742,28 @@ public function updatePembimbingAsal(Request $request, $id)
     );
 }
 
+public function deletePembimbingAsal($id)
+{
+    $pembimbing = PembimbingAsal::findOrFail($id);
+
+    // cegah hapus kalau masih jadi pembimbing asal aktif peserta
+    $masihDipakai = \App\Models\PembimbingAsalPeserta::where('id_pembimbing_asal', $id)->exists();
+
+    if ($masihDipakai) {
+        return back()->with(
+            'error',
+            'Pembimbing sekolah/kampus tidak bisa dihapus karena masih ditugaskan ke peserta aktif.'
+        );
+    }
+
+    $pembimbing->delete();
+
+    return back()->with(
+        'success',
+        'Data pembimbing sekolah/kampus berhasil dihapus'
+    );
+}
+
 public function assignPembimbingAsal(Request $request, $id)
 {
     $request->validate([
@@ -610,5 +785,55 @@ public function assignPembimbingAsal(Request $request, $id)
     );
 }
 
+
+public function updateDataPeserta(Request $request, $id)
+{
+    $request->validate([
+        'nama' => 'required|string|max:100',
+        'nisn_nim' => 'required|max:11|unique:peserta,nisn_nim,' . $id . ',id_peserta',
+        'id_jurusan' => 'nullable|exists:jurusan,id_jurusan',
+        'id_sekolah_kampus' => 'nullable|exists:sekolah_kampus,id_sekolah_kampus',
+        'kelas' => 'nullable|string|max:2',
+        'semester' => 'required|integer|min:1|max:14',
+        'awal_magang' => 'required|date',
+        'akhir_magang' => 'required|date|after_or_equal:awal_magang',
+    ], [
+        'nisn_nim.max' => 'NISN/NIM maksimal 11 karakter',
+        'nisn_nim.unique' => 'NISN/NIM ini sudah terdaftar pada peserta lain.',
+        'akhir_magang.after_or_equal' => 'Tanggal akhir magang tidak boleh sebelum tanggal awal.',
+    ]);
+
+    $peserta = Peserta::findOrFail($id);
+
+    $peserta->update([
+        'nama' => $request->nama,
+        'nisn_nim' => $request->nisn_nim,
+        'id_jurusan' => $request->id_jurusan,
+        'id_sekolah_kampus' => $request->id_sekolah_kampus,
+        'kelas' => $request->kelas,
+        'semester' => $request->semester,
+        'awal_magang' => $request->awal_magang,
+        'akhir_magang' => $request->akhir_magang,
+    ]);
+
+    if ($request->expectsJson()) {
+        return response()->json([
+            'success' => true,
+            'message' => 'Data peserta berhasil diperbarui.',
+            'data' => [
+                'nama' => $peserta->nama,
+                'nisn_nim' => $peserta->nisn_nim,
+                'jurusan' => optional($peserta->jurusan)->jurusan ?? '-',
+                'sekolah_kampus' => optional($peserta->sekolahKampus)->nama_sekolah_kampus ?? '-',
+                'kelas' => $peserta->kelas,
+                'semester' => $peserta->semester,
+                'awal_magang' => \Carbon\Carbon::parse($peserta->awal_magang)->format('d-m-Y'),
+                'akhir_magang' => \Carbon\Carbon::parse($peserta->akhir_magang)->format('d-m-Y'),
+            ],
+        ]);
+    }
+
+    return back()->with('success', 'Data peserta berhasil diperbarui.');
 }
 
+}

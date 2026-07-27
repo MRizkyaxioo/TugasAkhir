@@ -131,7 +131,7 @@
         width:100%;
         border-collapse:collapse;
         margin-top:10px;
-        margin-bottom:20px;
+        margin-bottom:14px;
     }
 
     .nilai-table th,
@@ -152,6 +152,30 @@
 
     .nilai-table td{
         text-align:center;
+    }
+
+    /* =========================
+       NILAI AKHIR (TERPISAH)
+    ========================== */
+
+    .nilai-akhir-table{
+        width:100%;
+        border-collapse:collapse;
+        margin-top:2px;
+        margin-bottom:20px;
+    }
+
+    .nilai-akhir-table td{
+        border:2px solid #000;
+        padding:8px;
+        font-size:12pt;
+        font-weight:bold;
+        text-align:center;
+    }
+
+    .nilai-akhir-table .label-akhir{
+        width:50%;
+        text-align:left;
     }
 
     /* =========================
@@ -204,20 +228,26 @@
     }
 
     .tanggal{
-        margin-bottom:90px;
-        font-size:11pt;
-    }
+    margin-bottom:5px;
+    font-size:11pt;
+}
 
-    .jabatan{
-        font-size:11pt;
-        margin-bottom:5px;
-    }
+.jabatan{
+    font-size:11pt;
+    margin-bottom:90px; /* ruang untuk tanda tangan */
+}
 
-    .nama{
-        font-weight:bold;
-        text-decoration:underline;
-        font-size:11pt;
-    }
+.nama{
+    font-size:11pt;
+    font-weight:normal;
+    text-decoration:none;
+}
+
+.nip{
+    margin-top:4px;
+    font-size:11pt;
+    font-weight:normal;
+}
 </style>
 
 </head>
@@ -273,7 +303,7 @@
         </tr>
 
         <tr>
-            <td class="label">NISN/NIM</td>
+            <td class="label">NIS/NIM</td>
             <td class="colon">:</td>
             <td>{{ $peserta->nisn_nim ?? '-' }}</td>
         </tr>
@@ -302,13 +332,13 @@
     </table>
 </div>
 
-{{-- TABEL NILAI --}}
+{{-- TABEL KRITERIA --}}
 <table class="nilai-table">
     <thead>
         <tr>
-            <th width="60%">Kriteria</th>
+            <th width="50%">Kriteria</th>
             <th width="20%">Nilai</th>
-            <th width="20%">Grade</th>
+            <th width="30%">Grade</th>
         </tr>
     </thead>
 
@@ -319,15 +349,15 @@
             <td>{{ $p->nilai }}</td>
             <td>
                 @if($p->nilai >= 75)
-                    A
+                    Baik Sekali
                 @elseif($p->nilai >= 65)
-                    B
+                    Baik
                 @elseif($p->nilai >= 55)
-                    C
+                    Cukup
                 @elseif($p->nilai >= 45)
-                    D
+                    Kurang
                 @else
-                    E
+                    Kurang Sekali
                 @endif
             </td>
         </tr>
@@ -335,16 +365,25 @@
     </tbody>
 </table>
 
+{{-- NILAI AKHIR, TERPISAH DARI TABEL KRITERIA --}}
+<table class="nilai-akhir-table">
+    <tr>
+        <td class="label-akhir">Nilai Akhir</td>
+        <td>{{ $peserta->nilai_akhir ?? '-' }}</td>
+        <td>{{ $peserta->grade_akhir }}</td>
+    </tr>
+</table>
+
 {{-- KETERANGAN --}}
 <div class="keterangan">
     <p>Keterangan Grade :</p>
 
     <ul>
-        <li>75 - 100 : A</li>
-        <li>65 - 74 : B</li>
-        <li>55 - 64 : C</li>
-        <li>45 - 54 : D</li>
-        <li>&lt; 45 : E</li>
+        <li>75 - 100 : Baik Sekali</li>
+        <li>65 - 74 : Baik</li>
+        <li>55 - 64 : Cukup</li>
+        <li>45 - 54 : Kurang</li>
+        <li>&lt; 45 : Kurang Sekali</li>
     </ul>
 </div>
 
@@ -388,6 +427,18 @@
                 <div class="nama">
                     {{ $kepala->nama ?? '....................................' }}
                 </div>
+
+                <div class="nip">
+    NIP.
+    @if(!empty($kepala->nip) && strlen($kepala->nip) == 18)
+        {{ substr($kepala->nip, 0, 8) }}
+        {{ substr($kepala->nip, 8, 6) }}
+        {{ substr($kepala->nip, 14, 1) }}
+        {{ substr($kepala->nip, 15, 3) }}
+    @else
+        ....................................
+    @endif
+</div>
             </td>
         </tr>
     </table>

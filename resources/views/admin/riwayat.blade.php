@@ -9,16 +9,11 @@
 </head>
 <body>
 
-    <!-- HAMBURGER TOGGLE (mobile) -->
-    <button class="sidebar-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open'); document.querySelector('.sidebar-overlay').classList.toggle('active');">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
-        </svg>
-    </button>
-    <div class="sidebar-overlay" onclick="document.querySelector('.sidebar').classList.remove('open'); this.classList.remove('active');"></div>
+    <!-- OVERLAY (mobile) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <!-- SIDEBAR -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebarAdmin">
         <div class="sidebar-logo">
             <img src="{{ asset('images/logo-poliban.jpg') }}" alt="Logo Poliban">
         </div>
@@ -107,6 +102,9 @@
     <!-- MAIN -->
     <div class="main-content">
         <div class="page-header">
+            <button type="button" class="btn-hamburger-admin" id="btnHamburger" aria-label="Buka menu">
+                <span></span><span></span><span></span>
+            </button>
             <div class="page-header-title">Riwayat Peserta Magang</div>
         </div>
 
@@ -121,33 +119,32 @@
                             <input type="text" name="nama" placeholder="Nama Peserta" value="{{ request('nama') }}">
                         </div>
                         <div class="filter-group">
-    <label>Jurusan</label>
-    <select name="jurusan">
-        <option value="">Semua Jurusan</option>
+                            <label>Jurusan</label>
+                            <select name="jurusan">
+                                <option value="">Semua Jurusan</option>
+                                @foreach($jurusan as $j)
+                                    <option value="{{ $j->id_jurusan }}"
+                                        {{ request('jurusan') == $j->id_jurusan ? 'selected' : '' }}>
+                                        {{ $j->jurusan }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
 
-        @foreach($jurusan as $j)
-            <option value="{{ $j->id_jurusan }}"
-                {{ request('jurusan') == $j->id_jurusan ? 'selected' : '' }}>
-                {{ $j->jurusan }}
-            </option>
-        @endforeach
-    </select>
-</div>
+                        <div class="filter-group">
+                            <label>Sekolah/Kampus</label>
+                            <select name="sekolah_kampus">
+                                <option value="">Semua Sekolah/Kampus</option>
+                                @foreach($sekolah as $s)
+                                    <option value="{{ $s->id_sekolah_kampus }}"
+                                        {{ request('sekolah_kampus') == $s->id_sekolah_kampus ? 'selected' : '' }}>
+                                        {{ $s->nama_sekolah_kampus }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
 
-<div class="filter-group">
-    <label>Sekolah/Kampus</label>
-    <select name="sekolah_kampus">
-        <option value="">Semua Sekolah/Kampus</option>
-
-        @foreach($sekolah as $s)
-            <option value="{{ $s->id_sekolah_kampus }}"
-                {{ request('sekolah_kampus') == $s->id_sekolah_kampus ? 'selected' : '' }}>
-                {{ $s->nama_sekolah_kampus }}
-            </option>
-        @endforeach
-    </select>
-</div>
-                        <div class="filter-group filter-submit">
+                        <div class="filter-actions">
                             <button type="submit" class="btn btn-primary">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
@@ -165,7 +162,7 @@
                             <tr>
                                 <th>No</th>
                                 <th>Nama</th>
-                                <th>Nisn/NIM</th>
+                                <th>Nis/NIM</th>
                                 <th>Sekolah/Kampus</th>
                                 <th>Jurusan</th>
                                 <th>Status</th>
@@ -196,25 +193,24 @@
                         </tbody>
                     </table>
                     @if ($data->hasPages())
-    <div class="pagination-wrapper">
-        <ul class="pagination">
-
-            @foreach ($data->getUrlRange(1, $data->lastPage()) as $page => $url)
-                <li class="page-item {{ $page == $data->currentPage() ? 'active' : '' }}">
-                    <a class="page-link" href="{{ $url }}">
-                        {{ $page }}
-                    </a>
-                </li>
-            @endforeach
-
-        </ul>
-    </div>
-@endif
+                    <div class="pagination-wrapper">
+                        <ul class="pagination">
+                            @foreach ($data->getUrlRange(1, $data->lastPage()) as $page => $url)
+                                <li class="page-item {{ $page == $data->currentPage() ? 'active' : '' }}">
+                                    <a class="page-link" href="{{ $url }}">
+                                        {{ $page }}
+                                    </a>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    @endif
                 </div>
 
             </div>
         </div>
     </div>
 
+    <script src="{{ asset('js/admin/sidebar.js') }}"></script>
 </body>
 </html>

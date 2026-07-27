@@ -32,6 +32,12 @@
 
             {{-- FORM KANAN / BAWAH --}}
             <div class="card-form">
+
+                <div class="login-tabs">
+                    <a href="{{ route('peserta.login') }}" class="login-tab active">Peserta Magang</a>
+                    <a href="{{ route('admin.login') }}" class="login-tab">Admin / Pembimbing</a>
+                </div>
+
                 <h2>Login</h2>
 
                 @if(session('error'))
@@ -47,7 +53,7 @@
                     @csrf
 
                     <div class="field">
-                        <label>NISN/NIM</label>
+                        <label>NIS/NIM</label>
                         <div class="input-wrap">
                             <input type="text" name="nisn_nim"
                                    value="{{ old('nisn_nim') }}" autocomplete="off">

@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -16,6 +17,12 @@ return new class extends Migration
             $table->smallInteger('kuota_peserta');
             $table->timestamps();
         });
+
+        DB::table('kuota_magang')->insert([
+            'id_kuota' => 1,
+            'kuota_peserta' => '1',
+        ]);
+
     }
 
     /**

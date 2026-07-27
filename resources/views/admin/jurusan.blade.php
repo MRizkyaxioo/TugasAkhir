@@ -147,7 +147,7 @@
                             <tbody>
                                 @forelse($data as $i => $d)
                                 <tr>
-                                    <td data-label="No">{{ $i + 1 }}</td>
+                                    <td data-label="No">{{ $data->firstItem() + $i }}</td>
                                     <td data-label="Jurusan">{{ $d->jurusan }}</td>
                                     <td data-label="Aksi">
                                         <button class="btn-edit"
@@ -163,6 +163,19 @@
                                 @endforelse
                             </tbody>
                         </table>
+                        @if ($data->hasPages())
+    <div class="pagination-wrapper">
+        <ul class="pagination">
+            @foreach ($data->getUrlRange(1, $data->lastPage()) as $page => $url)
+                <li class="page-item {{ $page == $data->currentPage() ? 'active' : '' }}">
+                    <a class="page-link" href="{{ $url }}">
+                        {{ $page }}
+                    </a>
+                </li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 
                     </div>
                 </div>

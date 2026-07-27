@@ -91,6 +91,10 @@
 }
 
 .ttd-tanggal{
+    margin-bottom:5px;
+}
+
+.ttd-jabatan{
     margin-bottom:80px;
 }
 
@@ -233,17 +237,17 @@ th{
     <div class="ttd-kanan">
 
         <div class="ttd-tanggal">
-            Banjarmasin,
-            {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('d F Y') }}
-        </div>
+    Banjarmasin,
+    {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('d F Y') }}
+</div>
 
-        <div>
-            Pembimbing Lapangan
-        </div>
+<div class="ttd-jabatan">
+    Pembimbing Lapangan
+</div>
 
-        <div class="ttd-nama">
-            {{ $peserta->pembimbing->first()->nama ?? 'Belum ada pembimbing' }}
-        </div>
+<div class="ttd-nama">
+    {{ $peserta->pembimbing->first()->nama ?? 'Belum ada pembimbing' }}
+</div>
 
     </div>
 </div>

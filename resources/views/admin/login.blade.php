@@ -25,11 +25,17 @@
             <div class="card-photo">
                 <img src="{{ asset('images/perpustakaan.jpg') }}"
                      alt="Perpustakaan Poliban"
-                     onerror="this.parentElement.innerHTML='<div style=\'width:100%;height:100%;background:linear-gradient(135deg,#E8D5B5,#C8A87A);display:flex;align-items:center;justify-content:center;\'><span style=\'font-family:serif;color:#7B4F2E;text-align:center;padding:20px;line-height:1.6\'>Perpustakaan<br>Politeknik Negeri<br>Banjarmasin</span></div>'">
+                     onerror="this.parentElement.innerHTML='<div class=\'card-photo-fallback\'><span>Perpustakaan<br>Politeknik Negeri<br>Banjarmasin</span></div>'">
             </div>
 
             <div class="card-form">
-                <h2>Login Pentugas Magang Perpustakaan Poliban</h2>
+
+                <div class="login-tabs">
+                    <a href="{{ route('peserta.login') }}" class="login-tab">Peserta Magang</a>
+                    <a href="{{ route('admin.login') }}" class="login-tab active">Admin / Pembimbing</a>
+                </div>
+
+                <h2>Login Petugas Magang Perpustakaan Poliban</h2>
 
                 @if(session('error'))
                     <div class="alert-error">{{ session('error') }}</div>
@@ -84,6 +90,7 @@
             </div>
 
         </div>
+
     </main>
 
     <script src="{{ asset('js/admin/login.js') }}"></script>

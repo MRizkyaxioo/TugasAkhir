@@ -161,4 +161,40 @@ public function selesai()
 
     return view('peserta.selesai', compact('peserta'));
 }
+
+public function updateProfil(Request $request)
+{
+    $peserta = Auth::guard('peserta')->user();
+
+    $request->validate(
+    [
+        'nama' => 'required|string|max:60',
+        'no_telp' => 'required|string|max:15',
+        'email' => 'required|email|max:100|unique:peserta,email,' . $peserta->id_peserta . ',id_peserta',
+    ],
+    [
+        'nama.required' => 'Nama wajib diisi.',
+        'nama.max' => 'Nama maksimal 60 karakter.',
+
+        'no_telp.required' => 'Nomor telepon wajib diisi.',
+        'no_telp.max' => 'Nomor telepon maksimal 15 karakter.',
+
+        'email.required' => 'Email wajib diisi.',
+        'email.email' => 'Format email tidak valid.',
+        'email.unique' => 'Email tersebut sudah digunakan oleh peserta lain.',
+
+        'alamat.required' => 'Alamat wajib diisi.',
+    ]
+);
+
+    $peserta->update([
+        'nama'    => $request->nama,
+        'no_telp' => $request->no_telp,
+        'email'   => $request->email,
+        'alamat'  => $request->alamat,
+    ]);
+
+    return back()->with('success', 'Profil berhasil diperbarui.');
+}
+
 }

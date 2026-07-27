@@ -17,22 +17,33 @@ class PresensiController extends Controller
     // Halaman utama presensi admin
     public function halamanPresensi()
 {
-    // Auto close presensi yang kemarin lupa ditutup
-Presensi::where('status', 'dibuka')
-    ->whereDate('tanggal', '<', Carbon::today())
+    $now = Carbon::now('Asia/Makassar');
+
+    // Tutup otomatis presensi hari sebelumnya
+    Presensi::where('status', 'dibuka')
+        ->whereDate('tanggal', '<', $now->toDateString())
+        ->update([
+            'status' => 'ditutup'
+        ]);
+
+    // Tutup otomatis jika jam sudah lewat
+    Presensi::where('status', 'dibuka')
+        ->whereDate('tanggal', $now->toDateString())
+        ->whereTime('jam_tutup', '<=', $now->format('H:i:s'))
+        ->update([
+            'status' => 'ditutup'
+        ]);
+
+    // Finalkan presensi yang sudah ditutup
+    PresensiPeserta::whereHas('presensi', function ($q) {
+        $q->where('status', 'ditutup');
+    })
+    ->where('is_final', 0)
     ->update([
-        'status' => 'ditutup'
+        'is_final' => 1
     ]);
 
-PresensiPeserta::whereHas('presensi', function ($q) {
-    $q->where('status', 'ditutup');
-})
-->where('is_final', 0)
-->update([
-    'is_final' => 1
-]);
-
-    $today = Carbon::today()->toDateString();
+    $today = $now->toDateString();
 
     $presensi = Presensi::whereDate('tanggal', $today)->first();
 
@@ -44,13 +55,7 @@ PresensiPeserta::whereHas('presensi', function ($q) {
             ->get();
     }
 
-    return view(
-        'admin.presensi',
-        compact(
-            'presensi',
-            'data'
-        )
-    );
+    return view('admin.presensi', compact('presensi', 'data'));
 }
 
 public function bukaPresensi(Request $request)
@@ -139,10 +144,21 @@ public function updateStatus(Request $request)
         'status' => 'required|in:hadir,izin,sakit,alpa',
     ]);
 
-    PresensiPeserta::where(
-        'id_presensi_peserta',
-        $request->id
-    )->update([
+    $presensiPeserta = PresensiPeserta::with('presensi')
+        ->findOrFail($request->id);
+
+    // Tidak boleh diubah jika sudah final atau presensi ditutup
+    if (
+        $presensiPeserta->is_final ||
+        $presensiPeserta->presensi->status === 'ditutup'
+    ) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Presensi sudah ditutup.'
+        ], 403);
+    }
+
+    $presensiPeserta->update([
         'status_kehadiran' => $request->status
     ]);
 

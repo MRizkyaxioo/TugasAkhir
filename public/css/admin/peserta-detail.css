@@ -402,3 +402,167 @@ body {
     .info-row { flex-direction: column; gap: 2px; }
     .info-label { width: auto; }
 }
+
+/* ===== EDITABLE FIELDS ===== */
+.info-row-editable {
+    align-items: flex-start;
+}
+
+.info-edit-wrapper {
+    flex: 1;
+    min-width: 0;
+}
+
+.info-display {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.btn-edit-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    border: 1px solid rgba(200,135,58,0.3);
+    border-radius: 50%;
+    background: rgba(200,135,58,0.08);
+    color: var(--gold);
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.btn-edit-icon:hover {
+    background: var(--gold);
+    color: #fff;
+}
+
+.edit-form {
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+    width: 100%;
+}
+
+.edit-form.is-visible {
+    display: flex;
+}
+
+.edit-input,
+.edit-select {
+    width: 100%;
+    padding: 7px 10px;
+    border: 1.5px solid #E8D5B5;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    color: var(--dark);
+    background: var(--warm-white);
+    outline: none;
+}
+
+.edit-input:focus,
+.edit-select:focus {
+    border-color: var(--gold);
+}
+
+.edit-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.btn-save-icon,
+.btn-cancel-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.btn-save-icon {
+    background: #DCFCE7;
+    border: 1.5px solid #BBF7D0;
+    color: #166534;
+}
+.btn-save-icon:hover { background: #166534; color: #fff; }
+
+.btn-cancel-icon {
+    background: #f9f4ed;
+    border: 1.5px solid #E8D5B5;
+    color: var(--muted);
+}
+.btn-cancel-icon:hover { background: #E8D5B5; color: var(--dark); }
+
+/* ===============================================
+   TOM SELECT - perbaikan dropdown transparan/tembus
+   =============================================== */
+
+.ts-wrapper.single .ts-control {
+    padding: 6px 10px;
+    font-size: 0.82rem;
+    border: 1.5px solid #E8D5B5;
+    border-radius: 8px;
+    background: var(--warm-white);
+}
+.ts-wrapper.focus .ts-control {
+    border-color: var(--gold) !important;
+    box-shadow: none !important;
+}
+
+.ts-dropdown {
+    background: var(--card-bg) !important;
+    border: 1.5px solid #E8D5B5 !important;
+    border-radius: 10px !important;
+    box-shadow: 0 10px 32px rgba(26,18,8,0.18) !important;
+    z-index: 3000 !important;
+    margin-top: 4px !important;
+    overflow: hidden;
+}
+
+.ts-dropdown .ts-dropdown-content {
+    background: var(--card-bg) !important;
+}
+
+.ts-dropdown [data-selectable],
+.ts-dropdown .option {
+    background: var(--card-bg) !important;
+    color: var(--dark) !important;
+    font-size: 0.82rem;
+    padding: 8px 12px;
+}
+
+.ts-dropdown [data-selectable].active,
+.ts-dropdown .option.active {
+    background: rgba(200,135,58,0.12) !important;
+    color: var(--gold) !important;
+}
+
+.ts-dropdown .no-results {
+    background: var(--card-bg) !important;
+    color: var(--muted) !important;
+    font-size: 0.82rem;
+    padding: 8px 12px;
+}
+
+.ts-dropdown .ts-control input {
+    background: var(--card-bg) !important;
+}
+
+@media (max-width: 420px) {
+    .info-display { flex-wrap: wrap; }
+}
+
+.edit-error {
+    font-size: 0.75rem;
+    color: #DC2626;
+    margin-top: -2px;
+}

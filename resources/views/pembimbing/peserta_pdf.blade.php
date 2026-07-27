@@ -60,7 +60,7 @@
     margin-bottom:20px;
 }
 
-        
+
 
         h2 {
     text-align:center;
@@ -70,7 +70,7 @@
     text-decoration:underline;
     margin-bottom:10px;
 }
-        
+
 
         .sub{
     margin-bottom:20px;
@@ -103,6 +103,33 @@
     font-size:12pt;
     color:#000;
     padding:20px 35px;
+}
+
+/* =========================
+   TANDA TANGAN
+========================= */
+
+.ttd{
+    margin-top:50px;
+    width:100%;
+}
+
+.ttd-kanan{
+    width:40%;
+    float:right;
+    text-align:center;
+}
+
+.ttd-tanggal{
+    margin-bottom:5px;
+}
+
+.ttd-jabatan{
+    margin-bottom:0;
+}
+
+.ttd-nama{
+    margin-top:0;
 }
     </style>
 </head>
@@ -155,7 +182,7 @@
             <tr>
                 <th>No</th>
                 <th>Nama</th>
-                <th>NISN/NIM</th>
+                <th>NIS/NIM</th>
                 <th>Sekolah/Kampus</th>
                 <th>Jurusan</th>
                 <th>Periode Magang</th>
@@ -207,17 +234,17 @@
         <td style="border:none;"></td>
 
         <td style="border:none; width:40%; text-align:center;">
-    Banjarmasin,
-    {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('d F Y') }}
+            Banjarmasin,
+            {{ \Carbon\Carbon::now()->locale('id')->translatedFormat('d F Y') }}
 
-    <br><br><br><br><br>
+            <br>
 
-    Pembimbing Lapangan
+            Pembimbing Lapangan
 
-    <br><br>
+            <br><br><br><br><br><br>
 
-    {{ $pembimbing->nama }}
-</td>
+            {{ $pembimbing->nama }}
+        </td>
     </tr>
 </table>
 </body>

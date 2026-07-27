@@ -511,6 +511,10 @@ section { padding: 72px 48px; }
 
 .kontak-icon.instagram { background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
 .kontak-icon.facebook  { background: #1877F2; }
+.kontak-icon.telepon,
+.kontak-icon.email {
+    background: var(--gold);
+}
 
 .kontak-icon svg { color: #fff; }
 
@@ -519,6 +523,26 @@ section { padding: 72px 48px; }
     font-size: 0.7rem;
     color: var(--muted);
     font-weight: 300;
+}
+
+.kontak-item-split {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding: 0;
+}
+
+.kontak-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    text-decoration: none;
+    color: var(--dark);
+}
+
+.kontak-row:first-child {
+    border-bottom: 1px solid rgba(200,135,58,0.12);
 }
 
 /* ── HAMBURGER ── */
@@ -571,7 +595,7 @@ section { padding: 72px 48px; }
     display: none;
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
-    z-index: 199;
+    z-index: 300;
 }
 
 .mobile-menu-overlay {

@@ -9,15 +9,11 @@
 </head>
 <body>
 
-    <!-- HAMBURGER TOGGLE (mobile) -->
-    <button class="sidebar-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open'); document.querySelector('.sidebar-overlay').classList.toggle('active');">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
-        </svg>
-    </button>
-    <div class="sidebar-overlay" onclick="document.querySelector('.sidebar').classList.remove('open'); this.classList.remove('active');"></div>
+    <!-- OVERLAY (mobile) -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <aside class="sidebar">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebarAdmin">
         <div class="sidebar-logo">
             <img src="{{ asset('images/logo-poliban.jpg') }}" alt="Logo Poliban">
         </div>
@@ -72,22 +68,22 @@
             </a>
 
             <a href="{{ route('admin.jurusan') }}"
-   class="nav-item {{ request()->routeIs('admin.jurusan') ? 'active' : '' }}">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
-        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
-    </svg>
-    Data Jurusan
-</a>
+               class="nav-item {{ request()->routeIs('admin.jurusan') ? 'active' : '' }}">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                    <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                </svg>
+                Data Jurusan
+            </a>
 
-<a href="{{ route('admin.sekolah') }}"
-   class="nav-item {{ request()->routeIs('admin.sekolah') ? 'active' : '' }}">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-        <polyline points="9 22 9 12 15 12 15 22"/>
-    </svg>
-    Data Sekolah/Kampus
-</a>
+            <a href="{{ route('admin.sekolah') }}"
+               class="nav-item {{ request()->routeIs('admin.sekolah') ? 'active' : '' }}">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+                Data Sekolah/Kampus
+            </a>
         </nav>
         <div class="sidebar-footer">
             <form action="{{ route('admin.logout') }}" method="POST">
@@ -104,40 +100,44 @@
         </div>
     </aside>
 
+    <!-- MAIN -->
     <div class="main-content">
         <div class="page-header">
+            <button type="button" class="btn-hamburger-admin" id="btnHamburger" aria-label="Buka menu">
+                <span></span><span></span><span></span>
+            </button>
             <div class="page-header-title">Rekap Presensi</div>
         </div>
 
         <form method="GET" class="filter">
 
-    <select name="bulan">
-        <option value="">Keseluruhan Bulan</option>
+            <select name="bulan">
+                <option value="">Keseluruhan Bulan</option>
 
-        @for($i=1; $i<=12; $i++)
-            <option value="{{ $i }}"
-                {{ request('bulan') == $i ? 'selected' : '' }}>
-                {{ date('F', mktime(0,0,0,$i,1)) }}
-            </option>
-        @endfor
-    </select>
+                @for($i=1; $i<=12; $i++)
+                    <option value="{{ $i }}"
+                        {{ request('bulan') == $i ? 'selected' : '' }}>
+                        {{ date('F', mktime(0,0,0,$i,1)) }}
+                    </option>
+                @endfor
+            </select>
 
-    <input type="text"
-           name="nama"
-           placeholder="Cari nama peserta"
-           value="{{ request('nama') }}">
+            <input type="text"
+                   name="nama"
+                   placeholder="Cari nama peserta"
+                   value="{{ request('nama') }}">
 
-    <button type="submit">Terapkan</button>
+            <button type="submit">Terapkan</button>
 
-    <a href="{{ route('admin.rekap.presensi.export', [
-    'bulan' => request('bulan'),
-    'nama' => request('nama')
-]) }}"
-class="btn-export">
-    Cetak Rekap
-</a>
+            <a href="{{ route('admin.rekap.presensi.export', [
+                'bulan' => request('bulan'),
+                'nama' => request('nama')
+            ]) }}"
+            class="btn-export">
+                Cetak Rekap
+            </a>
 
-</form>
+        </form>
 
         <div class="page-body">
             <div class="card">
@@ -145,7 +145,7 @@ class="btn-export">
                     <table>
                         <thead>
                             <tr>
-                                <th>NISN/NIM</th>
+                                <th>NIS/NIM</th>
                                 <th>Nama</th>
                                 <th style="text-align:center;">Hadir</th>
                                 <th style="text-align:center;">Izin</th>
@@ -195,5 +195,6 @@ class="btn-export">
         </div>
     </div>
 
+    <script src="{{ asset('js/admin/sidebar.js') }}"></script>
 </body>
 </html>

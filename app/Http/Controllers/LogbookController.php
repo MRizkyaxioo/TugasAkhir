@@ -72,21 +72,30 @@ class LogbookController extends Controller
 
         $request->validate([
     'kegiatan' => 'required',
-    'bukti_foto' => 'required|image|mimes:jpeg,png,jpg|max:5120',
+    'bukti_foto' => 'required|mimes:jpeg,png,jpg,heic,heif|max:5120',
 ], [
     'kegiatan.required' => 'Kegiatan wajib diisi.',
     'bukti_foto.required' => 'Bukti kegiatan wajib diunggah.',
-    'bukti_foto.image' => 'Bukti kegiatan harus berupa gambar.',
-    'bukti_foto.mimes' => 'Format gambar harus JPG, JPEG, atau PNG.',
+    'bukti_foto.mimes' => 'Format gambar harus JPG, JPEG, PNG, HEIC, atau HEIF.',
     'bukti_foto.max' => 'Ukuran gambar maksimal 5 MB.',
 ]);
 
         $path = null;
-        if ($request->hasFile('bukti_foto')) {
-            $file = $request->file('bukti_foto');
-            $filename = time().'_'.$file->getClientOriginalName();
-            $path = $file->storeAs('logbook', $filename, 'public');
-        }
+if ($request->hasFile('bukti_foto')) {
+    $file = $request->file('bukti_foto');
+    $mime = strtolower($file->getMimeType());
+
+    if (in_array($mime, ['image/heic', 'image/heif'])) {
+        $imagick = new \Imagick($file->getRealPath());
+        $imagick->setImageFormat('jpeg');
+        $filename = time().'_'.pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME).'.jpg';
+        Storage::disk('public')->put('logbook/'.$filename, $imagick->getImageBlob());
+        $path = 'logbook/'.$filename;
+    } else {
+        $filename = time().'_'.$file->getClientOriginalName();
+        $path = $file->storeAs('logbook', $filename, 'public');
+    }
+}
 
         Logbook::create([
             'id_peserta' => $peserta->id_peserta,
@@ -115,18 +124,29 @@ class LogbookController extends Controller
 
     $request->validate([
         'kegiatan' => 'required',
-        'bukti_foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+        'bukti_foto' => 'nullable|mimes:jpeg,png,jpg,heic,heif|max:5120',
     ]);
 
     $path = $logbook->bukti_foto;
-    if ($request->hasFile('bukti_foto')) {
-        if ($path && Storage::disk('public')->exists($path)) {
-            Storage::disk('public')->delete($path);
-        }
-        $file = $request->file('bukti_foto');
+if ($request->hasFile('bukti_foto')) {
+    if ($path && Storage::disk('public')->exists($path)) {
+        Storage::disk('public')->delete($path);
+    }
+
+    $file = $request->file('bukti_foto');
+    $mime = strtolower($file->getMimeType());
+
+    if (in_array($mime, ['image/heic', 'image/heif'])) {
+        $imagick = new \Imagick($file->getRealPath());
+        $imagick->setImageFormat('jpeg');
+        $filename = time().'_'.pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME).'.jpg';
+        Storage::disk('public')->put('logbook/'.$filename, $imagick->getImageBlob());
+        $path = 'logbook/'.$filename;
+    } else {
         $filename = time().'_'.$file->getClientOriginalName();
         $path = $file->storeAs('logbook', $filename, 'public');
     }
+}
 
     $logbook->update([
         'kegiatan' => $request->kegiatan,

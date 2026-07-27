@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Logbook Harian - Magang Perpustakaan Poliban</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('css/peserta/logbook.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/peserta/logbook.css') }}?v={{ time() }}">
 </head>
 <body>
 
@@ -216,6 +216,18 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 @endif
     <script>
+        // ── Fix 100vh di mobile (address bar bikin 100vh > tinggi layar terlihat) ──
+        // Browser modern sudah punya 100dvh (sudah di-set lewat CSS), tapi ini fallback
+        // untuk browser lama yang belum support dvh, supaya sidebar & tombol logout
+        // tetap pas dengan tinggi layar yang BENAR-BENAR terlihat.
+        function setVhVariable() {
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        }
+        setVhVariable();
+        window.addEventListener('resize', setVhVariable);
+        window.addEventListener('orientationchange', setVhVariable);
+
         // ── Sidebar drawer ──
         const sidebar        = document.getElementById('sidebar');
         const sidebarOverlay = document.getElementById('sidebarOverlay');

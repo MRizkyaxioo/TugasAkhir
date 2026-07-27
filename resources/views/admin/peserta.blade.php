@@ -129,33 +129,32 @@
                             <input type="text" name="nama" placeholder="Nama Peserta" value="{{ request('nama') }}">
                         </div>
                         <div class="filter-group">
-    <label>Jurusan</label>
-    <select name="jurusan">
-        <option value="">Semua Jurusan</option>
+                            <label>Jurusan</label>
+                            <select name="jurusan">
+                                <option value="">Semua Jurusan</option>
+                                @foreach($jurusan as $j)
+                                    <option value="{{ $j->id_jurusan }}"
+                                        {{ request('jurusan') == $j->id_jurusan ? 'selected' : '' }}>
+                                        {{ $j->jurusan }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
 
-        @foreach($jurusan as $j)
-            <option value="{{ $j->id_jurusan }}"
-                {{ request('jurusan') == $j->id_jurusan ? 'selected' : '' }}>
-                {{ $j->jurusan }}
-            </option>
-        @endforeach
-    </select>
-</div>
+                        <div class="filter-group">
+                            <label>Sekolah/Kampus</label>
+                            <select name="sekolah_kampus">
+                                <option value="">Semua Sekolah/Kampus</option>
+                                @foreach($sekolah as $s)
+                                    <option value="{{ $s->id_sekolah_kampus }}"
+                                        {{ request('sekolah_kampus') == $s->id_sekolah_kampus ? 'selected' : '' }}>
+                                        {{ $s->nama_sekolah_kampus }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
 
-<div class="filter-group">
-    <label>Sekolah/Kampus</label>
-    <select name="sekolah_kampus">
-        <option value="">Semua Sekolah/Kampus</option>
-
-        @foreach($sekolah as $s)
-            <option value="{{ $s->id_sekolah_kampus }}"
-                {{ request('sekolah_kampus') == $s->id_sekolah_kampus ? 'selected' : '' }}>
-                {{ $s->nama_sekolah_kampus }}
-            </option>
-        @endforeach
-    </select>
-</div>
-                        <div style="display:flex; align-items:flex-end;">
+                        <div class="filter-actions">
                             <button type="submit" class="btn btn-primary">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
@@ -173,7 +172,7 @@
                             <tr>
                                 <th>No</th>
                                 <th>Nama</th>
-                                <th>NISN/NIM</th>
+                                <th>NIS/NIM</th>
                                 <th>Sekolah/Kampus</th>
                                 <th>Jurusan</th>
                                 <th>Status</th>
@@ -183,18 +182,18 @@
                         <tbody>
                             @forelse($data as $i => $d)
                             <tr>
-                                <td>{{ $data->firstItem() + $i }}</td>
-                                <td>{{ $d->nama }}</td>
-                                <td>{{ $d->nisn_nim }}</td>
-                                <td>{{ $d->sekolahKampus->nama_sekolah_kampus ?? '-' }}</td>
-                                <td>{{ $d->jurusan->jurusan ?? '-' }}</td>
-                                <td><span class="badge badge-diterima">Diterima</span></td>
-                                <td>
+                                <td data-label="No">{{ $data->firstItem() + $i }}</td>
+                                <td data-label="Nama">{{ $d->nama }}</td>
+                                <td data-label="NISN/NIM">{{ $d->nisn_nim }}</td>
+                                <td data-label="Sekolah/Kampus">{{ $d->sekolahKampus->nama_sekolah_kampus ?? '-' }}</td>
+                                <td data-label="Jurusan">{{ $d->jurusan->jurusan ?? '-' }}</td>
+                                <td data-label="Status"><span class="badge badge-diterima">Diterima</span></td>
+                                <td data-label="Aksi">
                                     <div class="aksi-cell">
                                         <a href="{{ route('admin.detail.peserta', $d->id_peserta) }}"
                                            class="btn btn-outline btn-sm">Detail</a>
-                                           <a href="{{ route('admin.logbook', $d->id_peserta) }}"
-   class="btn btn-outline btn-sm">Logbook</a>
+                                        <a href="{{ route('admin.logbook', $d->id_peserta) }}"
+                                           class="btn btn-outline btn-sm">Logbook</a>
                                         <button type="button"
                                                 class="btn btn-primary btn-sm"
                                                 onclick="openModal('modal-{{ $d->id_peserta }}')">
@@ -211,20 +210,18 @@
                         </tbody>
                     </table>
                     @if ($data->hasPages())
-    <div class="pagination-wrapper">
-        <ul class="pagination">
-
-            @foreach ($data->getUrlRange(1, $data->lastPage()) as $page => $url)
-                <li class="page-item {{ $page == $data->currentPage() ? 'active' : '' }}">
-                    <a class="page-link" href="{{ $url }}">
-                        {{ $page }}
-                    </a>
-                </li>
-            @endforeach
-
-        </ul>
-    </div>
-@endif
+                    <div class="pagination-wrapper">
+                        <ul class="pagination">
+                            @foreach ($data->getUrlRange(1, $data->lastPage()) as $page => $url)
+                                <li class="page-item {{ $page == $data->currentPage() ? 'active' : '' }}">
+                                    <a class="page-link" href="{{ $url }}">
+                                        {{ $page }}
+                                    </a>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    @endif
                 </div>
             </div>
         </div>
