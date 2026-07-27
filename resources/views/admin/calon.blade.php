@@ -186,7 +186,7 @@
                             <tr>
                                 <td>{{ $data->firstItem() + $i }}</td>
                                 <td>{{ $d->nama }}</td>
-                                <td>{{ $d->nis_nim }}</td>
+                                <td>{{ $d->nisn_nim }}</td>
                                 <td>{{ $d->sekolahKampus->nama_sekolah_kampus ?? '-' }}</td>
                                 <td>{{ $d->jurusan->jurusan ?? '-' }}</td>
                                 <td>
